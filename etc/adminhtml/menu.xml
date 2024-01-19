@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Fatchip_Computop::computop" title="Computop" module="Fatchip_Computop" sortOrder="79" resource="Fatchip_Computop::computop"/>
+        <add id="Fatchip_Computop::computop_configuration" title="Configuration" module="Fatchip_Computop" sortOrder="20" parent="Fatchip_Computop::computop" resource="Fatchip_Computop::computop_configuration"/>
+        <add id="Fatchip_Computop::computop_configuration_general" title="General" module="Fatchip_Computop" sortOrder="10" parent="Fatchip_Computop::computop_configuration" action="adminhtml/system_config/edit/section/computop_general" resource="Fatchip_Computop::computop_configuration_general"/>
+        <add id="Fatchip_Computop::computop_configuration_payment" title="Payment" module="Fatchip_Computop" sortOrder="20" parent="Fatchip_Computop::computop_configuration" action="adminhtml/system_config/edit/section/computop_payment" resource="Fatchip_Computop::computop_configuration_payment"/>
+        <!-- @TODO: EDIT or REMOVE
+        <add id="Fatchip_Computop::computop_protocol" title="Logs" module="Fatchip_Computop" sortOrder="30" parent="Fatchip_Computop::computop" resource="Fatchip_Computop::computop_protocol"/>
+        <add id="Fatchip_Computop::computop_protocol_api" title="Api" module="Fatchip_Computop" sortOrder="10" parent="Fatchip_Computop::computop_protocol" action="computop/protocol_api" resource="Fatchip_Computop::computop_protocol_api"/>
+        -->
+    </menu>
+</config>

@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="computop" translate="label" sortOrder="1000000">
+            <label>Computop</label>
+        </tab>
+        <section id="computop_general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>General</label>
+            <tab>computop</tab>
+            <resource>Fatchip_Computop::computop_configuration_general</resource>
+            <group id="global" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Global</label>
+                <field id="merchantid" translate="label,tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>MerchantID</label>
+                    <tooltip>Your MerchantID</tooltip>
+                </field>
+                <field id="mac" translate="label,tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>MAC</label>
+                    <tooltip>Your HMAC key</tooltip>
+                </field>
+                <field id="password" translate="label,tooltip" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Password</label>
+                    <tooltip>Your encryption password</tooltip>
+                </field>
+                <field id="restapikey" translate="label,tooltip" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>REST-API key</label>
+                    <tooltip>Your REST-API key</tooltip>
+                </field>
+                <field id="ordernr_prefix" translate="label,tooltip" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order number prefix</label>
+                    <tooltip>Prefix for order number</tooltip>
+                </field>
+                <field id="ordernr_suffix" translate="label,tooltip" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order number suffix</label>
+                    <tooltip>Suffix for order number</tooltip>
+                </field>
+                <!-- @TODO: EDIT or REMOVE
+                <field id="allowspecific" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment from Specific Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <depends>
+                        <field id="allowspecific">1</field>
+                    </depends>
+                </field>
+                <field id="currency" translate="label,comment" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Currency</label>
+                    <source_model>Fatchip\Computop\Model\Source\Currency</source_model>
+                    <comment>Payment information is transmitted using the selected currency</comment>
+                </field>
+                <field id="transmit_ip" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Transmit IP address</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="transmit_customerid" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Transmit customer-id</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                -->
+            </group>
+        </section>
+        <section id="computop_payment" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Payment</label>
+            <tab>computop</tab>
+            <resource>Fatchip_Computop::computop_configuration_payment</resource>
+            <include path="Fatchip_Computop::system/computop_creditcard.xml"/>
+        </section>
+    </system>
+</config>
