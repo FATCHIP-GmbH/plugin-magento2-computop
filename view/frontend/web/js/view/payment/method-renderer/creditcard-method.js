@@ -7,11 +7,6 @@ define(
         return Component.extend({
             defaults: {
                 template: 'Fatchip_Computop/payment/creditcard'
-            },
-
-            /** Returns payment method instructions */
-            getInstructions: function () {
-                return window.checkoutConfig.payment.instructions[this.item.method];
             }
         });
     }

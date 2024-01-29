@@ -13,7 +13,10 @@ define(
     function (Component, $, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction, placeOrderAction) {
         'use strict';
         return Component.extend({
-
+            /** Returns payment method instructions */
+            getInstructions: function () {
+                return window.checkoutConfig.payment.instructions[this.item.method];
+            }
         });
     }
 );

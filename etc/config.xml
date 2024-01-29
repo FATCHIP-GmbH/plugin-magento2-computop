@@ -3,7 +3,7 @@
     <default>
         <payment>
             <computop_creditcard>
-                <model>ComputopCreditcardFacade</model>
+                <model>Fatchip\Computop\Model\Method\Creditcard</model>
                 <title>Computop Creditcard</title>
                 <payment_action>authorize</payment_action>
                 <active>1</active>

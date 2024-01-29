@@ -1,38 +1,12 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <virtualType name="ComputopBaseFacade" type="Fatchip\Computop\Model\Method\BaseMethod">
+    <type name="Fatchip\Computop\Model\Method\BaseMethod">
         <arguments>
-            <!--argument name="code" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_CREDITCARD</argument-->
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
-            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPool</argument>
-            <!-- Needed? argument name="validatorPool" xsi:type="object">BraintreeValidatorPool</argument -->
             <argument name="commandPool" xsi:type="object">ComputopGatewayCommandPool</argument>
         </arguments>
-    </virtualType>
-    <virtualType name="ComputopCreditcardFacade" type="ComputopBaseFacade">
-        <arguments>
-            <argument name="code" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_CREDITCARD</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="ComputopValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
-        <arguments>
-            <argument name="handlers" xsi:type="array">
-                <item name="default" xsi:type="string">ComputopConfigValueHandler</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="ComputopConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
-        <arguments>
-            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfig</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="ComputopCreditcardVaultPaymentConfig" type="Magento\Payment\Gateway\Config\Config">
-        <arguments>
-            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_CREDITCARD</argument>
-        </arguments>
-    </virtualType>
+    </type>
 
     <virtualType name="ComputopGatewayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>
@@ -74,4 +48,30 @@
             </argument>
         </arguments>
     </virtualType>
+
+    <!-- START - EVERY PAYMENT METHOD NEEDS ONE IF THESE BLOCKS... -->
+    <!-- Creditcard Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\Creditcard">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolCreditcard</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolCreditcard" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerCreditcard</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerCreditcard" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigCreditcard</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigCreditcard" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_CREDITCARD</argument>
+        </arguments>
+    </virtualType>
+    <!-- END - EVERY PAYMENT METHOD NEEDS ONE IF THESE BLOCKS... -->
 </config>

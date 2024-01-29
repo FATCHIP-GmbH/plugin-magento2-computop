@@ -64,7 +64,7 @@ class ConfigProvider implements ConfigProviderInterface
     {
         $methodInstance = $this->dataHelper->getMethodInstance($code);
         if ($methodInstance) {
-            return nl2br($this->escaper->escapeHtml($methodInstance->getInstructions()));
+            return nl2br($this->escaper->escapeHtml($methodInstance->getConfigData('instructions')));
         }
         return '';
     }
