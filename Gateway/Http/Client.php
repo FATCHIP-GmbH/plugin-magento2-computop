@@ -6,7 +6,7 @@ use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
 
-class ClientMock implements ClientInterface
+class Client implements ClientInterface
 {
     const SUCCESS = 1;
     const FAILURE = 0;

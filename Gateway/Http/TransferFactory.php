@@ -33,11 +33,7 @@ class TransferFactory implements TransferFactoryInterface
         return $this->transferBuilder
             ->setBody($request)
             ->setMethod('POST')
-            ->setHeaders(
-                [
-                    'foo' => 'bar',
-                ]
-            )
+            #->setHeaders(['foo' => 'bar']) // not extra headers needed for now I think
             ->build();
     }
 }

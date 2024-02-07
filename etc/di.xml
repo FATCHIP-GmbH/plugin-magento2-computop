@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- START - PAYMENT CONFIG -->
     <type name="Fatchip\Computop\Model\Method\BaseMethod">
         <arguments>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -27,7 +28,7 @@
             <argument name="requestBuilder" xsi:type="object">ComputopGatewayAuthorizationRequest</argument>
             <argument name="handler" xsi:type="object">ComputopGatewayResponseHandlerComposite</argument>
             <argument name="transferFactory" xsi:type="object">Fatchip\Computop\Gateway\Http\TransferFactory</argument>
-            <argument name="client" xsi:type="object">Fatchip\Computop\Gateway\Http\ClientMock</argument>
+            <argument name="client" xsi:type="object">Fatchip\Computop\Gateway\Http\Client</argument>
         </arguments>
     </virtualType>
 
@@ -74,4 +75,37 @@
         </arguments>
     </virtualType>
     <!-- END - EVERY PAYMENT METHOD NEEDS ONE IF THESE BLOCKS... -->
+
+    <!-- Giropay Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\Giropay">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolGiropay</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolGiropay" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerGiropay</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerGiropay" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigGiropay</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigGiropay" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_GIROPAY</argument>
+        </arguments>
+    </virtualType>
+    <!-- END - PAYMENT CONFIG -->
+
+    <!-- START - Session proxies -->
+    <type name="Fatchip\Computop\Controller\Onepage\Returned">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <!-- END - Session proxies -->
 </config>

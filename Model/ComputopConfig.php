@@ -12,4 +12,5 @@ abstract class ComputopConfig
 
     /* Payment method codes */
     const METHOD_CREDITCARD = 'computop_creditcard';
+    const METHOD_GIROPAY = 'computop_giropay';
 }

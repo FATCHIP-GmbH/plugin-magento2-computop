@@ -17,21 +17,31 @@ class Base
     protected $storeCode = null;
 
     /**
-     * Computop base helper
+     * Computop payment helper
      *
-     * @var \Fatchip\Computop\Helper\Base
+     * @var \Fatchip\Computop\Helper\Payment
      */
-    protected $baseHelper;
+    protected $paymentHelper;
+
+    /**
+     * Class for handling the encryption of the API communication
+     *
+     * @var \Fatchip\Computop\Model\Api\Encryption\Blowfish
+     */
+    protected $blowfish;
 
     /**
      * Constructor
      *
-     * @param \Fatchip\Computop\Helper\Base $baseHelper
+     * @param \Fatchip\Computop\Helper\Payment $paymentHelper
+     * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
      */
     public function __construct(
-        \Fatchip\Computop\Helper\Base $baseHelper
+        \Fatchip\Computop\Helper\Payment $paymentHelper,
+        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
     ) {
-        $this->baseHelper = $baseHelper;
+        $this->paymentHelper = $paymentHelper;
+        $this->blowfish = $blowfish;
         $this->initRequest();
     }
 
@@ -44,7 +54,7 @@ class Base
     protected function initRequest()
     {
         $this->parameters = []; // clear parameters
-        $this->addParameter('MerchantID', $this->shopHelper->getConfigParam('merchantid', 'global', 'payone_general', $this->storeCode));
+        $this->addParameter('MerchantID', $this->paymentHelper->getConfigParam('merchantid', 'global', 'payone_general', $this->storeCode));
     }
 
     /**
@@ -54,7 +64,9 @@ class Base
      */
     public function getParameters()
     {
-        return $this->parameters;
+        $return = $this->parameters;
+        $return['MAC'] = $this->getHmac();
+        return $return;
     }
 
     /**
@@ -85,6 +97,17 @@ class Base
     }
 
     /**
+     * Adds multiple parameters to parameters array
+     *
+     * @param  array $parameters
+     * @return void
+     */
+    public function addParameters($parameters)
+    {
+        $this->parameters = array_merge($this->parameters, $parameters);
+    }
+
+    /**
      * Removes certain parameter from parameters array
      *
      * @param  string $paramName
@@ -111,6 +134,19 @@ class Base
         }
     }
 
+
+    /**
+     * Formats amount for API
+     * Docs say: Amount in the smallest currency unit (e.g. EUR Cent)
+     *
+     * @param $amount
+     * @return float|int
+     */
+    protected function formatAmount($amount)
+    {
+        return number_format($amount * 100, 2, '.', '');
+    }
+
     /**
      * Generates Hmac string and returns it
      *
@@ -119,15 +155,27 @@ class Base
     protected function getHmac()
     {
         $hashParts = [
-            $this->getParameter("PayID", ""),
+            $this->getParameter("PayID", ""), // may be empty, but that's ok - i.e. for Authorization
             $this->getParameter("TransID", ""),
             $this->getParameter("MerchantID", ""),
             $this->getParameter("Amount", ""),
             $this->getParameter("Currency", ""),
         ];
         $hashString = implode("*", $hashParts);
-        $secret = $this->baseHelper->getConfigParam('mac', 'global', 'computop_general', $this->storeCode);
+        $secret = $this->paymentHelper->getConfigParam('mac', 'global', 'computop_general', $this->storeCode);
 
         return hash_hmac('sha256', $hashString, $secret);
+    }
+
+    public function getEncryptedParameters()
+    {
+        $dataQuery = http_build_query($this->getParameters());
+        $length = mb_strlen($dataQuery);
+
+        return [
+            'MerchantID' => $this->getParameter('MerchantID'),
+            'Len' => $length,
+            'Data' => $this->blowfish->ctEncrypt($dataQuery, $length, $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode))
+        ];
     }
 }

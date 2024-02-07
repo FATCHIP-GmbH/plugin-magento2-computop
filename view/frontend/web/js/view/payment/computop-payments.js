@@ -12,6 +12,10 @@ define(
             {
                 type: 'computop_creditcard',
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/creditcard-method'
+            },
+            {
+                type: 'computop_giropay',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/giropay-method'
             }
         );
         /** Add view logic here if needed */
