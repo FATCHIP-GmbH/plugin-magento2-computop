@@ -21,6 +21,60 @@ class Authorization extends Base
         /** @var BaseMethod $methodInstance */
         $methodInstance = $payment->getMethodInstance();
 
+        /**
+        {
+            "transactionId": "6B29FC40-1067-B31D-00DD010662DA",
+            "amount": {
+                "currency": "EUR",
+                "value": 50000
+            },
+            "language": "de",
+            "urls": {
+                "failure": "https://my.callback.url.com/failure",
+                "success": "https://my.callback.url.com/success",
+                "notify": "https://my.callback.url.com/notify"
+            },
+            "order": {
+                "id": "6B29FC40-1067-B31D-00DD010A1122",
+                "description": [
+                    "description of purchased goods",
+                    "unit prices",
+                    "etc"
+                ]
+            },
+            "expirationTime": "2023-05-01T13:50:49.112Z",
+            "capture": {
+                "hours": {
+                    "delayed": 20
+                }
+            },
+            "channel": {
+                "code": "configurationChannel"
+            },
+            "metadata": {
+                "userData": "my user data",
+                "k1": "v1",
+                "plain": "plain text",
+                "k2": "v2"
+            },
+            "payment": {
+                "method": "giropay",
+                "giropay": {
+                    "sellingPoint": "sp",
+                    "service": "products",
+                    "scheme": "gir",
+                    "account": {
+                        "number": "12345",
+                        "code": "RABONL2U",
+                        "accountHolder": "John Doe "
+                    }
+                }
+            }
+        }
+         */
+
+
+
         $this->addParameter('Currency', $order->getOrderCurrencyCode());
         $this->addParameter('Amount', $this->formatAmount($amount)); ///@TODO: Check if amount is base-currency or order-currency
 

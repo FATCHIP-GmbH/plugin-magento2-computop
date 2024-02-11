@@ -24,6 +24,13 @@ class BaseMethod extends Adapter
     protected $methodCode;
 
     /**
+     * URL to Computop API
+     *
+     * @var string
+     */
+    protected $apiBaseUrl = "https://www.computop-paygate.com/";
+
+    /**
      * Defines where API requests are sent to at the Comutop API
      *
      * @var string
@@ -80,7 +87,7 @@ class BaseMethod extends Adapter
      */
     public function getApiEndpoint()
     {
-        return $this->apiEndpoint;
+        return rtrim($this->apiBaseUrl, "/")."/".$this->apiEndpoint;
     }
 
     /**

@@ -54,7 +54,7 @@ class Base
     protected function initRequest()
     {
         $this->parameters = []; // clear parameters
-        $this->addParameter('MerchantID', $this->paymentHelper->getConfigParam('merchantid', 'global', 'payone_general', $this->storeCode));
+        $this->addParameter('MerchantID', $this->paymentHelper->getConfigParam('merchantid', 'global', 'computop_general', $this->storeCode));
     }
 
     /**
@@ -144,7 +144,7 @@ class Base
      */
     protected function formatAmount($amount)
     {
-        return number_format($amount * 100, 2, '.', '');
+        return number_format($amount * 100, 0, '.', '');
     }
 
     /**
@@ -169,7 +169,7 @@ class Base
 
     public function getEncryptedParameters()
     {
-        $dataQuery = http_build_query($this->getParameters());
+        $dataQuery = urldecode(http_build_query($this->getParameters()));
         $length = mb_strlen($dataQuery);
 
         return [

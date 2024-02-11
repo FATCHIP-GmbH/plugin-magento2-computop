@@ -18,5 +18,6 @@ class Giropay extends BaseMethod
      *
      * @var string
      */
-    protected $apiEndpoint = "giropay.aspx";
+    #protected $apiEndpoint = "giropay.aspx";
+    protected $apiEndpoint = "paymentpage.aspx";
 }

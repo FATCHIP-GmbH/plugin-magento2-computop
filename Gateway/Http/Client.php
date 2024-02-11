@@ -2,6 +2,7 @@
 
 namespace Fatchip\Computop\Gateway\Http;
 
+use Magento\Payment\Gateway\Http\ClientException;
 use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
@@ -25,12 +26,20 @@ class Client implements ClientInterface
     private $logger;
 
     /**
+     * @var \Magento\Framework\HTTP\Client\Curl
+     */
+    private $curl;
+
+    /**
+     * @param \Magento\Framework\HTTP\Client\Curl $curl
      * @param Logger $logger
      */
     public function __construct(
+        \Magento\Framework\HTTP\Client\Curl $curl,
         Logger $logger
     ) {
         $this->logger = $logger;
+        $this->curl = $curl;
     }
 
     /**
@@ -41,12 +50,9 @@ class Client implements ClientInterface
      */
     public function placeRequest(TransferInterface $transferObject)
     {
-        ///@TODO: Implement API communication
-        $response = $this->generateResponseForCode(
-            $this->getResultCode(
-                $transferObject
-            )
-        );
+        $this->curl->post($transferObject->getUri(), $transferObject->getBody());
+
+        $response = $this->formatResponse($this->curl->getBody());
 
         $this->logger->debug(
             [
@@ -55,7 +61,22 @@ class Client implements ClientInterface
             ]
         );
 
+        if (!isset($response['Status']) || $response['Status'] == 'FAILED') {
+            $message = __($response['Description'] ?: 'Sorry, but something went wrong');
+            throw new ClientException($message);
+        }
+
         return $response;
+    }
+
+    protected function formatResponse($response)
+    {
+        $return = [];
+        $response = "PayID=00000000000000000000000000000000&TransID=na&Status=FAILED&Description=UnexpectedError";
+        if (!empty($response)) {
+            parse_str($response, $return);
+        }
+        return $return;
     }
 
     /**

@@ -16,5 +16,6 @@ class Handler implements HandlerInterface
     public function handle(array $handlingSubject, array $response)
     {
         // do things
+
     }
 }

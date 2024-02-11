@@ -15,14 +15,22 @@ class AuthorizationRequest implements BuilderInterface
     protected $authRequest;
 
     /**
+     * @var \Fatchip\Computop\Model\Api\OAuth
+     */
+    protected $oauth;
+
+    /**
      * Constructor
      *
      * @param \Fatchip\Computop\Model\Api\Request\Authorization $authRequest
+     * @param \Fatchip\Computop\Model\Api\OAuth $oauth
      */
     public function __construct(
-        \Fatchip\Computop\Model\Api\Request\Authorization $authRequest
+        \Fatchip\Computop\Model\Api\Request\Authorization $authRequest,
+        \Fatchip\Computop\Model\Api\OAuth $oauth
     ) {
         $this->authRequest = $authRequest;
+        $this->oauth = $oauth;
     }
 
     /**
@@ -33,9 +41,21 @@ class AuthorizationRequest implements BuilderInterface
      */
     public function build(array $buildSubject)
     {
+        $this->oauth->getOAuthToken();
+
         $paymentData = SubjectReader::readPayment($buildSubject);
         $amount = SubjectReader::readAmount($buildSubject);
 
-        return $this->authRequest->generateRequest($paymentData->getPayment()->getOrder(), $paymentData->getPayment(), $amount);
+        $payment = $paymentData->getPayment();
+        $order = $payment->getOrder();
+
+        $requestInfo = $this->authRequest->generateRequest($order, $payment, $amount);
+
+        /** @var BaseMethod $methodInstance */
+        $methodInstance = $payment->getMethodInstance();
+
+        $requestInfo['uri'] = $methodInstance->getApiEndpoint();
+
+        return $requestInfo;
     }
 }

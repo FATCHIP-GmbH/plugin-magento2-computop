@@ -30,10 +30,14 @@ class TransferFactory implements TransferFactoryInterface
      */
     public function create(array $request)
     {
-        return $this->transferBuilder
-            ->setBody($request)
-            ->setMethod('POST')
-            #->setHeaders(['foo' => 'bar']) // not extra headers needed for now I think
-            ->build();
+        if (!empty($request['uri'])) {
+            $this->transferBuilder->setUri($request['uri']);
+            unset($request['uri']);
+        }
+        $this->transferBuilder->setBody($request);
+        $this->transferBuilder->setMethod('POST');
+        #$this->transferBuilder->setHeaders(['foo' => 'bar']); // not extra headers needed for now I think
+
+        return $this->transferBuilder->build();
     }
 }
