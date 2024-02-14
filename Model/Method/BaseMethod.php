@@ -9,12 +9,14 @@ use Magento\Payment\Gateway\Command\CommandPoolInterface;
 use Magento\Payment\Gateway\Config\ValueHandlerPoolInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectFactory;
 use Magento\Payment\Gateway\Validator\ValidatorPoolInterface;
+use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Method\Adapter;
 use Psr\Log\LoggerInterface;
 use Magento\Payment\Gateway\Config\Config;
 use Magento\Sales\Model\Order;
+use Magento\Framework\DataObject;
 
-class BaseMethod extends Adapter
+abstract class BaseMethod extends Adapter
 {
     /**
      * Method identifier of this payment method
@@ -31,6 +33,13 @@ class BaseMethod extends Adapter
     protected $apiBaseUrl = "https://www.computop-paygate.com/";
 
     /**
+     * Can be used to assign data from frontend to info instance
+     *
+     * @var array
+     */
+    protected $assignKeys;
+
+    /**
      * Defines where API requests are sent to at the Comutop API
      *
      * @var string
@@ -45,6 +54,16 @@ class BaseMethod extends Adapter
     protected $urlBuilder;
 
     /**
+     * @var \Fatchip\Computop\Model\Api\Request\Authorization
+     */
+    protected $authRequest;
+
+    /**
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
      * @param ManagerInterface $eventManager
      * @param ValueHandlerPoolInterface $valueHandlerPool
      * @param PaymentDataObjectFactory $paymentDataObjectFactory
@@ -52,6 +71,8 @@ class BaseMethod extends Adapter
      * @param string $formBlockType
      * @param string $infoBlockType
      * @param \Magento\Framework\Url $urlBuilder
+     * @param \Fatchip\Computop\Model\Api\Request\Authorization $authRequest
+     * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param CommandPoolInterface|null $commandPool
      * @param ValidatorPoolInterface|null $validatorPool
      * @param CommandManagerInterface|null $commandExecutor
@@ -66,6 +87,8 @@ class BaseMethod extends Adapter
         $formBlockType,
         $infoBlockType,
         \Magento\Framework\Url $urlBuilder,
+        \Fatchip\Computop\Model\Api\Request\Authorization $authRequest,
+        \Magento\Checkout\Model\Session $checkoutSession,
         CommandPoolInterface $commandPool = null,
         ValidatorPoolInterface $validatorPool = null,
         CommandManagerInterface $commandExecutor = null,
@@ -78,6 +101,8 @@ class BaseMethod extends Adapter
 
         parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $commandPool, $validatorPool, $commandExecutor, $logger);
         $this->urlBuilder = $urlBuilder;
+        $this->authRequest = $authRequest;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -129,6 +154,30 @@ class BaseMethod extends Adapter
      */
     public function getNotifyUrl()
     {
+        return "https://robert.demoshop.fatchip.de/magento_computop246/pub/ctNotify.php"; //@TODO: remove
         return $this->urlBuilder->getUrl('computop/notify/index');
+    }
+
+
+    /**
+     * Add the checkout-form-data to the checkout session
+     *
+     * @param  DataObject $data
+     * @return $this
+     */
+    public function assignData(DataObject $data)
+    {
+        parent::assignData($data);
+
+        if (!empty($this->assignKeys)) {
+            $infoInstance = $this->getInfoInstance();
+            $additionalData = $data->getAdditionalData();
+            foreach ($this->assignKeys as $key) {
+                if (!empty($additionalData[$key])) {
+                    $infoInstance->setAdditionalInformation($key, $additionalData[$key]);
+                }
+            }
+        }
+        return $this;
     }
 }

@@ -31,17 +31,25 @@ class Base
     protected $blowfish;
 
     /**
+     * @var \Magento\Framework\HTTP\Client\Curl
+     */
+    protected $curl;
+
+    /**
      * Constructor
      *
      * @param \Fatchip\Computop\Helper\Payment $paymentHelper
      * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+     * @param \Magento\Framework\HTTP\Client\Curl $curl
      */
     public function __construct(
         \Fatchip\Computop\Helper\Payment $paymentHelper,
-        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
+        \Magento\Framework\HTTP\Client\Curl $curl
     ) {
         $this->paymentHelper = $paymentHelper;
         $this->blowfish = $blowfish;
+        $this->curl = $curl;
         $this->initRequest();
     }
 
@@ -66,6 +74,7 @@ class Base
     {
         $return = $this->parameters;
         $return['MAC'] = $this->getHmac();
+        error_log(date('Y-m-d H:i:s - ')."Request: ".print_r($return, true).PHP_EOL, 3, __DIR__."/../../../api.log");
         return $return;
     }
 

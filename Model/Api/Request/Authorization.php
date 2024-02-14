@@ -21,64 +21,19 @@ class Authorization extends Base
         /** @var BaseMethod $methodInstance */
         $methodInstance = $payment->getMethodInstance();
 
-        /**
-        {
-            "transactionId": "6B29FC40-1067-B31D-00DD010662DA",
-            "amount": {
-                "currency": "EUR",
-                "value": 50000
-            },
-            "language": "de",
-            "urls": {
-                "failure": "https://my.callback.url.com/failure",
-                "success": "https://my.callback.url.com/success",
-                "notify": "https://my.callback.url.com/notify"
-            },
-            "order": {
-                "id": "6B29FC40-1067-B31D-00DD010A1122",
-                "description": [
-                    "description of purchased goods",
-                    "unit prices",
-                    "etc"
-                ]
-            },
-            "expirationTime": "2023-05-01T13:50:49.112Z",
-            "capture": {
-                "hours": {
-                    "delayed": 20
-                }
-            },
-            "channel": {
-                "code": "configurationChannel"
-            },
-            "metadata": {
-                "userData": "my user data",
-                "k1": "v1",
-                "plain": "plain text",
-                "k2": "v2"
-            },
-            "payment": {
-                "method": "giropay",
-                "giropay": {
-                    "sellingPoint": "sp",
-                    "service": "products",
-                    "scheme": "gir",
-                    "account": {
-                        "number": "12345",
-                        "code": "RABONL2U",
-                        "accountHolder": "John Doe "
-                    }
-                }
-            }
-        }
-         */
-
-
-
         $this->addParameter('Currency', $order->getOrderCurrencyCode());
         $this->addParameter('Amount', $this->formatAmount($amount)); ///@TODO: Check if amount is base-currency or order-currency
 
-        $this->addParameter('TransID', $this->paymentHelper->getTransactionID()); // Generate new TransID for further use with this transaction @TODO: Extend order table and save TransactionID
+        $this->addParameter('TransID', $this->paymentHelper->getTransactionId()); // Generate new TransID for further use with this transaction @TODO: Extend order table and save TransactionID
+        $this->addParameter('ReqId', $this->paymentHelper->getRequestId()); // @TODO: Does this need to be safed? Check
+
+        #$this->addParameter('IPAddr', 'TODO'); // @TODO: IPaddress needed?
+        #$this->addParameter('orderDesc', 'Demoshop'); // @TODO: Generate a orderDesc with Shopname? or product titles?
+        #$this->addParameter('userData', 'Shopware Version: 5.7.19 Modul Version: 1.1.18'); // @TODO: Generate a shop-version + module-version string
+        #$this->addParameter('EtiId', 'Shopware Version: 5.7.19 Modul Version: 1.1.18'); // @TODO: Generate a shop-version + module-version string
+        #$this->addParameter('language', 'de'); // @TODO: Transmit used language?
+        #$this->addParameter(''addrCountryCode', 'DE'); // @TODO: Add customers country code - billing I guess
+
         $this->addParameter('RefNr', $order->getIncrementId()); // Generate new TransID for further use with this transaction @TODO: Extend order table and save TransactionID
 
         $this->addParameter('URLSuccess', $methodInstance->getSuccessUrl($order));
@@ -96,5 +51,22 @@ class Authorization extends Base
         */
 
         return $this->getEncryptedParameters();
+    }
+
+    public function sendCurlRequest(Order $order, Payment $payment, $amount)
+    {
+        /** @var BaseMethod $methodInstance */
+        $methodInstance = $payment->getMethodInstance();
+
+        $this->curl->post($methodInstance->getApiEndpoint(), $this->generateRequest($order, $payment, $amount));
+        $response = $this->curl->getBody();
+        if (!empty($response)) {
+            parse_str($response, $parsedResponse);
+            if (isset($parsedResponse['Data']) && isset($parsedResponse['Len'])) {
+                $decrypted = $this->blowfish->ctDecrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));
+                parse_str($decrypted, $return);
+                return $return;
+            }
+        }
     }
 }

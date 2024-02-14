@@ -72,7 +72,7 @@ class Client implements ClientInterface
     protected function formatResponse($response)
     {
         $return = [];
-        $response = "PayID=00000000000000000000000000000000&TransID=na&Status=FAILED&Description=UnexpectedError";
+        #$response = "PayID=00000000000000000000000000000000&TransID=na&Status=FAILED&Description=UnexpectedError";
         if (!empty($response)) {
             parse_str($response, $return);
         }

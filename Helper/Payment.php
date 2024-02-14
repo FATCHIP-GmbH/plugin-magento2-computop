@@ -14,6 +14,7 @@ class Payment extends Base
     protected $availablePayments = [
         ComputopConfig::METHOD_CREDITCARD,
         ComputopConfig::METHOD_GIROPAY,
+        ComputopConfig::METHOD_DIRECTDEBIT,
     ];
 
     /**
@@ -33,9 +34,9 @@ class Payment extends Base
      * @param  int $digitCount
      * @return string
      */
-    public function getTransactionID($digitCount = 12)
+    public function getTransactionId($digitCount = 12)
     {
-        mt_srand((double)microtime() * 1000000);
+        mt_srand(intval(microtime(true) * 1000000));
 
         $transID = (string)mt_rand();
         // y: 2 digits for year
@@ -47,5 +48,21 @@ class Payment extends Base
         $transID .= date('ymdHis');
         // $transID = md5($transID);
         return substr($transID, 0, $digitCount);
+    }
+
+    /**
+     * Generates a request id
+     * Doc says: To avoid double payments or actions (e.g. by ETM), enter an alphanumeric value which identifies your transaction and may be assigned only once.
+     * If the transaction or action is submitted again with the same ReqID, Computop Paygate will not carry out the payment or new action,
+     * but will just return the status of the original transaction or action.
+     *
+     * @return string
+     */
+    public function getRequestId()
+    {
+        mt_srand(intval(microtime(true) * 1000000));
+        $reqID = (string)mt_rand();
+        $reqID .= date('yzGis');
+        return $reqID;
     }
 }

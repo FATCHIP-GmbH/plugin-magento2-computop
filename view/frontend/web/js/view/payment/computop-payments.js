@@ -14,6 +14,10 @@ define(
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/creditcard-method'
             },
             {
+                type: 'computop_directdebit',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/directdebit-method'
+            },
+            {
                 type: 'computop_giropay',
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/giropay-method'
             }

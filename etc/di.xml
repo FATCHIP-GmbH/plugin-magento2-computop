@@ -76,6 +76,29 @@
     </virtualType>
     <!-- END - EVERY PAYMENT METHOD NEEDS ONE IF THESE BLOCKS... -->
 
+    <!-- Direct Debit Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\DirectDebit">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolDirectDebit</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolDirectDebit" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerDirectDebit</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerDirectDebit" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigDirectDebit</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigDirectDebit" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_DIRECTDEBIT</argument>
+        </arguments>
+    </virtualType>
     <!-- Giropay Config Handler -->
     <type name="Fatchip\Computop\Model\Method\Giropay">
         <arguments>
@@ -103,6 +126,21 @@
 
     <!-- START - Session proxies -->
     <type name="Fatchip\Computop\Controller\Onepage\Returned">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Fatchip\Computop\Model\Method\BaseMethod">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Fatchip\Computop\Controller\Onepage\Redirect">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Fatchip\Computop\Controller\Onepage\Failure">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>

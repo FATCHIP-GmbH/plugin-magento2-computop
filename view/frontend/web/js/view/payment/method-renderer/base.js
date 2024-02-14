@@ -16,6 +16,31 @@ define(
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
+            },
+            continueToComputop: function () {
+                if (this.validate() && additionalValidators.validate()) {
+                    this.handleRedirectAction('computop/onepage/redirect/');
+                    return false;
+                }
+            },
+            redirect: function(redirectUrl) {
+                window.location.replace(url.build(redirectUrl));
+            },
+            handleRedirectAction: function(url) {
+                var self = this;
+
+                this.isPlaceOrderActionAllowed(false);
+                this.getPlaceOrderDeferredObject()
+                    .fail(
+                        function () {
+                            self.isPlaceOrderActionAllowed(true);
+                        }
+                    ).done(
+                    function () {
+                        self.afterPlaceOrder();
+                        self.redirect(url);
+                    }
+                );
             }
         });
     }

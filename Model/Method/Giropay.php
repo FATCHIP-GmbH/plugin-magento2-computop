@@ -4,7 +4,7 @@ namespace Fatchip\Computop\Model\Method;
 
 use Fatchip\Computop\Model\ComputopConfig;
 
-class Giropay extends BaseMethod
+class Giropay extends RedirectPayment
 {
     /**
      * Method identifier of this payment method
@@ -18,6 +18,6 @@ class Giropay extends BaseMethod
      *
      * @var string
      */
-    #protected $apiEndpoint = "giropay.aspx";
-    protected $apiEndpoint = "paymentpage.aspx";
+    protected $apiEndpoint = "giropay.aspx";
+    #protected $apiEndpoint = "paymentpage.aspx";
 }

@@ -22,6 +22,14 @@ class TransferFactory implements TransferFactoryInterface
         $this->transferBuilder = $transferBuilder;
     }
 
+    protected function redirectTest($url, $request)
+    {
+        $url .= "?".http_build_query($request);
+        // this method is just for testing!
+        #header("Location: ".$url);
+        #die();
+    }
+
     /**
      * Builds gateway transfer object
      *
@@ -32,8 +40,13 @@ class TransferFactory implements TransferFactoryInterface
     {
         if (!empty($request['uri'])) {
             $this->transferBuilder->setUri($request['uri']);
+            $url = $request['uri'];
             unset($request['uri']);
+            $this->redirectTest($url, $request);
         }
+
+
+
         $this->transferBuilder->setBody($request);
         $this->transferBuilder->setMethod('POST');
         #$this->transferBuilder->setHeaders(['foo' => 'bar']); // not extra headers needed for now I think
