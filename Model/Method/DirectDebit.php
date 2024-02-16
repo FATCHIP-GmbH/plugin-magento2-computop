@@ -23,6 +23,11 @@ class DirectDebit extends ServerToServerPayment
     protected $apiEndpoint = "edddirect.aspx";
 
     /**
+     * @var string
+     */
+    protected $requestType = "LASTSCHRIFT";
+
+    /**
      * Can be used to assign data from frontend to info instance
      *
      * @var array

@@ -7,6 +7,11 @@ use Magento\Payment\Model\InfoInterface;
 abstract class RedirectPayment extends BaseMethod
 {
     /**
+     * @var string
+     */
+    protected $requestType = "REQUEST";
+
+    /**
      * @inheritdoc
      */
     public function authorize(InfoInterface $payment, $amount)

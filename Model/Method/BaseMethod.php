@@ -59,6 +59,11 @@ abstract class BaseMethod extends Adapter
     protected $authRequest;
 
     /**
+     * @var string
+     */
+    protected $requestType = "";
+
+    /**
      * @var \Magento\Checkout\Model\Session
      */
     protected $checkoutSession;
@@ -113,6 +118,16 @@ abstract class BaseMethod extends Adapter
     public function getApiEndpoint()
     {
         return rtrim($this->apiBaseUrl, "/")."/".$this->apiEndpoint;
+    }
+
+    /**
+     * Returns request type
+     *
+     * @return string
+     */
+    public function getRequestType()
+    {
+        return $this->requestType;
     }
 
     /**

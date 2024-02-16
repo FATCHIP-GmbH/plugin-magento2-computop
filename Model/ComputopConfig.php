@@ -8,7 +8,7 @@ namespace Fatchip\Computop\Model;
 abstract class ComputopConfig
 {
     /* Module version */
-    const MODULE_VERSION = '0.0.1';
+    const MODULE_VERSION = '0.0.3';
 
     /* Payment method codes */
     const METHOD_CREDITCARD = 'computop_creditcard';

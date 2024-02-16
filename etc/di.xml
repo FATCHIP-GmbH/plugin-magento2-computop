@@ -146,4 +146,18 @@
         </arguments>
     </type>
     <!-- END - Session proxies -->
+
+    <virtualType name="Fatchip\Computop\Model\ResourceModel\ApiLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">computop_api_log</argument>
+            <argument name="resourceModel" xsi:type="string">Fatchip\Computop\Model\ResourceModel\ApiLog</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="computop_api_log_grid_data_source" xsi:type="string">Fatchip\Computop\Model\ResourceModel\ApiLog\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

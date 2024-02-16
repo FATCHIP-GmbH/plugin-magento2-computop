@@ -2,6 +2,9 @@
 
 namespace Fatchip\Computop\Model\Api\Request;
 
+use Fatchip\Computop\Model\Method\BaseMethod;
+use Magento\Sales\Model\Order;
+
 class Base
 {
     /**
@@ -36,20 +39,28 @@ class Base
     protected $curl;
 
     /**
+     * @var \Fatchip\Computop\Model\ResourceModel\ApiLog
+     */
+    protected $apiLog;
+
+    /**
      * Constructor
      *
      * @param \Fatchip\Computop\Helper\Payment $paymentHelper
      * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
      * @param \Magento\Framework\HTTP\Client\Curl $curl
+     * @param \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog
      */
     public function __construct(
         \Fatchip\Computop\Helper\Payment $paymentHelper,
         \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
-        \Magento\Framework\HTTP\Client\Curl $curl
+        \Magento\Framework\HTTP\Client\Curl $curl,
+        \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog
     ) {
         $this->paymentHelper = $paymentHelper;
         $this->blowfish = $blowfish;
         $this->curl = $curl;
+        $this->apiLog = $apiLog;
         $this->initRequest();
     }
 
@@ -176,6 +187,11 @@ class Base
         return hash_hmac('sha256', $hashString, $secret);
     }
 
+    /**
+     * Returns parameters in encrypted format
+     *
+     * @return array
+     */
     public function getEncryptedParameters()
     {
         $dataQuery = urldecode(http_build_query($this->getParameters()));
@@ -186,5 +202,35 @@ class Base
             'Len' => $length,
             'Data' => $this->blowfish->ctEncrypt($dataQuery, $length, $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode))
         ];
+    }
+
+    /**
+     * Send request to given url and decode given response
+     *
+     * @param  string $url
+     * @param  string $requestType
+     * @param  array  $params
+     * @param  Order  $order
+     * @return array|null
+     */
+    protected function handleCurlRequest($url, $requestType, $params, Order $order = null)
+    {
+        $response = null;
+
+        ///@TODO: Log Request
+        $this->curl->post($url, $params);
+
+        $responseBody = $this->curl->getBody();
+        if (!empty($responseBody)) {
+            parse_str($responseBody, $parsedResponse);
+            if (isset($parsedResponse['Data']) && isset($parsedResponse['Len'])) {
+                $decrypted = $this->blowfish->ctDecrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));
+                ///@TODO: Log Response
+                parse_str($decrypted, $decryptedArray);
+                $response = $decryptedArray;
+            }
+        }
+        $this->apiLog->addApiLogEntry($requestType, $params, $response, $order);
+        return $response;
     }
 }

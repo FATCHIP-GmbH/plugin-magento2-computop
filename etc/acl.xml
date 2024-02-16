@@ -8,8 +8,8 @@
                         <resource id="Fatchip_Computop::computop_configuration_general" title="General" sortOrder="10" />
                         <resource id="Fatchip_Computop::computop_configuration_payment" title="Payment" sortOrder="20" />
                     </resource>
-                    <resource id="Fatchip_Computop::computop_protocol" title="Logs" sortOrder="20">
-                        <resource id="Fatchip_Computop::computop_protocol_api" title="Api" sortOrder="10" />
+                    <resource id="Fatchip_Computop::computop_api" title="Logs" sortOrder="20">
+                        <resource id="Fatchip_Computop::computop_api_log" title="Api" sortOrder="10" />
                     </resource>
                 </resource>
             </resource>

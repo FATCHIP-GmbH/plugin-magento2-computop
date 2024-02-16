@@ -5,9 +5,7 @@
         <add id="Fatchip_Computop::computop_configuration" title="Configuration" module="Fatchip_Computop" sortOrder="20" parent="Fatchip_Computop::computop" resource="Fatchip_Computop::computop_configuration"/>
         <add id="Fatchip_Computop::computop_configuration_general" title="General" module="Fatchip_Computop" sortOrder="10" parent="Fatchip_Computop::computop_configuration" action="adminhtml/system_config/edit/section/computop_general" resource="Fatchip_Computop::computop_configuration_general"/>
         <add id="Fatchip_Computop::computop_configuration_payment" title="Payment" module="Fatchip_Computop" sortOrder="20" parent="Fatchip_Computop::computop_configuration" action="adminhtml/system_config/edit/section/computop_payment" resource="Fatchip_Computop::computop_configuration_payment"/>
-        <!-- @TODO: EDIT or REMOVE
-        <add id="Fatchip_Computop::computop_protocol" title="Logs" module="Fatchip_Computop" sortOrder="30" parent="Fatchip_Computop::computop" resource="Fatchip_Computop::computop_protocol"/>
-        <add id="Fatchip_Computop::computop_protocol_api" title="Api" module="Fatchip_Computop" sortOrder="10" parent="Fatchip_Computop::computop_protocol" action="computop/protocol_api" resource="Fatchip_Computop::computop_protocol_api"/>
-        -->
+        <add id="Fatchip_Computop::computop_api" title="Logs" module="Fatchip_Computop" sortOrder="30" parent="Fatchip_Computop::computop" resource="Fatchip_Computop::computop_api"/>
+        <add id="Fatchip_Computop::computop_api_log" title="Api" module="Fatchip_Computop" sortOrder="40" parent="Fatchip_Computop::computop_api" action="computop/api_log" resource="Fatchip_Computop::computop_api_log"/>
     </menu>
 </config>

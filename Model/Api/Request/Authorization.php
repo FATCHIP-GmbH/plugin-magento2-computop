@@ -46,7 +46,6 @@ class Authorization extends Base
         $parameters = [
             'OrderDesc' => 'TODO',
             'UserData' => 'TODO',
-            'ReqId' => 'TODO', // RequestId um Request unique zu machen
         ];
         */
 
@@ -58,15 +57,6 @@ class Authorization extends Base
         /** @var BaseMethod $methodInstance */
         $methodInstance = $payment->getMethodInstance();
 
-        $this->curl->post($methodInstance->getApiEndpoint(), $this->generateRequest($order, $payment, $amount));
-        $response = $this->curl->getBody();
-        if (!empty($response)) {
-            parse_str($response, $parsedResponse);
-            if (isset($parsedResponse['Data']) && isset($parsedResponse['Len'])) {
-                $decrypted = $this->blowfish->ctDecrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));
-                parse_str($decrypted, $return);
-                return $return;
-            }
-        }
+        $response = $this->handleCurlRequest($methodInstance->getApiEndpoint(), $methodInstance->getRequestType(), $this->generateRequest($order, $payment, $amount), $order);
     }
 }

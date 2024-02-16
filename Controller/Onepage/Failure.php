@@ -80,9 +80,9 @@ class Failure extends \Magento\Framework\App\Action\Action
             error_log(date('Y-m-d H:i:s - ')."Response: ".print_r($result, true).PHP_EOL, 3, __DIR__."/../../api.log");
 
             /*
-            $sPaymentMethod = $this->checkoutSession->getPayoneRedirectedPaymentMethod();
+            $sPaymentMethod = $this->checkoutSession->getRedirectedPaymentMethod();
             if ($sPaymentMethod) {
-                $this->checkoutSession->setPayoneCanceledPaymentMethod($sPaymentMethod);
+                $this->checkoutSession->setCanceledPaymentMethod($sPaymentMethod);
             }*/
 
             if ($this->getRequest()->getParam('error')) {
