@@ -190,11 +190,16 @@ class Base
     /**
      * Returns parameters in encrypted format
      *
+     * @param  array $params
      * @return array
      */
-    public function getEncryptedParameters()
+    public function getEncryptedParameters($params = null)
     {
-        $dataQuery = urldecode(http_build_query($this->getParameters()));
+        if ($params === null) {
+            $params = $this->getParameters();
+        }
+
+        $dataQuery = urldecode(http_build_query($params));
         $length = mb_strlen($dataQuery);
 
         return [
@@ -217,17 +222,13 @@ class Base
     {
         $response = null;
 
-        ///@TODO: Log Request
-        $this->curl->post($url, $params);
+        $this->curl->post($url, $this->getEncryptedParameters($params));
 
         $responseBody = $this->curl->getBody();
         if (!empty($responseBody)) {
             parse_str($responseBody, $parsedResponse);
             if (isset($parsedResponse['Data']) && isset($parsedResponse['Len'])) {
-                $decrypted = $this->blowfish->ctDecrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));
-                ///@TODO: Log Response
-                parse_str($decrypted, $decryptedArray);
-                $response = $decryptedArray;
+                $response = $this->blowfish->ctDecrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));;
             }
         }
         $this->apiLog->addApiLogEntry($requestType, $params, $response, $order);

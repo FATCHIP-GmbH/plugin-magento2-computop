@@ -33,9 +33,9 @@ class Failure extends \Magento\Framework\App\Action\Action
     protected $blowfish;
 
     /**
-     * @var \Fatchip\Computop\Helper\Base
+     * @var \Fatchip\Computop\Model\ResourceModel\ApiLog
      */
-    protected $baseHelper;
+    protected $apiLog;
 
     /**
      * Constructor
@@ -45,7 +45,7 @@ class Failure extends \Magento\Framework\App\Action\Action
      * @param \Magento\Sales\Model\OrderFactory               $orderFactory
      * @param \Magento\Framework\Url                          $urlBuilder
      * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
-     * @param \Fatchip\Computop\Helper\Base                   $baseHelper
+     * @param \Fatchip\Computop\Model\ResourceModel\ApiLog    $apiLog
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -53,14 +53,14 @@ class Failure extends \Magento\Framework\App\Action\Action
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \Magento\Framework\Url $urlBuilder,
         \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
-        \Fatchip\Computop\Helper\Base $baseHelper
+        \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
         $this->orderFactory = $orderFactory;
         $this->urlBuilder = $urlBuilder;
         $this->blowfish = $blowfish;
-        $this->baseHelper = $baseHelper;
+        $this->apiLog = $apiLog;
     }
 
     public function execute()
@@ -72,10 +72,10 @@ class Failure extends \Magento\Framework\App\Action\Action
 
             $error = "<pre>".print_r($_REQUEST, true)."</pre>";
 
-            $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'), $this->baseHelper->getConfigParam('password'));
-            parse_str($response, $result);
+            $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
+            $this->apiLog->addApiLogResponse($response);
 
-            $error = "<pre>".print_r($result, true)."</pre>";
+            $error = "<pre>".print_r($response, true)."</pre>";
 
             error_log(date('Y-m-d H:i:s - ')."Response: ".print_r($result, true).PHP_EOL, 3, __DIR__."/../../api.log");
 

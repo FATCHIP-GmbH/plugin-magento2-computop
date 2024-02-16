@@ -65,7 +65,7 @@ class View extends \Magento\Backend\App\Action
         if ($this->_isAllowed()) {
             $resultPage->setActiveMenu('Fatchip_Computop::computop_api_log');
             $resultPage->getConfig()->getTitle()->prepend(__('API - Log'));
-            $resultPage->getConfig()->getTitle()->prepend(sprintf("#%s", $this->getRequest()->getParam('entity_id')));
+            $resultPage->getConfig()->getTitle()->prepend(sprintf("#%s", $this->getRequest()->getParam('id')));
         }
         return $resultPage;
     }

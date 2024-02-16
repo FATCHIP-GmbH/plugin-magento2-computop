@@ -6,7 +6,7 @@
                 <model>Fatchip\Computop\Model\Method\Creditcard</model>
                 <title>Computop Creditcard</title>
                 <payment_action>authorize</payment_action>
-                <active>1</active>
+                <active>0</active>
                 <is_gateway>1</is_gateway>
                 <order_status>pending</order_status>
                 <group>computop</group>

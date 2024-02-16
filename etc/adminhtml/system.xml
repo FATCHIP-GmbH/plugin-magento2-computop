@@ -66,7 +66,7 @@
             <label>Payment</label>
             <tab>computop</tab>
             <resource>Fatchip_Computop::computop_configuration_payment</resource>
-            <include path="Fatchip_Computop::system/computop_creditcard.xml"/>
+            <!--include path="Fatchip_Computop::system/computop_creditcard.xml"/-->
             <include path="Fatchip_Computop::system/computop_directdebit.xml"/>
             <include path="Fatchip_Computop::system/computop_giropay.xml"/>
         </section>

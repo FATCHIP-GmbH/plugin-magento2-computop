@@ -10,6 +10,22 @@ namespace Fatchip\Computop\Model\Api\Encryption;
 class Blowfish
 {
     /**
+     * @var \Fatchip\Computop\Helper\Base
+     */
+    protected $baseHelper;
+
+    /**
+     * Constructor
+     *
+     * @param \Fatchip\Computop\Helper\Base $baseHelper
+     */
+    public function __construct(
+        \Fatchip\Computop\Helper\Base $baseHelper
+    ) {
+        $this->baseHelper = $baseHelper;
+    }
+
+    /**
      * @var int[]
      */
     protected $p = [608135816, -2052912941, 320440878, 57701188, -1542899678, 698298832, 137296536, -330404727, 1160258022, 953160567, -1101764913, 887688300, -1062458953, -914599715, 1065670069, -1253635817, -1843997223, -1988494565];
@@ -161,8 +177,12 @@ class Blowfish
      * @param  string  $password
      * @return bool|string
      */
-    public function ctEncrypt($plaintext, $len, $password)
+    public function ctEncrypt($plaintext, $len, $password = false)
     {
+        if ($password === false) {
+            $password = $this->baseHelper->getConfigParam('password');
+        }
+
         if (mb_strlen($password) <= 0) $password = ' ';
         if (mb_strlen($plaintext) != $len) {
             #echo 'Length mismatch. The parameter len differs from actual length.';
@@ -179,10 +199,14 @@ class Blowfish
      * @param  string  $cipher
      * @param  integer $len
      * @param  string  $password
-     * @return bool|string
+     * @return array
      */
-    public function ctDecrypt($cipher, $len, $password)
+    public function ctDecrypt($cipher, $len, $password = false)
     {
+        if ($password === false) {
+            $password = $this->baseHelper->getConfigParam('password');
+        }
+
         if (mb_strlen($password) <= 0) $password = ' ';
         # converts hex to bin
         $cipher = pack('H' . strlen($cipher), $cipher);
@@ -191,6 +215,8 @@ class Blowfish
             return false;
         }
         $this->setKey($password);
-        return mb_substr($this->decrypt($cipher), 0, $len);
+        $decrypted = mb_substr($this->decrypt($cipher), 0, $len);
+        parse_str($decrypted, $decryptedArray);
+        return $decryptedArray;
     }
 }

@@ -19,5 +19,4 @@ class Giropay extends RedirectPayment
      * @var string
      */
     protected $apiEndpoint = "giropay.aspx";
-    #protected $apiEndpoint = "paymentpage.aspx";
 }

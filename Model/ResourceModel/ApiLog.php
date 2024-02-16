@@ -74,6 +74,20 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
+     * Cleans data for database
+     *
+     * @param  array $array
+     * @return array
+     */
+    protected function cleanData($array)
+    {
+        if (isset($array['HMAC'])) {
+            unset($array['HMAC']);
+        }
+        return $this->maskParameters($array);
+    }
+
+    /**
      * Save Api-log entry to database
      *
      * @param  string $requestType
@@ -84,8 +98,8 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function addApiLogEntry($requestType, $request, $response = null, Order $order = null)
     {
-        $request = $this->maskParameters($request);
-        $response = $this->maskParameters($response);
+        $request = $this->cleanData($request);
+        $response = $this->cleanData($response);
 
         $this->getConnection()->insert(
             $this->getMainTable(),
@@ -95,11 +109,35 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 'request' => $requestType,
                 'response' => $this->getParamValue('Status', $response),
                 'request_details' => json_encode($request),
-                'response_details' => json_encode($response),
+                'response_details' => !empty($response) ? json_encode($response) : null,
                 'pay_id' => $this->getParamValue('PayID', $request, $response),
                 'trans_id' => $this->getParamValue('TransID', $request, $response),
                 'x_id' => $this->getParamValue('XID', $request, $response),
             ]
+        );
+        return $this;
+    }
+
+    public function addApiLogResponse($response)
+    {
+        $response = $this->cleanData($response);
+
+        $where = [
+            'request = ?' => 'REDIRECT',
+            'trans_id = ?' => $this->getParamValue('TransID', $response),
+            'response_details IS NULL' => null,
+        ];
+
+        $this->getConnection()->update(
+            $this->getMainTable(),
+            [
+                'response' => $this->getParamValue('Status', $response),
+                'response_details' => json_encode($response),
+                'pay_id' => $this->getParamValue('PayID', $response),
+                'trans_id' => $this->getParamValue('TransID', $response),
+                'x_id' => $this->getParamValue('XID', $response),
+            ],
+            $where
         );
         return $this;
     }

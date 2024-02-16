@@ -12,9 +12,11 @@ class Authorization extends Base
      * @param  Order   $order
      * @param  Payment $payment
      * @param  double  $amount
+     * @param  bool    $log
+     * @param  bool    $encrypt
      * @return array
      */
-    public function generateRequest(Order $order, Payment $payment, $amount)
+    public function generateRequest(Order $order, Payment $payment, $amount, $encrypt = false, $log = false)
     {
         $amount = $order->getTotalDue(); // given amount is in base-currency - order currency is needed for transfer to computop
 
@@ -42,14 +44,17 @@ class Authorization extends Base
         $this->addParameter('Response', 'encrypt');
 
         $this->addParameters($methodInstance->getPaymentSpecificParameters($order));
-        /* ///@TODO
-        $parameters = [
-            'OrderDesc' => 'TODO',
-            'UserData' => 'TODO',
-        ];
-        */
 
-        return $this->getEncryptedParameters();
+        $params = $this->getParameters();
+
+        if ($log === true) {
+            $this->apiLog->addApiLogEntry($methodInstance->getRequestType(), $params, null, $order);
+        }
+
+        if ($encrypt === true) {
+            $params = $this->getEncryptedParameters($params);
+        }
+        return $params;
     }
 
     public function sendCurlRequest(Order $order, Payment $payment, $amount)
@@ -58,5 +63,6 @@ class Authorization extends Base
         $methodInstance = $payment->getMethodInstance();
 
         $response = $this->handleCurlRequest($methodInstance->getApiEndpoint(), $methodInstance->getRequestType(), $this->generateRequest($order, $payment, $amount), $order);
+        ///@TODO: Handle response - check for failed and throw exception
     }
 }
