@@ -18,8 +18,20 @@ define(
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/directdebit-method'
             },
             {
+                type: 'computop_paypal',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/paypal-method'
+            },
+            {
+                type: 'computop_klarna',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/klarna-method'
+            },
+            {
                 type: 'computop_giropay',
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/giropay-method'
+            },
+            {
+                type: 'computop_ideal',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/ideal-method'
             }
         );
         /** Add view logic here if needed */

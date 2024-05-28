@@ -10,6 +10,23 @@ use Magento\Framework\Model\AbstractModel;
 class ApiLog extends AbstractModel
 {
     /**
+     * These keys have base64 encoded values and neede to be decoded
+     *
+     * @var string[]
+     */
+    protected $base64EncodedKeys = [
+        'card',
+        'threedsdata',
+        'resultsresponse',
+        'browserInfo',
+        'billingAddress',
+        'shippingAddress',
+        'resultsresponse',
+        'credentialOnFile',
+        'userData',
+    ];
+
+    /**
      * Initialize resource model
      *
      * @return void
@@ -26,7 +43,17 @@ class ApiLog extends AbstractModel
      */
     public function getRequestDetails()
     {
-        return json_decode($this->getData('request_details'), true);
+        if (empty($this->getData('request_details'))) {
+            return [];
+        }
+
+        $details = json_decode($this->getData('request_details'), true);
+        foreach ($details as $key => $value) {
+            if (in_array($key, $this->base64EncodedKeys)) {
+                $details[$key] = json_decode(base64_decode($value), true);
+            }
+        }
+        return $details;
     }
 
     /**
@@ -36,6 +63,16 @@ class ApiLog extends AbstractModel
      */
     public function getResponseDetails()
     {
-        return json_decode($this->getData('response_details'), true);
+        if (empty($this->getData('response_details'))) {
+            return [];
+        }
+
+        $details = json_decode($this->getData('response_details'), true);
+        foreach ($details as $key => $value) {
+            if (in_array($key, $this->base64EncodedKeys)) {
+                $details[$key] = json_decode(base64_decode($value), true);
+            }
+        }
+        return $details;
     }
 }

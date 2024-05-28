@@ -36,10 +36,10 @@ define(
                             self.isPlaceOrderActionAllowed(true);
                         }
                     ).done(
-                    function () {
-                        self.afterPlaceOrder();
-                        self.redirect(url);
-                    }
+                        function () {
+                            self.afterPlaceOrder();
+                            self.redirect(url);
+                        }
                 );
             }
         });

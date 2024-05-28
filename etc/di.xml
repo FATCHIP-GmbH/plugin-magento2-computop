@@ -1,54 +1,17 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- START - REST API PREFERENCES -->
+    <preference for="Fatchip\Computop\Api\CreditcardRequestDataInterface" type="Fatchip\Computop\Service\V1\CreditcardRequestData" />
+    <preference for="Fatchip\Computop\Api\Data\CreditcardRequestDataResponseInterface" type="Fatchip\Computop\Service\V1\Data\CreditcardRequestDataResponse" />
+    <!-- END - REST API PREFERENCES -->
+
     <!-- START - PAYMENT CONFIG -->
     <type name="Fatchip\Computop\Model\Method\BaseMethod">
         <arguments>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
-            <argument name="commandPool" xsi:type="object">ComputopGatewayCommandPool</argument>
         </arguments>
     </type>
-
-    <virtualType name="ComputopGatewayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
-        <arguments>
-            <argument name="commands" xsi:type="array">
-                <item name="authorize" xsi:type="string">ComputopGatewayAuthorizeCommand</item>
-                <!-- @TODO
-                <item name="capture" xsi:type="string">ComputopGatewayCaptureCommand</item>
-                <item name="refund" xsi:type="string">ComputopGatewayCaptureCommand</item>
-                <item name="void" xsi:type="string">ComputopGatewayVoidCommand</item>
-                -->
-            </argument>
-        </arguments>
-    </virtualType>
-
-    <!-- Authorize command -->
-    <virtualType name="ComputopGatewayAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
-        <arguments>
-            <argument name="requestBuilder" xsi:type="object">ComputopGatewayAuthorizationRequest</argument>
-            <argument name="handler" xsi:type="object">ComputopGatewayResponseHandlerComposite</argument>
-            <argument name="transferFactory" xsi:type="object">Fatchip\Computop\Gateway\Http\TransferFactory</argument>
-            <argument name="client" xsi:type="object">Fatchip\Computop\Gateway\Http\Client</argument>
-        </arguments>
-    </virtualType>
-
-    <!-- Authorization Request -->
-    <virtualType name="ComputopGatewayAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
-        <arguments>
-            <argument name="builders" xsi:type="array">
-                <item name="autorization" xsi:type="string">Fatchip\Computop\Gateway\Request\AuthorizationRequest</item>
-            </argument>
-        </arguments>
-    </virtualType>
-
-    <!-- Response handlers -->
-    <virtualType name="ComputopGatewayResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
-        <arguments>
-            <argument name="handlers" xsi:type="array">
-                <item name="handler" xsi:type="string">Fatchip\Computop\Gateway\Response\Handler</item>
-            </argument>
-        </arguments>
-    </virtualType>
 
     <!-- START - EVERY PAYMENT METHOD NEEDS ONE IF THESE BLOCKS... -->
     <!-- Creditcard Config Handler -->
@@ -99,6 +62,52 @@
             <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_DIRECTDEBIT</argument>
         </arguments>
     </virtualType>
+    <!-- PayPal Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\PayPal">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolPayPal</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolPayPal" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerPayPal</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerPayPal" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigPayPal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigPayPal" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_PAYPAL</argument>
+        </arguments>
+    </virtualType>
+    <!-- Klarna Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\Klarna">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolKlarna</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolKlarna" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerKlarna</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerKlarna" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigKlarna</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigKlarna" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_KLARNA</argument>
+        </arguments>
+    </virtualType>
     <!-- Giropay Config Handler -->
     <type name="Fatchip\Computop\Model\Method\Giropay">
         <arguments>
@@ -122,15 +131,53 @@
             <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_GIROPAY</argument>
         </arguments>
     </virtualType>
+    <!-- Ideal Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\Ideal">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolIdeal</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolIdeal" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerIdeal</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerIdeal" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigIdeal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigIdeal" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_IDEAL</argument>
+        </arguments>
+    </virtualType>
     <!-- END - PAYMENT CONFIG -->
 
     <!-- START - Session proxies -->
-    <type name="Fatchip\Computop\Controller\Onepage\Returned">
+    <type name="Fatchip\Computop\Model\Method\BaseMethod">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
     </type>
-    <type name="Fatchip\Computop\Model\Method\BaseMethod">
+    <type name="\Fatchip\Computop\Model\Method\Ideal">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="\Fatchip\Computop\Model\Method\Klarna">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="\Fatchip\Computop\Model\Method\RedirectPayment">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Fatchip\Computop\Controller\Onepage\Returned">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
@@ -141,6 +188,26 @@
         </arguments>
     </type>
     <type name="Fatchip\Computop\Controller\Onepage\Failure">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Fatchip\Computop\Controller\Onepage\Payment">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Fatchip\Computop\Block\Paypal\InitScript">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Fatchip\Computop\Block\Onepage\Iframe">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Fatchip\Computop\Service\V1\CreditcardRequestData">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
@@ -159,5 +226,11 @@
                 <item name="computop_api_log_grid_data_source" xsi:type="string">Fatchip\Computop\Model\ResourceModel\ApiLog\Grid\Collection</item>
             </argument>
         </arguments>
+    </type>
+    <type name="Magento\Framework\Session\SessionStartChecker">
+        <plugin name="computop_redirect_session_checker" type="Fatchip\Computop\Plugin\RedirectSessionChecker"/>
+    </type>
+    <type name="Magento\Sales\Model\Service\CreditmemoService">
+        <plugin name="computop_payment_plugin_creditmemoservice" type="Fatchip\Computop\Plugin\CreditmemoService" sortOrder="1" />
     </type>
 </config>

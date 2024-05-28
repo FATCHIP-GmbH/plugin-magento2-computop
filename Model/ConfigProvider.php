@@ -2,6 +2,7 @@
 
 namespace Fatchip\Computop\Model;
 
+use Fatchip\Computop\Model\Method\BaseMethod;
 use Magento\Checkout\Model\ConfigProviderInterface;
 
 class ConfigProvider implements ConfigProviderInterface
@@ -45,28 +46,25 @@ class ConfigProvider implements ConfigProviderInterface
     }
 
     /**
-     * Returns Computop config needed for payments in the frontend
+     * Returns Computop custom config for config params not specifically tied to a payment method
      *
      * @return array
      */
-    protected function getComputopConfig()
+    protected function getComputopCustomConfig()
     {
-        return [];
+        $config = [];
+        return $config;
     }
 
     /**
      * Get the payment instruction text
      *
-     * @param  string $code
+     * @param  BaseMethod $methodInstance
      * @return string
      */
-    protected function getInstructionByCode($code)
+    protected function getInstructionByCode($methodInstance)
     {
-        $methodInstance = $this->dataHelper->getMethodInstance($code);
-        if ($methodInstance) {
-            return nl2br($this->escaper->escapeHtml($methodInstance->getConfigData('instructions')));
-        }
-        return '';
+        return nl2br($this->escaper->escapeHtml($methodInstance->getConfigData('instructions')));
     }
 
     /**
@@ -77,13 +75,16 @@ class ConfigProvider implements ConfigProviderInterface
     public function getConfig()
     {
         $config = ['payment' => [
-            'computop' => $this->getComputopConfig(),
+            'computop' => $this->getComputopCustomConfig(),
         ]];
 
         foreach ($this->paymentHelper->getAvailablePaymentTypes() as $methodCode) {
-            $config['payment']['instructions'][$methodCode] = $this->getInstructionByCode($methodCode);
+            $methodInstance = $this->dataHelper->getMethodInstance($methodCode);
+            if ($methodInstance instanceof BaseMethod && $methodInstance->isAvailable()) {
+                $config['payment']['computop'][$methodCode] = $methodInstance->getFrontendConfig();
+                $config['payment']['instructions'][$methodCode] = $this->getInstructionByCode($methodInstance);
+            }
         }
-
         return $config;
     }
 }

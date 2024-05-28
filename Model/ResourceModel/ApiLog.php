@@ -7,6 +7,14 @@ use Magento\Sales\Model\Order;
 class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
+     * @var string[]
+     */
+    protected $cleanKeys = [
+        'HMAC',
+        'MAC',
+    ];
+
+    /**
      * Fields in request or response that need to be masked
      *
      * @var array
@@ -81,8 +89,10 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function cleanData($array)
     {
-        if (isset($array['HMAC'])) {
-            unset($array['HMAC']);
+        foreach ($this->cleanKeys as $key) {
+            if (isset($array[$key])) {
+                unset($array[$key]);
+            }
         }
         return $this->maskParameters($array);
     }
@@ -90,10 +100,10 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Save Api-log entry to database
      *
-     * @param  string $requestType
-     * @param  array  $request
-     * @param  array  $response
-     * @param  Order  $order
+     * @param  string     $requestType
+     * @param  array      $request
+     * @param  array      $response
+     * @param  Order|null $order
      * @return $this
      */
     public function addApiLogEntry($requestType, $request, $response = null, Order $order = null)
@@ -101,14 +111,28 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $request = $this->cleanData($request);
         $response = $this->cleanData($response);
 
+        $orderIncrementId = !is_null($order) ? $order->getIncrementId() : null;
+        $paymentMethod = !is_null($order) ? $order->getPayment()->getMethod() : null;
+
+        if ($order === null) {
+            $transId = $this->getParamValue('TransID', $request, $response);
+            if (!empty($transId)) {
+                $apiLog = $this->getApiLogEntryByTransId($transId);
+                if (!empty($apiLog)) {
+                    $orderIncrementId = $apiLog['order_increment_id'];
+                    $paymentMethod = $apiLog['payment_method'];
+                }
+            }
+        }
+
         $this->getConnection()->insert(
             $this->getMainTable(),
             [
-                'order_increment_id' => !is_null($order) ? $order->getIncrementId() : null,
-                'payment_method' => !is_null($order) ? $order->getPayment()->getMethod() : null,
+                'order_increment_id' => $orderIncrementId,
+                'payment_method' => $paymentMethod,
                 'request' => $requestType,
                 'response' => $this->getParamValue('Status', $response),
-                'request_details' => json_encode($request),
+                'request_details' => !empty($request) ? json_encode($request) : null,
                 'response_details' => !empty($response) ? json_encode($response) : null,
                 'pay_id' => $this->getParamValue('PayID', $request, $response),
                 'trans_id' => $this->getParamValue('TransID', $request, $response),
@@ -116,6 +140,45 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ]
         );
         return $this;
+    }
+
+    /**
+     * Try to get another ApiLog entry by given TransactionId
+     *
+     * @param  string $transId
+     * @return mixed
+     */
+    protected function getApiLogEntryByTransId($transId)
+    {
+        $select = $this->getConnection()->select()
+            ->from($this->getMainTable())
+            ->where("trans_id = :transId");
+
+        $params = [
+            'transId' => $transId,
+        ];
+
+        return $this->getConnection()->fetchRow($select, $params);
+    }
+
+    /**
+     * @param  Order $order
+     * @param  array $request
+     * @param  array $response
+     * @return string|null
+     */
+    protected function getOrderIncrementId($order, $request, $response)
+    {
+        if ($order !== null && !empty($order->getIncrementId())) {
+            return $order->getIncrementId();
+        }
+
+        $transId = $this->getParamValue('TransID', $request, $response);
+        if (!empty($transId)) {
+            return $this->getOrderIncrementIdFromTransId($transId);
+        }
+
+        return null;
     }
 
     public function addApiLogResponse($response)

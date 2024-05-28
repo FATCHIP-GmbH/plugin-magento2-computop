@@ -3,6 +3,7 @@
 namespace Fatchip\Computop\Model\Method;
 
 use Fatchip\Computop\Model\ComputopConfig;
+use Magento\Sales\Model\Order;
 
 class Giropay extends RedirectPayment
 {
@@ -19,4 +20,17 @@ class Giropay extends RedirectPayment
      * @var string
      */
     protected $apiEndpoint = "giropay.aspx";
+
+    /**
+     * Return parameters specific to this payment type
+     *
+     * @param  Order|null $order
+     * @return array
+     */
+    public function getPaymentSpecificParameters(Order $order = null)
+    {
+        return [
+            'Capture' => $this->getPaymentConfigParam('capture_method'),
+        ];
+    }
 }

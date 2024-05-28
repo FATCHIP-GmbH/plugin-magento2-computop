@@ -11,6 +11,10 @@
             <label>Title</label>
             <config_path>payment/computop_directdebit/title</config_path>
         </field>
+        <field id="capture_method" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Capture method</label>
+            <source_model>Fatchip\Computop\Model\Source\CaptureMethods</source_model>
+        </field>
         <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>New Order Status</label>
             <config_path>payment/computop_directdebit/order_status</config_path>
@@ -32,6 +36,5 @@
             <label>Sort Order</label>
             <config_path>payment/computop_directdebit/sort_order</config_path>
         </field>
-        <!--include path="Fatchip_Computop::system/default_fields.xml"/-->
     </group>
 </include>

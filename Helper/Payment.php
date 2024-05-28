@@ -13,8 +13,11 @@ class Payment extends Base
      */
     protected $availablePayments = [
         ComputopConfig::METHOD_CREDITCARD,
-        ComputopConfig::METHOD_GIROPAY,
         ComputopConfig::METHOD_DIRECTDEBIT,
+        ComputopConfig::METHOD_PAYPAL,
+        ComputopConfig::METHOD_KLARNA,
+        ComputopConfig::METHOD_GIROPAY,
+        ComputopConfig::METHOD_IDEAL,
     ];
 
     /**

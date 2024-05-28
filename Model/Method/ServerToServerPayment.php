@@ -16,7 +16,8 @@ abstract class ServerToServerPayment extends BaseMethod
         }
 
         $response = $this->authRequest->sendCurlRequest($payment->getOrder(), $payment, $amount);
-        ///@TODO Add status check for FAILED
+
+        $this->handleResponse($payment, $response);
 
         return $this;
     }

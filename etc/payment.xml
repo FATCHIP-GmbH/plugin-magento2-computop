@@ -12,7 +12,16 @@
         <method name="computop_directdebit">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="computop_paypal">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="computop_klarna">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
         <method name="computop_giropay">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="computop_ideal">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
     </methods>

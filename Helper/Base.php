@@ -66,6 +66,17 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Get parameter from the request
+     *
+     * @param  string $parameter
+     * @return mixed
+     */
+    public function getRequestParameter($parameter)
+    {
+        return $this->_getRequest()->getParam($parameter);
+    }
+
+    /**
      * Trying to fetch the current storeCode
      * Fetching the correct storeCode in the Magento2 backend is very inaccurate
      *

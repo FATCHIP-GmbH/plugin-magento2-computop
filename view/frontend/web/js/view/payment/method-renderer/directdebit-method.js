@@ -1,25 +1,36 @@
 define(
     [
         'Fatchip_Computop/js/view/payment/method-renderer/base',
-        'mage/translate'
+        'Magento_Checkout/js/model/quote',
+        'mage/translate',
     ],
-    function (Component, $t) {
+    function (Component, quote, $t) {
         'use strict';
         return Component.extend({
             defaults: {
                 template: 'Fatchip_Computop/payment/directdebit',
                 bank: '',
                 iban: '',
-                bic: ''
+                bic: '',
+                accountholder: '',
             },
             initObservable: function () {
                 this._super()
                     .observe([
                         'bank',
                         'iban',
-                        'bic'
+                        'bic',
+                        'accountholder'
                     ]);
                 return this;
+            },
+            initialize: function () {
+                let parentReturn = this._super();
+                if (this.accountholder() == '') {
+                    let billingAddress = quote.billingAddress();
+                    this.accountholder(billingAddress.firstname + " " + billingAddress.lastname);
+                }
+                return parentReturn;
             },
             validate: function () {
                 if (this.bank()  == '') {
@@ -28,6 +39,10 @@ define(
                 }
                 if (this.iban() == '') {
                     this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
+                    return false;
+                }
+                if (this.accountholder() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid account holder.')});
                     return false;
                 }
                 if (this.requestBic() == 1 && this.bic() == '') {
@@ -63,10 +78,11 @@ define(
                 parentReturn.additional_data.bank = this.bank();
                 parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
                 parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
+                parentReturn.additional_data.accountholder = this.accountholder();
                 return parentReturn;
             },
             requestBic: function() {
-                return false; ///@TODO: Add config option
+                return window.checkoutConfig.payment.computop.requestBic;
             }
         });
     }

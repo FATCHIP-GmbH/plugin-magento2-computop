@@ -36,6 +36,7 @@ class DirectDebit extends ServerToServerPayment
         'bank',
         'iban',
         'bic',
+        'accountholder',
     ];
 
     /**
@@ -53,21 +54,30 @@ class DirectDebit extends ServerToServerPayment
     /**
      * Return parameters specific to this payment type
      *
-     * @param  Order $order
+     * @param  Order|null $order
      * @return array
      */
-    public function getPaymentSpecificParameters(Order $order)
+    public function getPaymentSpecificParameters(Order $order = null)
     {
-        $oInfoInstance = $this->getInfoInstance();
-        $billing = $order->getBillingAddress();
-
+        $infoInstance = $this->getInfoInstance();
         return [
-            'AccBank' => $oInfoInstance->getAdditionalInformation('bank'),
-            'AccOwner' => $billing->getFirstname().' '.$billing->getLastname(),
-            'IBAN' => $oInfoInstance->getAdditionalInformation('iban'),
-            'BIC' => $oInfoInstance->getAdditionalInformation('bic'),
+            'AccBank' => $infoInstance->getAdditionalInformation('bank'),
+            'AccOwner' => $infoInstance->getAdditionalInformation('accountholder'),
+            'IBAN' => $infoInstance->getAdditionalInformation('iban'),
+            'BIC' => $infoInstance->getAdditionalInformation('bic'),
             'MandateID' => $this->createMandateId($order->getIncrementId()),
             'DtOfSgntr' => date('d-m-Y'),
+            'Capture' => $this->getPaymentConfigParam('capture_method'),
         ];
+    }
+
+    /**
+     * Hook for extension by the real payment method classes
+     *
+     * @return array
+     */
+    public function getFrontendConfig()
+    {
+        return [];
     }
 }

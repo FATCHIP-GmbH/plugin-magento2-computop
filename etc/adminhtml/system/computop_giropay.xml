@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
-    <group id="computop_giropay" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+    <group id="computop_giropay" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Giropay</label>
         <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Enabled</label>
@@ -10,6 +10,14 @@
         <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Title</label>
             <config_path>payment/computop_giropay/title</config_path>
+        </field>
+        <field id="capture_method" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Capture method</label>
+            <source_model>Fatchip\Computop\Model\Source\CaptureMethods</source_model>
+        </field>
+        <field id="request_bic" translate="label" type="select" sortOrder="18" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Request BIC</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>New Order Status</label>
@@ -28,10 +36,9 @@
             <label>Maximum Order Total</label>
             <config_path>payment/computop_giropay/max_order_total</config_path>
         </field>
-        <field id="sort_order" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field id="sort_order" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Sort Order</label>
             <config_path>payment/computop_giropay/sort_order</config_path>
         </field>
-        <!--include path="Fatchip_Computop::system/default_fields.xml"/-->
     </group>
 </include>

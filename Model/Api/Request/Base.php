@@ -27,6 +27,13 @@ class Base
     protected $paymentHelper;
 
     /**
+     * Computop API helper
+     *
+     * @var \Fatchip\Computop\Helper\Api
+     */
+    protected $apiHelper;
+
+    /**
      * Class for handling the encryption of the API communication
      *
      * @var \Fatchip\Computop\Model\Api\Encryption\Blowfish
@@ -44,23 +51,62 @@ class Base
     protected $apiLog;
 
     /**
+     * Checkout session model
+     *
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
+     * Defines request type to be seen in API Log
+     *
+     * @var string
+     */
+    protected $requestType;
+
+    /**
+     * URL to Computop API
+     *
+     * @var string
+     */
+    protected $apiBaseUrl = "https://www.computop-paygate.com/";
+
+    /**
+     * Defines where API requests are sent to at the Comutop API
+     *
+     * @var string
+     */
+    protected $apiEndpoint;
+
+    /**
+     * @var string
+     */
+    protected $transactionId;
+
+    /**
      * Constructor
      *
      * @param \Fatchip\Computop\Helper\Payment $paymentHelper
+     * @param \Fatchip\Computop\Helper\Api $apiHelper
      * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
      * @param \Magento\Framework\HTTP\Client\Curl $curl
      * @param \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog
+     * @param \Magento\Checkout\Model\Session $checkoutSession
      */
     public function __construct(
         \Fatchip\Computop\Helper\Payment $paymentHelper,
+        \Fatchip\Computop\Helper\Api $apiHelper,
         \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
         \Magento\Framework\HTTP\Client\Curl $curl,
-        \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog
+        \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog,
+        \Magento\Checkout\Model\Session $checkoutSession
     ) {
         $this->paymentHelper = $paymentHelper;
+        $this->apiHelper = $apiHelper;
         $this->blowfish = $blowfish;
         $this->curl = $curl;
         $this->apiLog = $apiLog;
+        $this->checkoutSession = $checkoutSession;
         $this->initRequest();
     }
 
@@ -77,6 +123,30 @@ class Base
     }
 
     /**
+     * Returns transaction id for this request
+     *
+     * @return string
+     */
+    public function getTransactionId()
+    {
+        if (empty($this->transactionId)) {
+            $this->transactionId = $this->paymentHelper->getTransactionId();
+        }
+        return $this->transactionId;
+    }
+
+    /**
+     * Set transaction id for later use with the request
+     *
+     * @param  string $transactionId
+     * @return void
+     */
+    public function setTransactionId($transactionId)
+    {
+        $this->transactionId = $transactionId;
+    }
+
+    /**
      * Returns all parameters
      *
      * @return array
@@ -85,8 +155,17 @@ class Base
     {
         $return = $this->parameters;
         $return['MAC'] = $this->getHmac();
-        error_log(date('Y-m-d H:i:s - ')."Request: ".print_r($return, true).PHP_EOL, 3, __DIR__."/../../../api.log");
         return $return;
+    }
+
+    /**
+     * Returns API helper object
+     *
+     * @return \Fatchip\Computop\Helper\Api
+     */
+    public function getApiHelper()
+    {
+        return $this->apiHelper;
     }
 
     /**
@@ -141,6 +220,20 @@ class Base
     }
 
     /**
+     * Returns the API endpoint
+     *
+     * @param  bool $apiEndpoint
+     * @return string
+     */
+    public function getFullApiEndpoint($apiEndpoint = false)
+    {
+        if ($apiEndpoint === false) {
+            $apiEndpoint = $this->apiEndpoint;
+        }
+        return rtrim($this->apiBaseUrl, "/")."/".$apiEndpoint;
+    }
+
+    /**
      * Set current store code and reinit base parameters
      *
      * @param  string $storeCode
@@ -154,17 +247,14 @@ class Base
         }
     }
 
-
     /**
-     * Formats amount for API
-     * Docs say: Amount in the smallest currency unit (e.g. EUR Cent)
+     * Returns request type for API log
      *
-     * @param $amount
-     * @return float|int
+     * @return string
      */
-    protected function formatAmount($amount)
+    public function getRequestType()
     {
-        return number_format($amount * 100, 0, '.', '');
+        return $this->requestType;
     }
 
     /**
@@ -212,10 +302,10 @@ class Base
     /**
      * Send request to given url and decode given response
      *
-     * @param  string $url
-     * @param  string $requestType
-     * @param  array  $params
-     * @param  Order  $order
+     * @param  string      $url
+     * @param  string      $requestType
+     * @param  array|null  $params
+     * @param  Order|null  $order
      * @return array|null
      */
     protected function handleCurlRequest($url, $requestType, $params, Order $order = null)
@@ -231,7 +321,49 @@ class Base
                 $response = $this->blowfish->ctDecrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));;
             }
         }
-        $this->apiLog->addApiLogEntry($requestType, $params, $response, $order);
+
+        $this->handleLogging($requestType, $params, $response, $order);
+
         return $response;
+    }
+
+    /**
+     * @param string     $requestType
+     * @param array      $request
+     * @param array      $response
+     * @param Order|null $order
+     * @return void
+     */
+    protected function handleLogging($requestType, $request, $response = null, Order $order = null)
+    {
+        $this->checkoutSession->setApiLogData(['type' => $requestType, 'request' => $request, 'response' => $response]);
+        $this->apiLog->addApiLogEntry($requestType, $request, $response, $order);
+    }
+
+    /**
+     * Sends a standard curl request to Computop API
+     * Endpoint and request type are taken from the properties of the request class
+     *
+     * @param  array|null $params
+     * @param  Order|null $order
+     * @return array|null
+     */
+    protected function handleStandardCurlRequest($params, Order $order = null)
+    {
+        return $this->handleCurlRequest($this->getFullApiEndpoint(), $this->getRequestType(), $params, $order);
+    }
+
+    /**
+     * Sends a payment curl request to Computop API
+     * Endpoint and request type are taken from method instance object
+     *
+     * @param  BaseMethod $methodInstance
+     * @param  array $params
+     * @param  Order|null $order
+     * @return array|null
+     */
+    protected function handlePaymentCurlRequest(BaseMethod $methodInstance, $params, Order $order = null)
+    {
+        return $this->handleCurlRequest($this->getFullApiEndpoint($methodInstance->getApiEndpoint()), $methodInstance->getRequestType(), $params, $order);
     }
 }

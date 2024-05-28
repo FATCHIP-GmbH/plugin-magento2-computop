@@ -3,8 +3,11 @@
 namespace Fatchip\Computop\Controller\Onepage;
 
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
+use Magento\Framework\App\RequestInterface;
 
-class Failure extends \Magento\Framework\App\Action\Action
+class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareActionInterface
 {
     /**
      * Checkout session
@@ -63,27 +66,27 @@ class Failure extends \Magento\Framework\App\Action\Action
         $this->apiLog = $apiLog;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
+    }
+
     public function execute()
     {
         try {
-            $this->checkoutSession->setIsComputopRedirectCancellation(true);
-
-            $error = "";
-
-            $error = "<pre>".print_r($_REQUEST, true)."</pre>";
-
             $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
             $this->apiLog->addApiLogResponse($response);
-
-            $error = "<pre>".print_r($response, true)."</pre>";
-
-            error_log(date('Y-m-d H:i:s - ')."Response: ".print_r($result, true).PHP_EOL, 3, __DIR__."/../../api.log");
-
-            /*
-            $sPaymentMethod = $this->checkoutSession->getRedirectedPaymentMethod();
-            if ($sPaymentMethod) {
-                $this->checkoutSession->setCanceledPaymentMethod($sPaymentMethod);
-            }*/
 
             if ($this->getRequest()->getParam('error')) {
                 $this->checkoutSession->setComputopIsError(true);
@@ -105,11 +108,9 @@ class Failure extends \Magento\Framework\App\Action\Action
             $this->messageManager->addExceptionMessage($e, __('Error while canceling the payment'));
         }
 
-        die("Fehler: ".$error."<br><br><a href='".$this->urlBuilder->getUrl('checkout/cart')."'>To Shop</a>").
-
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        #$redirectUrl = $this->urlBuilder->getUrl('checkout').'#payment';
+        $this->messageManager->addErrorMessage('An error occured during the Checkout: '.$response['Description']);
         return $resultRedirect->setUrl($this->urlBuilder->getUrl('checkout/cart'));
     }
 }

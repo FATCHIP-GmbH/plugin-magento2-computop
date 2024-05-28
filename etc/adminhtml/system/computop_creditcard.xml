@@ -11,6 +11,18 @@
             <label>Title</label>
             <config_path>payment/computop_creditcard/title</config_path>
         </field>
+        <field id="mode" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Mode</label>
+            <source_model>Fatchip\Computop\Model\Source\CreditcardModes</source_model>
+        </field>
+        <field id="test_mode" translate="label" type="select" sortOrder="16" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Test Mode</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="capture_method" translate="label" type="select" sortOrder="17" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Capture method</label>
+            <source_model>Fatchip\Computop\Model\Source\CaptureMethods</source_model>
+        </field>
         <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>New Order Status</label>
             <config_path>payment/computop_creditcard/order_status</config_path>
@@ -28,14 +40,16 @@
             <label>Maximum Order Total</label>
             <config_path>payment/computop_creditcard/max_order_total</config_path>
         </field>
+        <field id="types" translate="label" type="multiselect" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Creditcard types (Silent Mode)</label>
+            <source_model>Fatchip\Computop\Model\Source\CreditcardTypes</source_model>
+        </field>
+        <field id="template" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Template Name</label>
+        </field>
         <field id="sort_order" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Sort Order</label>
             <config_path>payment/computop_creditcard/sort_order</config_path>
         </field>
-        <!--field id="types" translate="label" type="multiselect" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Creditcard-Type</label>
-            <source_model>Fatchip\Computop\Model\Source\CreditcardTypes</source_model>
-        </field-->
-        <!--include path="Fatchip_Computop::system/default_fields.xml"/-->
     </group>
 </include>

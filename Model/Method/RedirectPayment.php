@@ -12,6 +12,17 @@ abstract class RedirectPayment extends BaseMethod
     protected $requestType = "REDIRECT";
 
     /**
+     * Returns if auth request is needed
+     * Can be overloaded by other classes
+     *
+     * @return bool
+     */
+    protected function isAuthRequestNeeded()
+    {
+        return true;
+    }
+
+    /**
      * @inheritdoc
      */
     public function authorize(InfoInterface $payment, $amount)
@@ -21,14 +32,26 @@ abstract class RedirectPayment extends BaseMethod
         }
 
         $order = $payment->getOrder();
-        $order->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
+        $order->setCanSendNewEmailFlag(false);
 
-        $request = $this->authRequest->generateRequest($order, $payment, $amount, true, true, true);
-        $url = $this->getApiEndpoint()."?".http_build_query($request);
+        $transactionId = false;
+        if ($this->isAuthRequestNeeded()) {
+            $request = $this->authRequest->generateRequestFromOrder($order, $payment, $amount, true, true);
+            $url = $this->authRequest->getFullApiEndpoint($this->getApiEndpoint())."?".http_build_query($request);
 
-        $this->checkoutSession->setComputopRedirectUrl($url);
+            $this->checkoutSession->setComputopRedirectUrl($url);
 
+            $params = $this->authRequest->getParameters();
+            $transactionId = $params['TransID'];
+        }
 
+        if ($this->setTransactionPreAuthorization === true) {
+            if ($transactionId === false) {
+                // This is needed for CC Silent mode. TransactionId is generated before order creation and will later be used for auth request
+                $transactionId = $this->paymentHelper->getTransactionId();
+            }
+            $this->setTransactionId($payment, $transactionId);
+        }
 
         return $this;
     }

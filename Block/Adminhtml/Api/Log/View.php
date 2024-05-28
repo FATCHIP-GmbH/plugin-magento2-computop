@@ -2,7 +2,7 @@
 
 namespace Fatchip\Computop\Block\Adminhtml\Api\Log;
 
-use Payone\Core\Model\Entities\ApiLog;
+use Fatchip\Computop\Model\Entities\ApiLog;
 
 class View extends \Magento\Backend\Block\Widget\Container
 {

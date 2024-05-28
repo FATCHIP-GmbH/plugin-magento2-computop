@@ -1,0 +1,99 @@
+<div id="<?php echo $this->getButtonId(); ?>"></div>
+
+<script>
+    function loadPayPalScript() {
+        if (window.paypalJsLoaded === undefined || window.paypalJsLoaded !== true) {
+            require(['jquery'], function($){
+                $("body").append("<script type=\"text/javascript\" src=\"<?php echo $this->getJavascriptUrl(); ?>\" data-partner-attribution-id=\"Computop_PSP_PCP_Test\"><\/script>");
+            });
+            window.paypalJsLoaded = true;
+        }
+    }
+
+    function checkForPaypalObject() {
+        if (typeof paypal != 'object') {
+            loadPayPalScript();
+            setTimeout(function(){
+                window.requestAnimationFrame(checkForPaypalObject);
+            }, 1000);
+        } else {
+            initPayPalButton();
+        }
+    }
+
+    function initPayPalButton() {
+        let mid = "<?php echo $this->getMerchantId(); ?>";
+        let len = "<?php echo $this->getLenParam(); ?>";
+        let data = "<?php echo $this->getDataParam(); ?>";
+        let payid;
+
+        if (len != '' && data != '') {
+            // Set the request parameter MerchantID, Len and Data
+            const params = new URLSearchParams({
+                MerchantID: mid,
+                Len: len,
+                Data: data
+            });
+
+            // Render the PayPal button into #paypal-button-container
+            paypal.Buttons({
+                // Call your server to set up the transaction
+                createOrder: function(data, actions) {
+                    console.log('createOrder');
+                    return fetch('https://www.computop-paygate.com/ExternalServices/paypalorders.aspx', {
+                        method: 'POST',
+                        body: params
+                    }).then(function (res) {
+                        return res.text();
+                    }).then(function(orderData) {
+                        let qData = new URLSearchParams(orderData)
+                        payid = qData.get('PayID');
+                        return qData.get('orderid');
+                    });
+                },
+                // Call cbPayPal.aspx for continue sequence
+                onApprove: function (data, actions) {
+                    var rd = "MerchantId=" + mid + "&PayId=" + payid + "&OrderId=" + data.orderID;
+                    console.log('onApprove ' + rd);
+                    // Build an invisible form and directly submit it
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'https://www.computop-paygate.com/cbPayPal.aspx?rd=' + window.btoa(rd);
+                    form.style.display = 'none';
+                    // Add form to body
+                    document.body.appendChild(form);
+                    // Submit form
+                    form.submit();
+                },
+                onCancel: function (data, actions) {
+                    var rd = "MerchantId=" + mid + "&PayId=" + payid + "&OrderId=" + data.orderID;
+                    console.log('onCancel ' + rd);
+                    // Build an invisible form and directly submit it
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = "https://www.computop-paygate.com/cbPayPal.aspx?rd=" + window.btoa(rd) + "&ua=cancel&token=" + data.orderID;
+                    form.style.display = 'none';
+                    // Add form to body
+                    document.body.appendChild(form);
+                    // Submit form
+                    form.submit();
+                },
+                onError: function (data, actions) {
+                    var rd = "MerchantId=" + mid + "&PayId=" + payid + "&OrderId=" + data.orderID;
+                    console.log('onError ' + rd);
+                    // Build an invisible form and directly submit it
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = "https://www.computop-paygate.com/cbPayPal.aspx?rd=" + window.btoa(rd) + "&ua=cancel&token=" + data.orderID;
+                    form.style.display = 'none';
+                    // Add form to body
+                    document.body.appendChild(form);
+                    // Submit form
+                    form.submit();
+                }
+            }).render('#<?php echo $this->getButtonId(); ?>');
+        }
+    }
+
+    checkForPaypalObject();
+</script>
