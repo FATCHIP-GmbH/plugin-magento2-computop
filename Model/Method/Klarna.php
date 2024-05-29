@@ -203,7 +203,7 @@ class Klarna extends RedirectPayment
         if (!empty($klarnaAccount)) {
             return $klarnaAccount;
         }
-        return "0"; // default
+        return "1"; // default
     }
 
     /**

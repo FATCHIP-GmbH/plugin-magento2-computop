@@ -67,7 +67,7 @@ class Capture extends Base
         if (empty($response)) {
             throw new \Exception("An unknown error occured.");
         }
-        if ($response['Status'] != ComputopConfig::STATUS_CODE_SUCCESS) {
+        if ($this->apiHelper->isSuccessStatus($response) === false) {
             throw new \Exception("An error occured: ".strtolower($response['Description']));
         }
         return $response;

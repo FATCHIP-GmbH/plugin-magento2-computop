@@ -116,4 +116,18 @@ class Api extends Base
     {
         return trim($this->getConfigParam('ordernr_prefix') ?? '').$incrementId.trim($this->getConfigParam('ordernr_suffix') ?? '');
     }
+
+    /**
+     * Check if given response has a success response
+     *
+     * @param  array $response
+     * @return bool
+     */
+    public function isSuccessStatus($response)
+    {
+        if (isset($response['Code']) && ($response['Code'] == ComputopConfig::STATUS_CODE_SUCCESS || substr($response['Code'], 0, 1) == '0')) { # 0 = Ok, 2 = Error, 4 = Fatal Error
+            return true;
+        }
+        return false;
+    }
 }

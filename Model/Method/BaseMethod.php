@@ -282,7 +282,7 @@ abstract class BaseMethod extends Adapter
 
     public function handleResponse(InfoInterface $payment, $response)
     {
-        if ($response['Code'] != ComputopConfig::STATUS_CODE_SUCCESS && substr($response['Code'], 0, 1) != '0') { # 0 = Ok, 2 = Error, 4 = Fatal Error
+        if ($this->authRequest->getApiHelper()->isSuccessStatus($response) === false) {
             throw new LocalizedException(__($response['Description'] ?? 'Error'));
         }
 
