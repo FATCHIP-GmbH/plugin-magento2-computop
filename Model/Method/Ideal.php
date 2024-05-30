@@ -7,6 +7,7 @@ use Fatchip\Computop\Model\Api\Request\Capture;
 use Fatchip\Computop\Model\Api\Request\Credit;
 use Fatchip\Computop\Model\ResourceModel\IdealIssuerList;
 use Fatchip\Computop\Model\ComputopConfig;
+use Fatchip\Computop\Model\Source\CaptureMethods;
 use Fatchip\Computop\Model\Source\IdealService;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Payment\Gateway\Command\CommandManagerInterface;
@@ -98,6 +99,15 @@ class Ideal extends RedirectPayment
      * @var string
      */
     protected $apiEndpoint = "ideal.aspx";
+
+    /**
+     * @return string
+     */
+    public function getCaptureMode()
+    {
+        // Ideal has no capture mode, there orders are already paid when finished so it is always AUTO
+        return CaptureMethods::CAPTURE_AUTO;
+    }
 
     /**
      * Returns is PPRO service is configured

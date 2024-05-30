@@ -6,6 +6,7 @@ use Fatchip\Computop\Helper\Payment;
 use Fatchip\Computop\Model\Api\Request\Capture;
 use Fatchip\Computop\Model\Api\Request\Credit;
 use Fatchip\Computop\Model\ComputopConfig;
+use Fatchip\Computop\Model\Source\CaptureMethods;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Payment\Gateway\Command\CommandManagerInterface;
 use Magento\Payment\Gateway\Command\CommandPoolInterface;
@@ -96,6 +97,15 @@ class Klarna extends RedirectPayment
         parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $commandPool, $validatorPool, $commandExecutor, $logger);
         $this->apiHelper = $apiHelper;
         $this->taxItem = $taxItem;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCaptureMode()
+    {
+        // Klarna has no capture mode, there orders always have to be captured so it is always MANUAL
+        return CaptureMethods::CAPTURE_MANUAL;
     }
 
     /**

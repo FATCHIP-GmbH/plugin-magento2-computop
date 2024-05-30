@@ -117,7 +117,7 @@ abstract class BaseMethod extends Adapter
      *
      * @var bool
      */
-    protected $setTransactionPreAuthorization = false;
+    protected $setTransactionPreAuthorization = true;
 
     /**
      * Determines if auth requests adds address parameters to the request
@@ -259,6 +259,14 @@ abstract class BaseMethod extends Adapter
     }
 
     /**
+     * @return string
+     */
+    public function getCaptureMode()
+    {
+        return $this->getPaymentConfigParam('capture_method');
+    }
+
+    /**
      * Add the checkout-form-data to the checkout session
      *
      * @param  DataObject $data
@@ -287,7 +295,7 @@ abstract class BaseMethod extends Adapter
         }
 
         if ($this->setTransactionPreAuthorization === false) { // false = set POST auth
-            $this->setTransactionId($payment, $response['TransID']);
+            $this->setTransactionId($payment, $response['TransID'], true);
         }
 
         $order = $payment->getOrder();
@@ -303,7 +311,7 @@ abstract class BaseMethod extends Adapter
             }
         }
 
-        if ($this->getPaymentConfigParam('capture_method') == CaptureMethods::CAPTURE_AUTO && $response['Status'] == ComputopConfig::STATUS_AUTHORIZED) {
+        if ($this->getCaptureMode() == CaptureMethods::CAPTURE_AUTO && in_array($response['Status'], [ComputopConfig::STATUS_AUTHORIZED, ComputopConfig::STATUS_OK])) {
             if ($order->getInvoiceCollection()->count() == 0) {
                 $invoice = $this->invoiceService->prepareInvoice($order);
                 $invoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);

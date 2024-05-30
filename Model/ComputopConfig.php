@@ -23,4 +23,6 @@ abstract class ComputopConfig
     const STATUS_CODE_SUCCESS = '00000000';
 
     const STATUS_AUTHORIZED = 'AUTHORIZED';
+
+    const STATUS_OK = 'OK';
 }

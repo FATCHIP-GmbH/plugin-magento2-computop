@@ -4,6 +4,7 @@ namespace Fatchip\Computop\Model\Api\Request;
 
 use Fatchip\Computop\Model\ComputopConfig;
 use Fatchip\Computop\Model\Method\BaseMethod;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Model\InfoInterface;
 
 class Capture extends Base
@@ -22,9 +23,18 @@ class Capture extends Base
      */
     protected $apiEndpoint = "capture.aspx";
 
+    /**
+     * @param  InfoInterface $payment
+     * @return string
+     * @throws LocalizedException
+     */
     protected function getTruncatedTransactionId(InfoInterface $payment)
     {
         $transId = $payment->getTransactionId();
+        if (empty($transId)) {
+            throw new LocalizedException(__('Error: Transaction couldn\'t be found.'));
+        }
+
         if (strpos($transId, '-') !== false) {
             $split = explode('-', $transId);
             return $split[0];
@@ -68,6 +78,9 @@ class Capture extends Base
             throw new \Exception("An unknown error occured.");
         }
         if ($this->apiHelper->isSuccessStatus($response) === false) {
+            if ($response['Status'] == 'FAILED' && $response['Description'] == 'DISABLED') {
+                throw new LocalizedException(__('Capture failed. Capture is not available for this payment method if this is a test order.'));
+            }
             throw new \Exception("An error occured: ".strtolower($response['Description']));
         }
         return $response;
