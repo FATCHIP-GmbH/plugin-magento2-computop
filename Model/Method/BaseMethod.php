@@ -317,9 +317,14 @@ abstract class BaseMethod extends Adapter
 
         if ($this->getCaptureMode() == CaptureMethods::CAPTURE_AUTO && in_array($response['Status'], [ComputopConfig::STATUS_AUTHORIZED, ComputopConfig::STATUS_OK])) {
             if ($order->getInvoiceCollection()->count() == 0) {
+                $transId = $order->getPayment()->getLastTransId();
+                if ($this instanceof ServerToServerPayment) {
+                    $transId = $response['TransID'];
+                }
+
                 $invoice = $this->invoiceService->prepareInvoice($order);
                 $invoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
-                $invoice->setTransactionId($order->getPayment()->getLastTransId());
+                $invoice->setTransactionId($transId);
                 $invoice->register();
                 $invoice->pay();
                 $invoice->save();
