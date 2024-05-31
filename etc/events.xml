@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_payment_place_end">
+        <observer name="computop_order_payment_place_end" instance="Fatchip\Computop\Observer\OrderPaymentPlaceEnd" />
+    </event>
     <event name="controller_action_predispatch_checkout_index_index">
         <observer name="computop_predispatch_checkout_index" instance="Fatchip\Computop\Observer\CancelOrderProcess" />
     </event>

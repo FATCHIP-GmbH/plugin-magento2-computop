@@ -294,8 +294,12 @@ abstract class BaseMethod extends Adapter
             throw new LocalizedException(__($response['Description'] ?? 'Error'));
         }
 
-        if ($this->setTransactionPreAuthorization === false) { // false = set POST auth
-            $this->setTransactionId($payment, $response['TransID'], true);
+        if ($this instanceof ServerToServerPayment || $this->setTransactionPreAuthorization === false) { // false = set POST auth
+            $save = true;
+            if ($this instanceof ServerToServerPayment) {
+                $save = false;
+            }
+            $this->setTransactionId($payment, $response['TransID'], $save);
         }
 
         $order = $payment->getOrder();

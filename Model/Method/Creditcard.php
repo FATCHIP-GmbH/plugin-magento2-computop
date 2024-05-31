@@ -153,6 +153,17 @@ class Creditcard extends RedirectPayment
     }
 
     /**
+     * @return string
+     */
+    protected function getTemplateName()
+    {
+        if (!empty($this->getPaymentConfigParam('template'))) {
+            return $this->getPaymentConfigParam('template');
+        }
+        return "ct_responsive"; // default
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order|null $order
@@ -168,15 +179,7 @@ class Creditcard extends RedirectPayment
         if ((bool)$this->getPaymentConfigParam('test_mode') === true) {
             $params['orderDesc'] = 'Test:0000';
         }
-        if (!empty($this->getPaymentConfigParam('template'))) {
-            $params['template'] = $this->getPaymentConfigParam('template');
-        }
+        $params['template'] = $this->getTemplateName();
         return $params;
     }
 }
-
-/*
- * SILENT MODE
-!capture	MANUAL
-
- */
