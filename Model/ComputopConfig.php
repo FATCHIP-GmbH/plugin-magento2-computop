@@ -9,6 +9,7 @@ abstract class ComputopConfig
 {
     /* Module version */
     const MODULE_VERSION = '0.0.6';
+    const MODULE_NAME = 'Fatchip_Computop';
 
     /* Payment method codes */
     const METHOD_CREDITCARD = 'computop_creditcard';

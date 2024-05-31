@@ -29,7 +29,7 @@
                 <model>Fatchip\Computop\Model\Method\DirectDebit</model>
                 <title>Computop Direct Debit</title>
                 <payment_action>authorize</payment_action>
-                <active>1</active>
+                <active>0</active>
                 <is_gateway>1</is_gateway>
                 <order_status>pending</order_status>
                 <group>computop</group>
@@ -52,7 +52,7 @@
                 <model>Fatchip\Computop\Model\Method\PayPal</model>
                 <title>Computop PayPal</title>
                 <payment_action>authorize</payment_action>
-                <active>1</active>
+                <active>0</active>
                 <is_gateway>1</is_gateway>
                 <order_status>pending</order_status>
                 <group>computop</group>
@@ -75,7 +75,7 @@
                 <model>Fatchip\Computop\Model\Method\Klarna</model>
                 <title>Computop Klarna</title>
                 <payment_action>authorize</payment_action>
-                <active>1</active>
+                <active>0</active>
                 <is_gateway>1</is_gateway>
                 <order_status>pending</order_status>
                 <group>computop</group>
@@ -98,7 +98,7 @@
                 <model>Fatchip\Computop\Model\Method\Giropay</model>
                 <title>Computop Giropay</title>
                 <payment_action>authorize</payment_action>
-                <active>1</active>
+                <active>0</active>
                 <is_gateway>1</is_gateway>
                 <order_status>pending</order_status>
                 <group>computop</group>
@@ -121,7 +121,7 @@
                 <model>Fatchip\Computop\Model\Method\Ideal</model>
                 <title>Computop iDEAL</title>
                 <payment_action>authorize</payment_action>
-                <active>1</active>
+                <active>0</active>
                 <is_gateway>1</is_gateway>
                 <order_status>pending</order_status>
                 <group>computop</group>

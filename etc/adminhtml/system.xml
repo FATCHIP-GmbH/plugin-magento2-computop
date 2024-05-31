@@ -10,6 +10,10 @@
             <resource>Fatchip_Computop::computop_configuration_general</resource>
             <group id="global" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Global</label>
+                <field id="version" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Module version</label>
+                    <frontend_model>Fatchip\Computop\Block\Adminhtml\Config\Form\Field\ModuleVersion</frontend_model>
+                </field>
                 <field id="merchantid" translate="label,tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>MerchantID</label>
                     <tooltip>Your MerchantID</tooltip>
