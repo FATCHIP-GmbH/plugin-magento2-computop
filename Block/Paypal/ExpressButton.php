@@ -4,6 +4,7 @@ namespace Fatchip\Computop\Block\Paypal;
 
 use Fatchip\Computop\Model\Api\Request\Authorization;
 use Fatchip\Computop\Model\Method\PayPal;
+use Fatchip\Computop\Model\Source\CaptureMethods;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Template;
 
@@ -161,7 +162,11 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
      */
     public function getJavascriptUrl()
     {
-        return "https://www.paypal.com/sdk/js?client-id=ARCsDK7xBFxa5pnGxk8qvB0STB07fyi_yHDRrb5al6gxahj73Pxg9X2l7onP9J2IN-LqcVJojys94FLK&merchant-id=".$this->getPayerId()."&currency=".$this->getCurrency()."&disable-funding=giropay,sofort,sepa,card&intent=authorize";
+        $intent = "authorize";
+        if ($this->paypalMethod->getCaptureMode() == CaptureMethods::CAPTURE_AUTO) {
+            $intent = "capture";
+        }
+        return "https://www.paypal.com/sdk/js?client-id=ARCsDK7xBFxa5pnGxk8qvB0STB07fyi_yHDRrb5al6gxahj73Pxg9X2l7onP9J2IN-LqcVJojys94FLK&merchant-id=".$this->getPayerId()."&currency=".$this->getCurrency()."&disable-funding=giropay,sofort,sepa,card&intent=".$intent;
     }
 
     /**
@@ -239,6 +244,7 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
      */
     protected function canShowPayPalExpressButton()
     {
+        return false; // PPE_DEACTIVATED - deactivated for now
         if ((bool)$this->paypalMethod->getPaymentConfigParam('express_active') === true && !empty($this->getPayerId()) && !empty($this->getCurrency())) {
             return true;
         }
