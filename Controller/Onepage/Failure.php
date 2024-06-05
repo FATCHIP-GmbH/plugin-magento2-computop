@@ -92,16 +92,20 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
                 $this->checkoutSession->setComputopIsError(true);
             }
 
-            $orderId = $this->checkoutSession->getLastOrderId();
-            $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
-            if ($order) {
-                $order->cancel()->save();
-                $this->checkoutSession->restoreQuote();
-                $this->checkoutSession
-                    ->unsLastQuoteId()
-                    ->unsLastSuccessQuoteId()
-                    ->unsLastOrderId();
+            if (empty($this->checkoutSession->getComputopTmpRefnr())) { // no order created pre-redirect, therefor no order to cancel
+                $orderId = $this->checkoutSession->getLastOrderId();
+                $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
+                if ($order) {
+                    $order->cancel()->save();
+                    $this->checkoutSession->restoreQuote();
+                    $this->checkoutSession
+                        ->unsLastQuoteId()
+                        ->unsLastSuccessQuoteId()
+                        ->unsLastOrderId();
+                }
             }
+
+            $this->checkoutSession->unsComputopTmpRefnr();
         } catch (LocalizedException $e) {
             $this->messageManager->addExceptionMessage($e, $e->getMessage());
         } catch (\Exception $e) {

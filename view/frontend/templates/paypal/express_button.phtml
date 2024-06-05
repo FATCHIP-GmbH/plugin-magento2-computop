@@ -23,23 +23,32 @@
 
     function initPayPalButton() {
         let mid = "<?php echo $this->getMerchantId(); ?>";
-        let len = "<?php echo $this->getLenParam(); ?>";
-        let data = "<?php echo $this->getDataParam(); ?>";
+        var ppeLen = "<?php echo $this->getLenParam(); ?>";
+        var ppeData = "<?php echo $this->getDataParam(); ?>";
+        var quoteId = "<?php echo $this->getQuoteId(); ?>";
+        if (window.checkoutConfig === undefined) {
+            window.checkoutConfig = {};
+        }
+        if (window.checkoutConfig.storeCode === undefined) {
+            window.checkoutConfig.storeCode = '<?php echo $this->getStoreCode(); ?>';
+        }
         let payid;
 
-        if (len != '' && data != '') {
+        if (ppeLen != '' && ppeData != '') {
             // Set the request parameter MerchantID, Len and Data
             const params = new URLSearchParams({
                 MerchantID: mid,
-                Len: len,
-                Data: data
+                Len: ppeLen,
+                Data: ppeData
             });
 
             // Render the PayPal button into #paypal-button-container
             paypal.Buttons({
                 // Call your server to set up the transaction
                 createOrder: function(data, actions) {
-                    console.log('createOrder');
+                    require(['Fatchip_Computop/js/action/startpaypalexpress'], function(startpaypalexpress){
+                        startpaypalexpress(quoteId, ppeData, ppeLen);
+                    });
                     return fetch('https://www.computop-paygate.com/ExternalServices/paypalorders.aspx', {
                         method: 'POST',
                         body: params
@@ -54,7 +63,6 @@
                 // Call cbPayPal.aspx for continue sequence
                 onApprove: function (data, actions) {
                     var rd = "MerchantId=" + mid + "&PayId=" + payid + "&OrderId=" + data.orderID;
-                    console.log('onApprove ' + rd);
                     // Build an invisible form and directly submit it
                     const form = document.createElement('form');
                     form.method = 'POST';
@@ -67,7 +75,6 @@
                 },
                 onCancel: function (data, actions) {
                     var rd = "MerchantId=" + mid + "&PayId=" + payid + "&OrderId=" + data.orderID;
-                    console.log('onCancel ' + rd);
                     // Build an invisible form and directly submit it
                     const form = document.createElement('form');
                     form.method = 'POST';
@@ -80,7 +87,6 @@
                 },
                 onError: function (data, actions) {
                     var rd = "MerchantId=" + mid + "&PayId=" + payid + "&OrderId=" + data.orderID;
-                    console.log('onError ' + rd);
                     // Build an invisible form and directly submit it
                     const form = document.createElement('form');
                     form.method = 'POST';

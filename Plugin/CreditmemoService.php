@@ -50,15 +50,15 @@ class CreditmemoService
         try {
             $return = $proceed($creditmemo, $offlineRequested);
         } catch (\Exception $ex) {
-            $apiLogData = $this->checkoutSession->getApiLogData();
+            $apiLogData = $this->checkoutSession->getComputopApiLogData();
             if (!empty($apiLogData['request'])) {
                 // Rewrite the log-entry after it was rolled back in the db-transaction
                 $this->apiLog->addApiLogEntry($apiLogData['type'], $apiLogData['request'], $apiLogData['response']);
             }
-            $this->checkoutSession->getApiLogData();
+            $this->checkoutSession->unsComputopApiLogData();
             throw $ex;
         }
-        $this->checkoutSession->getApiLogData();
+        $this->checkoutSession->unsComputopApiLogData();
         return $return;
     }
 }

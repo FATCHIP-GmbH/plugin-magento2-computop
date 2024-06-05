@@ -2,6 +2,7 @@
 
 namespace Fatchip\Computop\Model\Api\Request;
 
+use Fatchip\Computop\Model\ComputopConfig;
 use Fatchip\Computop\Model\Method\BaseMethod;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
@@ -104,11 +105,11 @@ class Authorization extends Base
         return $this->generateRequest($methodInstance, $amount, $currency, $refNr, $order, $encrypt, $log);
     }
 
-    public function generateRequestFromQuote(Quote $quote, $methodInstance, $encrypt = false, $log = false)
+    public function generateRequestFromQuote(Quote $quote, BaseMethod $methodInstance, $encrypt = false, $log = false)
     {
         $amount = $quote->getGrandTotal();
         $currency = $quote->getQuoteCurrencyCode();
-        $refNr = 'tmp_'.$quote->getId();
+        $refNr = $methodInstance->getTemporaryRefNr($quote->getId());
 
         return $this->generateRequest($methodInstance, $amount, $currency, $refNr, null, $encrypt, $log);
     }

@@ -230,7 +230,7 @@ class Base
         if ($apiEndpoint === false) {
             $apiEndpoint = $this->apiEndpoint;
         }
-        return rtrim($this->apiBaseUrl, "/")."/".$apiEndpoint;
+        return rtrim($this->apiBaseUrl, "/") . "/" .$apiEndpoint;
     }
 
     /**
@@ -319,6 +319,8 @@ class Base
             parse_str($responseBody, $parsedResponse);
             if (isset($parsedResponse['Data']) && isset($parsedResponse['Len'])) {
                 $response = $this->blowfish->ctDecrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));;
+            } elseif (isset($parsedResponse['mid'])) { // not encrypted? this is the case with PPE paypalComplete call
+                $response = $parsedResponse;
             }
         }
 
@@ -336,7 +338,7 @@ class Base
      */
     protected function handleLogging($requestType, $request, $response = null, Order $order = null)
     {
-        $this->checkoutSession->setApiLogData(['type' => $requestType, 'request' => $request, 'response' => $response]);
+        $this->checkoutSession->setComputopApiLogData(['type' => $requestType, 'request' => $request, 'response' => $response]);
         $this->apiLog->addApiLogEntry($requestType, $request, $response, $order);
     }
 

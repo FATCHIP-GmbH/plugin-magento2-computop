@@ -178,6 +178,26 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
     }
 
     /**
+     * @return int|mixed
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getQuoteId()
+    {
+        return $this->checkoutSession->getQuote()->getId();
+    }
+
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getStoreCode()
+    {
+        return $this->checkoutSession->getQuote()->getStore()->getCode();
+    }
+
+    /**
      * @return array|null
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -244,7 +264,6 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
      */
     protected function canShowPayPalExpressButton()
     {
-        return false; // PPE_DEACTIVATED - deactivated for now
         if ((bool)$this->paypalMethod->getPaymentConfigParam('express_active') === true && !empty($this->getPayerId()) && !empty($this->getCurrency())) {
             return true;
         }

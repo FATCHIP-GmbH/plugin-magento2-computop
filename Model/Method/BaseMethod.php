@@ -25,6 +25,7 @@ use Magento\Sales\Model\Order;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Fatchip\Computop\Model\Api\Request\RefNrChange;
 
 abstract class BaseMethod extends Adapter
 {
@@ -110,6 +111,8 @@ abstract class BaseMethod extends Adapter
      */
     protected $invoiceSender;
 
+    protected $refNrChange;
+
     /**
      * Defines if transaction id is set pre or post authorization
      * True = pre auth
@@ -142,6 +145,7 @@ abstract class BaseMethod extends Adapter
      * @param InvoiceService $invoiceService
      * @param OrderSender $orderSender
      * @param InvoiceSender $invoiceSender
+     * @param RefNrChange $refNrChange
      * @param CommandPoolInterface|null $commandPool
      * @param ValidatorPoolInterface|null $validatorPool
      * @param CommandManagerInterface|null $commandExecutor
@@ -164,6 +168,7 @@ abstract class BaseMethod extends Adapter
         InvoiceService $invoiceService,
         OrderSender $orderSender,
         InvoiceSender $invoiceSender,
+        RefNrChange $refNrChange,
         CommandPoolInterface $commandPool = null,
         ValidatorPoolInterface $validatorPool = null,
         CommandManagerInterface $commandExecutor = null,
@@ -185,6 +190,7 @@ abstract class BaseMethod extends Adapter
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
         $this->loggerObject = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
+        $this->refNrChange = $refNrChange;
     }
 
     /**
@@ -288,15 +294,30 @@ abstract class BaseMethod extends Adapter
         return $this;
     }
 
+    /**
+     * @param InfoInterface $payment
+     * @param               $response
+     * @return void
+     */
+    protected function handleResponseSpecific(InfoInterface $payment, $response)
+    {
+        // hook for extention by child methods
+    }
+
+    /**
+     * @param InfoInterface $payment
+     * @param               $response
+     * @return void
+     */
     public function handleResponse(InfoInterface $payment, $response)
     {
         if ($this->authRequest->getApiHelper()->isSuccessStatus($response) === false) {
             throw new LocalizedException(__($response['Description'] ?? 'Error'));
         }
 
-        if ($this instanceof ServerToServerPayment || $this->setTransactionPreAuthorization === false) { // false = set POST auth
+        if ($this instanceof ServerToServerPayment || $this->setTransactionPreAuthorization === false || ($this instanceof PayPal && $this->isExpressAuthStep())) { // false = set POST auth
             $save = true;
-            if ($this instanceof ServerToServerPayment) {
+            if ($this instanceof ServerToServerPayment || ($this instanceof PayPal && $this->isExpressAuthStep())) {
                 $save = false;
             }
             $this->setTransactionId($payment, $response['TransID'], $save);
@@ -306,6 +327,7 @@ abstract class BaseMethod extends Adapter
         $order->setComputopPayid($response['PayID']);
         $order->save();
 
+        $this->handleResponseSpecific($payment, $response);
 
         if (!$order->getEmailSent()) { // the email should not have been sent at this given moment, but some custom modules may have changed this behaviour
             try {
@@ -318,7 +340,7 @@ abstract class BaseMethod extends Adapter
         if ($this->getCaptureMode() == CaptureMethods::CAPTURE_AUTO && in_array($response['Status'], [ComputopConfig::STATUS_AUTHORIZED, ComputopConfig::STATUS_OK])) {
             if ($order->getInvoiceCollection()->count() == 0) {
                 $transId = $order->getPayment()->getLastTransId();
-                if ($this instanceof ServerToServerPayment) {
+                if ($this instanceof ServerToServerPayment || ($this instanceof PayPal && $this->isExpressAuthStep())) {
                     $transId = $response['TransID'];
                 }
 
@@ -336,6 +358,21 @@ abstract class BaseMethod extends Adapter
         }
     }
 
+    /**
+     * @param  string $quoteId
+     * @return string
+     */
+    public function getTemporaryRefNr($quoteId)
+    {
+        return ComputopConfig::QUOTE_REFNR_PREFIX.$quoteId.date('his');
+    }
+
+    /**
+     * @param  InfoInterface $payment
+     * @param  string $transactionId
+     * @param  bool $save
+     * @return void
+     */
     public function setTransactionId(InfoInterface $payment, $transactionId, $save = false)
     {
         $payment->setTransactionId($transactionId);

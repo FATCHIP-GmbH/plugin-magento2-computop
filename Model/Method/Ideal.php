@@ -20,6 +20,7 @@ use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Psr\Log\LoggerInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Service\InvoiceService;
+use Fatchip\Computop\Model\Api\Request\RefNrChange;
 
 class Ideal extends RedirectPayment
 {
@@ -53,6 +54,7 @@ class Ideal extends RedirectPayment
      * @param InvoiceService $invoiceService
      * @param OrderSender $orderSender
      * @param InvoiceSender $invoiceSender
+     * @param RefNrChange $refNrChange
      * @param IdealIssuerList $idealIssuerResource
      * @param CommandPoolInterface|null $commandPool
      * @param ValidatorPoolInterface|null $validatorPool
@@ -76,13 +78,14 @@ class Ideal extends RedirectPayment
         InvoiceService $invoiceService,
         OrderSender $orderSender,
         InvoiceSender $invoiceSender,
+        RefNrChange $refNrChange,
         IdealIssuerList $idealIssuerResource,
         CommandPoolInterface $commandPool = null,
         ValidatorPoolInterface $validatorPool = null,
         CommandManagerInterface $commandExecutor = null,
         LoggerInterface $logger = null
     ) {
-        parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $commandPool, $validatorPool, $commandExecutor, $logger);
+        parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $refNrChange, $commandPool, $validatorPool, $commandExecutor, $logger);
         $this->idealIssuerResource = $idealIssuerResource;
     }
 

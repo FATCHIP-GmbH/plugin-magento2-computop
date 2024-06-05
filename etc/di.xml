@@ -3,6 +3,8 @@
     <!-- START - REST API PREFERENCES -->
     <preference for="Fatchip\Computop\Api\CreditcardRequestDataInterface" type="Fatchip\Computop\Service\V1\CreditcardRequestData" />
     <preference for="Fatchip\Computop\Api\Data\CreditcardRequestDataResponseInterface" type="Fatchip\Computop\Service\V1\Data\CreditcardRequestDataResponse" />
+    <preference for="Fatchip\Computop\Api\StartPayPalExpressInterface" type="Fatchip\Computop\Service\V1\StartPayPalExpress" />
+    <preference for="Fatchip\Computop\Api\Data\StartPayPalExpressResponseInterface" type="Fatchip\Computop\Service\V1\Data\StartPayPalExpressResponse" />
     <!-- END - REST API PREFERENCES -->
 
     <!-- START - PAYMENT CONFIG -->

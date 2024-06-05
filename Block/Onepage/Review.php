@@ -305,16 +305,11 @@ class Review extends \Magento\Framework\View\Element\Template
             }
 
             // misc shipping parameters
-            $this->setShippingMethodSubmitUrl(
-                $this->getUrl("{$this->_controllerPath}/review", ['_secure' => true])
-            );
+            $this->setShippingMethodSubmitUrl($this->getUrl("{$this->_controllerPath}/review", ['_secure' => true]));
         }
 
-        $this->setEditUrl(
-            $this->getUrl("{$this->_controllerPath}/edit")
-        )->setPlaceOrderUrl(
-            $this->getUrl("{$this->_controllerPath}/placeOrder", ['_secure' => true])
-        );
+        $this->setEditUrl($this->getUrl("{$this->_controllerPath}/edit"));
+        $this->setPlaceOrderUrl($this->getUrl("{$this->_controllerPath}/placeOrder", ['_secure' => true]));
 
         return parent::_beforeToHtml();
     }

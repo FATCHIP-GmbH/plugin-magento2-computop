@@ -209,7 +209,7 @@ class Blowfish
 
         if (mb_strlen($password) <= 0) $password = ' ';
         # converts hex to bin
-        $cipher = pack('H' . strlen($cipher), $cipher);
+        $cipher = pack('H' . strlen($cipher ?? ''), $cipher);
         if ($len > strlen($cipher)) {
             #echo 'Length mismatch. The parameter len is too large.';
             return false;

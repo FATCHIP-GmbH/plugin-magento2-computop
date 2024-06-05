@@ -4,9 +4,6 @@ namespace Fatchip\Computop\Service\V1\Data;
 
 use Fatchip\Computop\Api\Data\CreditcardRequestDataResponseInterface;
 
-/**
- * Object for addresscheck WebApi response
- */
 class CreditcardRequestDataResponse extends \Magento\Framework\Api\AbstractExtensibleObject implements CreditcardRequestDataResponseInterface
 {
     /**

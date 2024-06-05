@@ -4,6 +4,7 @@ namespace Fatchip\Computop\Model\Method;
 
 use Fatchip\Computop\Model\ComputopConfig;
 use Fatchip\Computop\Model\Source\CaptureMethods;
+use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order;
 
 class PayPal extends RedirectPayment
@@ -23,9 +24,32 @@ class PayPal extends RedirectPayment
     protected $apiEndpoint = "ExternalServices/paypalorders.aspx";
 
     /**
+     * @var string
+     */
+    protected $apiExpressEndpoint = "paypalComplete.aspx";
+
+    /**
      * @var bool
      */
     protected $isExpressOrder = false;
+
+    /**
+     * @var bool
+     */
+    protected $isExpressAuthStep = false;
+
+    /**
+     * Returns the API endpoint
+     *
+     * @return string
+     */
+    public function getApiEndpoint()
+    {
+        if ($this->isExpressAuthStep() === true) {
+            return $this->apiExpressEndpoint;
+        }
+        return $this->apiEndpoint;
+    }
 
     /**
      * @param  bool $isExpressOrder
@@ -43,7 +67,33 @@ class PayPal extends RedirectPayment
      */
     public function isExpressOrder()
     {
+        if ($this->checkoutSession->getComputopPpeIsExpressOrder() === true) {
+            return true;
+        }
         return $this->isExpressOrder;
+    }
+
+
+    /**
+     * @param  bool $isExpressAuthStep
+     * @return void
+     */
+    public function setIsExpressAuthStep($isExpressAuthStep)
+    {
+        $this->isExpressAuthStep = $isExpressAuthStep;
+    }
+
+    /**
+     * Returns if current PayPal order process is in PayPal Express mode
+     *
+     * @return bool
+     */
+    public function isExpressAuthStep()
+    {
+        if ($this->checkoutSession->getComputopPpeIsExpressAuthStep() === true) {
+            return true;
+        }
+        return $this->isExpressAuthStep;
     }
 
     /**
@@ -54,10 +104,24 @@ class PayPal extends RedirectPayment
     public function getSuccessUrl()
     {
         if ($this->isExpressOrder() === true) {
-            return $this->urlBuilder->getUrl('computop/onepage/review');
+            return $this->urlBuilder->getUrl('computop/onepage/ppeReturn');
         }
         return parent::getSuccessUrl();
     }
+
+    /**
+     * Returns redirect url for failure case
+     *
+     * @return string|null
+     */
+    public function getFailureUrl()
+    {
+        if ($this->isExpressOrder() === true) {
+            return $this->urlBuilder->getUrl('computop/onepage/ppeReturn');
+        }
+        return parent::getFailureUrl();
+    }
+
 
     /**
      * @param Order $order
@@ -79,6 +143,60 @@ class PayPal extends RedirectPayment
     }
 
     /**
+     * @param Order|null $order
+     * @return array
+     */
+    protected function getPayPalCompleteCallParams(Order $order = null)
+    {
+        $params = [
+            'PayID' => $this->checkoutSession->getComputopPpePayId(),
+        ];
+        if (!empty($order)) {
+            $params['RefNr'] = $this->authRequest->getApiHelper()->getReferenceNumber($this->checkoutSession->getComputopTmpRefnr());
+        }
+        return $params;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function authorize(InfoInterface $payment, $amount)
+    {
+        if ($this->isExpressAuthStep() === true) {
+            return $this->authorizeServerToServer($payment, $amount);
+        }
+        return parent::authorize($payment, $amount);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function authorizeServerToServer(InfoInterface $payment, $amount)
+    {
+        if (!$this->canAuthorize()) {
+            throw new \Magento\Framework\Exception\LocalizedException(__('The authorize action is not available.'));
+        }
+
+        $response = $this->authRequest->sendCurlRequest($payment->getOrder(), $payment, $amount);
+        $this->checkoutSession->setComputopPpeCompleteResponse($response);
+        $this->handleResponse($payment, $response);
+
+        return $this;
+    }
+
+    /**
+     * @param InfoInterface $payment
+     * @param               $response
+     * @return void
+     */
+    protected function handleResponseSpecific(InfoInterface $payment, $response)
+    {
+        if ($this->isExpressAuthStep() === true && !empty($response['PayID'])) {
+            $this->refNrChange->changeRefNr($response['PayID'], $payment->getOrder()->getIncrementId());
+        }
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order|null $order
@@ -86,6 +204,10 @@ class PayPal extends RedirectPayment
      */
     public function getPaymentSpecificParameters(Order $order = null)
     {
+        if ($this->isExpressAuthStep() === true) {
+            return $this->getPayPalCompleteCallParams($order);
+        }
+
         $params = [
             'Capture' => $this->getPaymentConfigParam('capture_method'),
             #'NoShipping' => '1',

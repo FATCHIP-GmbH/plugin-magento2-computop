@@ -19,8 +19,6 @@ class AddPaypalExpressButtons implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        return; // PPE_DEACTIVATED - deactivated for now
-
         /** @var \Magento\Catalog\Block\ShortcutButtons $shortcutButtons */
         $shortcutButtons = $observer->getEvent()->getContainer();
 

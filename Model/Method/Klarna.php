@@ -20,6 +20,7 @@ use Magento\Sales\Model\Order;
 use Magento\Quote\Model\Quote;
 use Magento\Tax\Api\OrderTaxManagementInterface;
 use Magento\Sales\Model\Service\InvoiceService;
+use Fatchip\Computop\Model\Api\Request\RefNrChange;
 
 class Klarna extends RedirectPayment
 {
@@ -63,6 +64,7 @@ class Klarna extends RedirectPayment
      * @param InvoiceService $invoiceService
      * @param OrderSender $orderSender
      * @param InvoiceSender $invoiceSender
+     * @param RefNrChange $refNrChange
      * @param \Fatchip\Computop\Helper\Api $apiHelper
      * @param \Magento\Sales\Model\ResourceModel\Order\Tax\Item $taxItem
      * @param CommandPoolInterface|null $commandPool
@@ -87,6 +89,7 @@ class Klarna extends RedirectPayment
         InvoiceService $invoiceService,
         OrderSender $orderSender,
         InvoiceSender $invoiceSender,
+        RefNrChange $refNrChange,
         \Fatchip\Computop\Helper\Api $apiHelper,
         \Magento\Sales\Model\ResourceModel\Order\Tax\Item $taxItem,
         CommandPoolInterface $commandPool = null,
@@ -94,7 +97,7 @@ class Klarna extends RedirectPayment
         CommandManagerInterface $commandExecutor = null,
         LoggerInterface $logger = null
     ) {
-        parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $commandPool, $validatorPool, $commandExecutor, $logger);
+        parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $refNrChange, $commandPool, $validatorPool, $commandExecutor, $logger);
         $this->apiHelper = $apiHelper;
         $this->taxItem = $taxItem;
     }

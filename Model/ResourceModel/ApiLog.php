@@ -186,7 +186,7 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $response = $this->cleanData($response);
 
         $where = [
-            'request = ?' => 'REDIRECT',
+            'request != ?' => 'NOTIFY',
             'trans_id = ?' => $this->getParamValue('TransID', $response),
             'response_details IS NULL' => null,
         ];

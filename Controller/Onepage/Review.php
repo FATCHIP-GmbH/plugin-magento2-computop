@@ -91,14 +91,9 @@ class Review extends \Magento\Framework\App\Action\Action
      */
     protected function canReviewBeShown()
     {
-        if ($this->checkoutSession->getQuote()->getPayment()->getMethod() == ComputopConfig::METHOD_PAYPAL) {
-            return false;
-        }
-
         if (in_array($this->checkoutSession->getQuote()->getPayment()->getMethod(), $this->availableReviewMethods)) {
             return true;
         }
-
         return false;
     }
 
