@@ -3,7 +3,7 @@
 <script>
     function loadPayPalScript() {
         if (window.paypalJsLoaded === undefined || window.paypalJsLoaded !== true) {
-            require(['jquery'], function($){
+            require(['jquery'], function($) {
                 $("body").append("<script type=\"text/javascript\" src=\"<?php echo $this->getJavascriptUrl(); ?>\" data-partner-attribution-id=\"Computop_PSP_PCP_Test\"><\/script>");
             });
             window.paypalJsLoaded = true;
@@ -13,7 +13,7 @@
     function checkForPaypalObject() {
         if (typeof paypal != 'object') {
             loadPayPalScript();
-            setTimeout(function(){
+            setTimeout(function() {
                 window.requestAnimationFrame(checkForPaypalObject);
             }, 1000);
         } else {
@@ -22,6 +22,10 @@
     }
 
     function initPayPalButton() {
+        if (document.getElementById('<?php echo $this->getButtonId(); ?>').childNodes.length > 0) { // buttons already loaded - abort
+            return;
+        }
+
         let mid = "<?php echo $this->getMerchantId(); ?>";
         var ppeLen = "<?php echo $this->getLenParam(); ?>";
         var ppeData = "<?php echo $this->getDataParam(); ?>";

@@ -75,4 +75,16 @@ class Checkout extends Base
         }
         return $quote->getCheckoutMethod();
     }
+
+    /**
+     * @param  string $fullName
+     * @return array
+     */
+    public function splitFullName($fullName)
+    {
+        $split = explode(" ", $fullName);
+        $firstname = array_shift($split);
+        $lastname = implode(" ", $split);
+        return [$firstname, $lastname];
+    }
 }

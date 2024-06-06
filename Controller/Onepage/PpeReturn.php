@@ -96,8 +96,10 @@ class PpeReturn extends \Magento\Framework\App\Action\Action implements CsrfAwar
 
     protected function updateAddressFromResponse($address, $response)
     {
-        $address->setFirstname($response['firstname']);
-        $address->setLastname($response['lastname']);
+        list($firstname, $lastname) = $this->checkoutHelper->splitFullName($response['name']);
+
+        $address->setFirstname($firstname);
+        $address->setLastname($lastname);
         $address->setStreet($response['AddrStreet']);
         $address->setCountryId($response['AddrCountryCode']);
         $address->setCity($response['AddrCity']);
