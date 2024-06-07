@@ -10,19 +10,19 @@
         }
     }
 
-    function checkForPaypalObject() {
+    function checkForPaypalObject(buttonId) {
         if (typeof paypal != 'object') {
             loadPayPalScript();
             setTimeout(function() {
-                window.requestAnimationFrame(checkForPaypalObject);
-            }, 1000);
+                window.requestAnimationFrame(function() {checkForPaypalObject(buttonId)});
+            }, 250);
         } else {
-            initPayPalButton();
+            initPayPalButton(buttonId);
         }
     }
 
-    function initPayPalButton() {
-        if (document.getElementById('<?php echo $this->getButtonId(); ?>').childNodes.length > 0) { // buttons already loaded - abort
+    function initPayPalButton(buttonId) {
+        if (document.getElementById(buttonId).childNodes.length > 0) { // buttons already loaded - abort
             return;
         }
 
@@ -101,9 +101,9 @@
                     // Submit form
                     form.submit();
                 }
-            }).render('#<?php echo $this->getButtonId(); ?>');
+            }).render('#' + buttonId);
         }
     }
 
-    checkForPaypalObject();
+    checkForPaypalObject('<?php echo $this->getButtonId(); ?>');
 </script>
