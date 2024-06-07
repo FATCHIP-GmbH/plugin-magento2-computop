@@ -233,6 +233,7 @@ class Klarna extends RedirectPayment
             'bdCountryCode' => $order->getBillingAddress()->getCountryId(),
             'Language' => $this->apiHelper->getStoreLocale(),
             'Account' => $this->getKlarnaAccount(),
+            'Order' => 'AUTO',
             'ArticleList' => $this->apiHelper->encodeArray($this->getArticleList($order)),
             'URLConfirm' => $methodInstance->getSuccessUrl(),
 
