@@ -141,5 +141,10 @@
                 <can_deny_payment>1</can_deny_payment>
             </computop_ideal>
         </payment>
+        <computop_payment>
+            <computop_creditcard>
+                <template>ct_responsive</template>
+            </computop_creditcard>
+        </computop_payment>
     </default>
 </config>
