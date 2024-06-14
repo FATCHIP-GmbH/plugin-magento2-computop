@@ -10,6 +10,8 @@
     <!-- START - PAYMENT CONFIG -->
     <type name="Fatchip\Computop\Model\Method\BaseMethod">
         <arguments>
+            <!-- code is set for 2.4.7 compatibility - code is set to correct value in the constructor -->
+            <argument name="code" xsi:type="string">Fatchip\Computop\Model\ComputopConfig::METHOD_CREDITCARD</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
         </arguments>
