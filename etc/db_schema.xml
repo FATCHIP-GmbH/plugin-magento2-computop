@@ -20,7 +20,7 @@
         </index>
     </table>
     <table name="computop_ideal_issuerlist" resource="default" engine="innodb" comment="List of iDeal issuers">
-        <column xsi:type="varchar" name="issuer_id" nullable="false" identity="true"/>
+        <column xsi:type="varchar" name="issuer_id" nullable="false"/>
         <column xsi:type="varchar" name="name" nullable="true" length="255"/>
         <column xsi:type="varchar" name="country" nullable="true" length="64"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
