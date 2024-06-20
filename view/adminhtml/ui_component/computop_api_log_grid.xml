@@ -59,7 +59,6 @@
         </settings>
         <column name="entity_id">
             <settings>
-                <indexField>entity_id</indexField>
                 <sorting>desc</sorting>
                 <label translate="true">ID</label>
             </settings>
