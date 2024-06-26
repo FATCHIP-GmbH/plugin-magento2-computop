@@ -23,25 +23,6 @@ class Capture extends Base
      */
     protected $apiEndpoint = "capture.aspx";
 
-    /**
-     * @param  InfoInterface $payment
-     * @return string
-     * @throws LocalizedException
-     */
-    protected function getTruncatedTransactionId(InfoInterface $payment)
-    {
-        $transId = $payment->getTransactionId();
-        if (empty($transId)) {
-            throw new LocalizedException(__('Error: Transaction couldn\'t be found.'));
-        }
-
-        if (strpos($transId, '-') !== false) {
-            $split = explode('-', $transId);
-            return $split[0];
-        }
-        return $transId;
-    }
-
     public function generateRequest(InfoInterface $payment, $amount)
     {
         $order = $payment->getOrder();
@@ -53,7 +34,7 @@ class Capture extends Base
         $this->addParameter('Amount', $this->apiHelper->formatAmount($amount));
         $this->addParameter('PayID', $order->getComputopPayid());
 
-        $this->addParameter('TransID', $this->getTruncatedTransactionId($payment)); // Generate new TransID for further use with this transaction
+        $this->addParameter('TransID', $this->apiHelper->getTruncatedTransactionId($payment->getTransactionId())); // Generate new TransID for further use with this transaction
         $this->addParameter('ReqId', $this->paymentHelper->getRequestId());
         $this->addParameter('EtiID', $this->apiHelper->getIdentString());
         $this->addParameter('RefNr', $this->apiHelper->getReferenceNumber($order->getIncrementId()));

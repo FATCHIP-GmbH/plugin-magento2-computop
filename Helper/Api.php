@@ -4,6 +4,7 @@ namespace Fatchip\Computop\Helper;
 
 use Fatchip\Computop\Model\ComputopConfig;
 use Locale;
+use Magento\Framework\Exception\LocalizedException;
 
 class Api extends Base
 {
@@ -129,5 +130,26 @@ class Api extends Base
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param  string $transId
+     * @return string
+     * @throws LocalizedException
+     */
+    public function getTruncatedTransactionId($transId)
+    {
+        if (empty($transId)) {
+            throw new LocalizedException(__('Error: Transaction couldn\'t be found.'));
+        }
+
+        if (strpos($transId, '-') !== false) {
+            $split = explode('-', $transId);
+            $transId = $split[0];
+        }
+
+        $transId = preg_replace('/[^a-zA-Z0-9]/', '', $transId); // remove all special characters
+
+        return $transId;
     }
 }

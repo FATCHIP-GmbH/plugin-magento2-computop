@@ -38,6 +38,10 @@
                     <label>Order number suffix</label>
                     <tooltip>Suffix for order number</tooltip>
                 </field>
+                <field id="ordernr_validation" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label> </label>
+                    <frontend_model>Fatchip\Computop\Block\Adminhtml\Config\Form\Field\Validation</frontend_model>
+                </field>
             </group>
         </section>
         <section id="computop_payment" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
