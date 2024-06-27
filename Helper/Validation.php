@@ -64,13 +64,13 @@ class Validation extends Base
             if ($idealService == IdealService::SERVICE_PPRO) {
                 $rules[] = [
                     'regex' => '^[a-zA-Z0-9,_-]{1,40}$', // a-zA-Z0-9,-_   max 40
-                    'errormessage' => __("Order number prefix/suffix validation failed: RefNr param may only consist of letters, numbers, comma, underscore, dash and must not be longer than 40 characters. Please change prefix/suffix accordingly."),
+                    'errormessage' => __("Order number prefix/suffix validation failed: RefNr param may only consist of letters, numbers, comma, underscore and dash. Additionally the combination of prefix, the 9-digit order number and suffix must not be longer than 40 characters in total. Please change prefix/suffix accordingly."),
                 ];
             }
             if ($idealService == IdealService::SERVICE_DIRECT) {
                 $rules[] = [
                     'regex' => '^.{1,15}$', // max 15
-                    'errormessage' => __("Order number prefix/suffix validation failed: RefNr param must not be longer than 15 characters in total. Please change prefix/suffix accordingly."),
+                    'errormessage' => __("Order number prefix/suffix validation failed: The combination of prefix, the 9-digit order number and suffix must not be longer than 15 characters in total. Please change prefix/suffix accordingly."),
                 ];
             }
         }
