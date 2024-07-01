@@ -8,7 +8,7 @@ namespace Fatchip\Computop\Model;
 abstract class ComputopConfig
 {
     /* Module version */
-    const MODULE_VERSION = '1.0.2';
+    const MODULE_VERSION = '1.0.3';
     const MODULE_NAME = 'Fatchip_Computop';
 
     /* Payment method codes */

@@ -2,7 +2,7 @@
     "name": "fatchip-gmbh/plugin-magento2-computop",
     "description": "FATCHIP Computop Payment Plugin",
     "type": "magento2-module",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "license": "MIT",
     "require": {
         "php": ">=7.4.0",
