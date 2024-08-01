@@ -23,6 +23,7 @@ class ApiLog extends AbstractModel
         'shippingAddress',
         'resultsresponse',
         'credentialOnFile',
+        'billToCustomer',
         'userData',
     ];
 

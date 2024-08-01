@@ -164,6 +164,39 @@ class Creditcard extends RedirectPayment
     }
 
     /**
+     * @param Order|null $order
+     * @return array
+     */
+    protected function getBillToCustomerArray(Order $order = null)
+    {
+        $billToCustomer = [];
+        $billingAddress = null;
+        if ($order === null) {
+            $quote = $this->checkoutSession->getQuote();
+            $billingAddress = $quote->getBillingAddress();
+            $billToCustomer['email'] = $quote->getCustomerEmail();
+        } else { // order is NOT null
+            $billingAddress = $order->getBillingAddress();
+            $billToCustomer['email'] = $order->getCustomerEmail();
+        }
+
+        if ($billingAddress instanceof \Magento\Customer\Model\Address\AddressModelInterface) {
+            if (!empty($billingAddress->getCompany())) {
+                $billToCustomer['business'] = [
+                    'legalName' => $billingAddress->getCompany(),
+                ];
+            } else {
+                $billToCustomer['consumer'] = [
+                    'firstName' => $billingAddress->getFirstname(),
+                    'lastName' => $billingAddress->getLastname(),
+                ];
+            }
+        }
+
+        return $billToCustomer;
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order|null $order
@@ -175,6 +208,7 @@ class Creditcard extends RedirectPayment
             'msgVer' => '2.0',
             'Capture' => $this->getPaymentConfigParam('capture_method'),
             'credentialOnFile' => $this->authRequest->getApiHelper()->encodeArray(['type' => ['unscheduled' => 'CIT'], 'initialPayment' => true]),
+            'billToCustomer' => $this->authRequest->getApiHelper()->encodeArray($this->getBillToCustomerArray($order)),
         ];
         if ((bool)$this->getPaymentConfigParam('test_mode') === true) {
             $params['orderDesc'] = 'Test:0000';
