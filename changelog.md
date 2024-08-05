@@ -1,5 +1,9 @@
 # Changelog - Computop Paymet Connector for Magento 2
 
+### 1.0.4
+Released 2024-08-05
+* Added new mandatory parameters to credit card request
+
 ### 1.0.3
 Released 2024-07-01
 * Refactored RefNr and TransID for compatibility with iDeal 2.0
