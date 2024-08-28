@@ -11,6 +11,10 @@
             <label>Title</label>
             <config_path>payment/computop_directdebit/title</config_path>
         </field>
+        <field id="request_bic" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Request BIC</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
         <field id="capture_method" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Capture method</label>
             <source_model>Fatchip\Computop\Model\Source\CaptureMethods</source_model>
