@@ -9,7 +9,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\Result\Redirect as CoreRedirect;
 
 /**
- * Controller for mandate management with debit payment
+ * Controller for order review
  */
 class Review extends \Magento\Framework\App\Action\Action
 {

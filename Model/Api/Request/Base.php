@@ -312,9 +312,14 @@ class Base
     {
         $response = null;
 
-        $this->curl->post($url, $this->getEncryptedParameters($params));
+        try {
+            $this->curl->post($url, $this->getEncryptedParameters($params));
 
-        $responseBody = $this->curl->getBody();
+            $responseBody = $this->curl->getBody();
+        } catch (\Exception $exc) {
+            throw $exc;
+        }
+
         if (!empty($responseBody)) {
             parse_str($responseBody, $parsedResponse);
             if (isset($parsedResponse['Data']) && isset($parsedResponse['Len'])) {
@@ -364,7 +369,7 @@ class Base
      * @param  Order|null $order
      * @return array|null
      */
-    protected function handlePaymentCurlRequest(BaseMethod $methodInstance, $params, Order $order = null)
+    public function handlePaymentCurlRequest(BaseMethod $methodInstance, $params, Order $order = null)
     {
         return $this->handleCurlRequest($this->getFullApiEndpoint($methodInstance->getApiEndpoint()), $methodInstance->getRequestType(), $params, $order);
     }

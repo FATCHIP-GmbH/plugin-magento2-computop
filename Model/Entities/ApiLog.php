@@ -25,6 +25,7 @@ class ApiLog extends AbstractModel
         'credentialOnFile',
         'billToCustomer',
         'userData',
+        'ArticleList',
     ];
 
     /**

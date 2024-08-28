@@ -224,4 +224,36 @@ class PayPal extends RedirectPayment
         }
         return $params;
     }
+
+    /**
+     * @param $quote
+     * @return void
+     */
+    public function preReviewPlaceOrder($quote)
+    {
+        $this->checkoutSession->setComputopPpeIsExpressOrder(true);
+        $this->checkoutSession->setComputopPpeIsExpressAuthStep(true);
+        $this->setIsExpressOrder(true);
+        $this->setIsExpressAuthStep(true);
+    }
+
+    /**
+     * @return string|false
+     */
+    public function postReviewPlaceOrder()
+    {
+        $response = $this->checkoutSession->getComputopPpeCompleteResponse();
+        if ($this->apiHelper->isSuccessStatus($response)) {
+            // "last successful quote"
+            #$quoteId = $quote->getId();
+            #$this->checkoutSession->setLastQuoteId($quoteId)->setLastSuccessQuoteId($quoteId);
+
+            #$quote->setIsActive(false)->save();
+
+            return 'checkout/onepage/success';
+        } elseif(!empty($response['paypalurl'])) {
+            return $response['paypalurl'];
+        }
+        return false;
+    }
 }

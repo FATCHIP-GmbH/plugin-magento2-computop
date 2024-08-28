@@ -70,14 +70,4 @@ class DirectDebit extends ServerToServerPayment
             'Capture' => $this->getPaymentConfigParam('capture_method'),
         ];
     }
-
-    /**
-     * Hook for extension by the real payment method classes
-     *
-     * @return array
-     */
-    public function getFrontendConfig()
-    {
-        return [];
-    }
 }

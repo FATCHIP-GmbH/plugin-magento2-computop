@@ -2,6 +2,7 @@
 
 namespace Fatchip\Computop\Model\Method;
 
+use Fatchip\Computop\Helper\Api;
 use Fatchip\Computop\Helper\Payment;
 use Fatchip\Computop\Model\Api\Request\Capture;
 use Fatchip\Computop\Model\Api\Request\Credit;
@@ -78,6 +79,11 @@ abstract class BaseMethod extends Adapter
     protected $paymentHelper;
 
     /**
+     * @var Api
+     */
+    protected $apiHelper;
+
+    /**
      * @var Capture
      */
     protected $captureRequest;
@@ -111,6 +117,9 @@ abstract class BaseMethod extends Adapter
      */
     protected $invoiceSender;
 
+    /**
+     * @var RefNrChange
+     */
     protected $refNrChange;
 
     /**
@@ -140,6 +149,7 @@ abstract class BaseMethod extends Adapter
      * @param \Fatchip\Computop\Model\Api\Request\Authorization $authRequest
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param Payment $paymentHelper
+     * @param Api $apiHelper
      * @param Capture $captureRequest
      * @param Credit $creditRequest
      * @param InvoiceService $invoiceService
@@ -163,6 +173,7 @@ abstract class BaseMethod extends Adapter
         \Fatchip\Computop\Model\Api\Request\Authorization $authRequest,
         \Magento\Checkout\Model\Session $checkoutSession,
         Payment $paymentHelper,
+        Api $apiHelper,
         Capture $captureRequest,
         Credit $creditRequest,
         InvoiceService $invoiceService,
@@ -184,6 +195,7 @@ abstract class BaseMethod extends Adapter
         $this->authRequest = $authRequest;
         $this->checkoutSession = $checkoutSession;
         $this->paymentHelper = $paymentHelper;
+        $this->apiHelper = $apiHelper;
         $this->captureRequest = $captureRequest;
         $this->creditRequest = $creditRequest;
         $this->invoiceService = $invoiceService;
@@ -323,6 +335,18 @@ abstract class BaseMethod extends Adapter
             $this->setTransactionId($payment, $response['TransID'], $save);
         }
 
+        if (!$this instanceof RedirectNoOrder) { // RedirectNoOrder methods did not create an order yet
+            $this->finalizeOrder($payment, $response);
+        }
+    }
+
+    /**
+     * @param  InfoInterface $payment
+     * @param  array         $response
+     * @return void
+     */
+    protected function finalizeOrder(InfoInterface $payment, $response)
+    {
         $order = $payment->getOrder();
         $order->setComputopPayid($response['PayID']);
         $order->save();
@@ -435,9 +459,7 @@ abstract class BaseMethod extends Adapter
      */
     public function getFrontendConfig()
     {
-        return [
-            'requestBic' => (bool)$this->getPaymentConfigParam('request_bic'),
-        ];
+        return [];
     }
 
     /**
@@ -480,5 +502,23 @@ abstract class BaseMethod extends Adapter
         // DO NOTHING FOR NOW
 
         return $this;
+    }
+
+    /**
+     * @param $quote
+     * @return void
+     */
+    public function preReviewPlaceOrder($quote)
+    {
+        // Method can be overwritten by inheriting classes
+    }
+
+    /**
+     * @return string
+     */
+    public function postReviewPlaceOrder()
+    {
+        // Method can be overwritten by inheriting classes
+        return '';
     }
 }

@@ -54,6 +54,7 @@
             <include path="Fatchip_Computop::system/computop_klarna.xml"/>
             <include path="Fatchip_Computop::system/computop_giropay.xml"/>
             <include path="Fatchip_Computop::system/computop_ideal.xml"/>
+            <include path="Fatchip_Computop::system/computop_easycredit.xml"/>
         </section>
     </system>
 </config>

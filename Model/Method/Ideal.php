@@ -2,6 +2,7 @@
 
 namespace Fatchip\Computop\Model\Method;
 
+use Fatchip\Computop\Helper\Api;
 use Fatchip\Computop\Helper\Payment;
 use Fatchip\Computop\Model\Api\Request\Capture;
 use Fatchip\Computop\Model\Api\Request\Credit;
@@ -49,6 +50,7 @@ class Ideal extends RedirectPayment
      * @param \Fatchip\Computop\Model\Api\Request\Authorization $authRequest
      * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param Payment $paymentHelper
+     * @param Api $apiHelper
      * @param Capture $captureRequest
      * @param Credit $creditRequest
      * @param InvoiceService $invoiceService
@@ -73,6 +75,7 @@ class Ideal extends RedirectPayment
         \Fatchip\Computop\Model\Api\Request\Authorization $authRequest,
         \Magento\Checkout\Model\Session $checkoutSession,
         Payment $paymentHelper,
+        Api $apiHelper,
         Capture $captureRequest,
         Credit $creditRequest,
         InvoiceService $invoiceService,
@@ -85,7 +88,7 @@ class Ideal extends RedirectPayment
         CommandManagerInterface $commandExecutor = null,
         LoggerInterface $logger = null
     ) {
-        parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $refNrChange, $commandPool, $validatorPool, $commandExecutor, $logger);
+        parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $apiHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $refNrChange, $commandPool, $validatorPool, $commandExecutor, $logger);
         $this->idealIssuerResource = $idealIssuerResource;
     }
 

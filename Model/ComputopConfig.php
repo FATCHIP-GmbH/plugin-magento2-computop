@@ -18,6 +18,7 @@ abstract class ComputopConfig
     const METHOD_KLARNA = 'computop_klarna';
     const METHOD_GIROPAY = 'computop_giropay';
     const METHOD_IDEAL = 'computop_ideal';
+    const METHOD_EASYCREDIT = 'computop_easycredit';
 
     const STATUS_CODE_SUCCESS = '00000000';
 

@@ -17,6 +17,29 @@ define(
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
+            isDateValid: function (year, month, day) {
+                if (!$.isNumeric(year) || !$.isNumeric(month) || !$.isNumeric(day)) {
+                    return false;
+                }
+
+                var birthDate = new Date(year + "-" + month + "-" + day);
+                if (birthDate.toString() === 'Invalid Date' ||
+                    birthDate.getFullYear() !== parseInt(year) ||
+                    birthDate.getMonth() + 1 !== parseInt(month) ||
+                    birthDate.getDate() !== parseInt(day)
+                ) {
+                    return false;
+                }
+                return true;
+            },
+            isBirthdayValid: function (year, month, day) {
+                var birthDate = new Date(year + "-" + month + "-" + day);
+                var minDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
+                if (birthDate > minDate) {
+                    return false;
+                }
+                return true;
+            },
             continueToComputop: function () {
                 if (this.validate() && additionalValidators.validate()) {
                     this.handleRedirectAction('computop/onepage/redirect/');

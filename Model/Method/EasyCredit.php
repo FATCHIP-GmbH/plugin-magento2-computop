@@ -1,0 +1,224 @@
+<?php
+
+namespace Fatchip\Computop\Model\Method;
+
+use Fatchip\Computop\Helper\Api;
+use Fatchip\Computop\Helper\Payment;
+use Fatchip\Computop\Model\Api\Request\Capture;
+use Fatchip\Computop\Model\Api\Request\Credit;
+use Fatchip\Computop\Model\Api\Request\EasyCreditConfirm;
+use Magento\Payment\Model\InfoInterface;
+use Fatchip\Computop\Model\ComputopConfig;
+use Magento\Framework\Event\ManagerInterface;
+use Magento\Payment\Gateway\Command\CommandManagerInterface;
+use Magento\Payment\Gateway\Command\CommandPoolInterface;
+use Magento\Payment\Gateway\Config\ValueHandlerPoolInterface;
+use Magento\Payment\Gateway\Data\PaymentDataObjectFactory;
+use Magento\Payment\Gateway\Validator\ValidatorPoolInterface;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Psr\Log\LoggerInterface;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Service\InvoiceService;
+use Fatchip\Computop\Model\Api\Request\RefNrChange;
+use Fatchip\Computop\Model\Api\Request\GetEasyCreditInfo;
+
+class EasyCredit extends RedirectNoOrder
+{
+    /**
+     * @var GetEasyCreditInfo
+     */
+    protected $getEasyCreditInfo;
+
+    /**
+     * @var EasyCreditConfirm
+     */
+    protected $easyCreditConfirm;
+
+    /**
+     * Method identifier of this payment method
+     *
+     * @var string
+     */
+    protected $methodCode = ComputopConfig::METHOD_EASYCREDIT;
+
+    /**
+     * Defines where API requests are sent to at the Comutop API
+     *
+     * @var string
+     */
+    protected $apiEndpoint = "easyCredit.aspx";
+
+    /**
+     * @param ManagerInterface $eventManager
+     * @param ValueHandlerPoolInterface $valueHandlerPool
+     * @param PaymentDataObjectFactory $paymentDataObjectFactory
+     * @param string $code
+     * @param string $formBlockType
+     * @param string $infoBlockType
+     * @param \Magento\Framework\Url $urlBuilder
+     * @param \Fatchip\Computop\Model\Api\Request\Authorization $authRequest
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param Payment $paymentHelper
+     * @param Api $apiHelper
+     * @param Capture $captureRequest
+     * @param Credit $creditRequest
+     * @param InvoiceService $invoiceService
+     * @param OrderSender $orderSender
+     * @param InvoiceSender $invoiceSender
+     * @param RefNrChange $refNrChange
+     * @param GetEasyCreditInfo $getEasyCreditInfo
+     * @param CommandPoolInterface|null $commandPool
+     * @param ValidatorPoolInterface|null $validatorPool
+     * @param CommandManagerInterface|null $commandExecutor
+     * @param LoggerInterface|null $logger
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
+    public function __construct(
+        ManagerInterface $eventManager,
+        ValueHandlerPoolInterface $valueHandlerPool,
+        PaymentDataObjectFactory $paymentDataObjectFactory,
+        $code,
+        $formBlockType,
+        $infoBlockType,
+        \Magento\Framework\Url $urlBuilder,
+        \Fatchip\Computop\Model\Api\Request\Authorization $authRequest,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        Payment $paymentHelper,
+        Api $apiHelper,
+        Capture $captureRequest,
+        Credit $creditRequest,
+        InvoiceService $invoiceService,
+        OrderSender $orderSender,
+        InvoiceSender $invoiceSender,
+        RefNrChange $refNrChange,
+        GetEasyCreditInfo $getEasyCreditInfo,
+        EasyCreditConfirm $easyCreditConfirm,
+        CommandPoolInterface $commandPool = null,
+        ValidatorPoolInterface $validatorPool = null,
+        CommandManagerInterface $commandExecutor = null,
+        LoggerInterface $logger = null
+    ) {
+        parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $apiHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $refNrChange, $commandPool, $validatorPool, $commandExecutor, $logger);
+        $this->getEasyCreditInfo = $getEasyCreditInfo;
+        $this->easyCreditConfirm = $easyCreditConfirm;
+    }
+
+    /**
+     * Return parameters specific to this payment type
+     *
+     * @param  Order|null $order
+     * @return array
+     */
+    public function getPaymentSpecificParameters(Order $order = null)
+    {
+        $dataSource = $order;
+        if ($order === null) {
+            $dataSource = $this->checkoutSession->getQuote();
+        }
+
+        $infoInstance = $this->getInfoInstance();
+
+        return [
+            #'Capture' => $this->getPaymentConfigParam('capture_method'),
+            'EventToken' => 'INT',
+            'version' => 'v3',
+            'Email' => $dataSource->getBillingAddress()->getEmail(),
+            'salutation' => 'Mr',
+            'FirstName' => $dataSource->getBillingAddress()->getFirstname(),
+            'bdFirstName' => $dataSource->getBillingAddress()->getFirstname(),
+            'bdLastName' => $dataSource->getBillingAddress()->getLastname(),
+            'LastName' => $dataSource->getBillingAddress()->getLastname(),
+            'sdFirstName' => $dataSource->getShippingAddress()->getFirstname(),
+            'sdLastName' => $dataSource->getShippingAddress()->getLastname(),
+            'bdZip' => '10587',
+            'sdZip' => '10587',
+            'bdCity' => 'Berlin',
+            'sdCity' => 'Berlin',
+            'bdCountryCode' => 'DE',
+            'sdCountryCode' => 'DE',
+            'bdStreet' => 'Helmholtzstr.',
+            'sdStreet' => 'Helmholtzstr.',
+            'bdStreetNr' => '2-9',
+            'sdStreetNr' => '2-9',
+            'DateOfBirth' => $this->getBirthday($dataSource->getCustomer()),
+            #'orderDesc' => 'Demoshop',
+            #'IPAddress' => '178.19.213.38',
+            #'language' => 'de',
+        ];
+    }
+
+    /**
+     * Returns the customers birthday if known
+     *
+     * @return string
+     */
+    protected function getBirthday($customer)
+    {
+        $dateOfBirth = $this->checkoutSession->getComputopEasyCreditDob();
+        if (!empty($dateOfBirth)) {
+            return $dateOfBirth;
+        }
+        return $customer->getDob();
+    }
+
+    /**
+     * URL where payment/order is finished
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getFinishUrl()
+    {
+        return $this->urlBuilder->getUrl('computop/onepage/easyCreditReview');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function authorize(InfoInterface $payment, $amount)
+    {
+        $parentReturn = parent::authorize($payment, $amount);
+
+        $order = $payment->getOrder();
+
+        $infoResponse = $this->checkoutSession->getComputopEasyCreditInfo();
+
+        // Throws exception when status is not successful, so no check for that needed here
+        $confirmResponse = $this->easyCreditConfirm->sendRequest($payment, $infoResponse);
+        $this->checkoutSession->setComputopEasyCreditConfirmResponse($confirmResponse);
+
+        if (!empty($confirmResponse['PayID'])) {
+            $this->refNrChange->changeRefNr($confirmResponse['PayID'], $this->apiHelper->getReferenceNumber($order->getIncrementId()));
+        }
+
+        if (!empty($confirmResponse['TransID'])) {
+            $this->setTransactionId($payment, $confirmResponse['TransID']);
+        }
+
+        $this->finalizeOrder($payment, $confirmResponse);
+
+        return $parentReturn;
+    }
+
+    /**
+     * @return string|false
+     */
+    public function postReviewPlaceOrder()
+    {
+        $response = $this->checkoutSession->getComputopEasyCreditConfirmResponse();
+        if ($this->apiHelper->isSuccessStatus($response)) {
+            return 'checkout/onepage/success';
+        }
+        return false;
+    }
+
+    public function getAuthRequestFromQuote()
+    {
+        $return = parent::getAuthRequestFromQuote();
+        $this->checkoutSession->unsComputopEasyCreditInfo();
+        $this->checkoutSession->unsComputopNoOrderRedirectResponse();
+        $this->checkoutSession->unsComputopEasyCreditConfirmResponse();
+        return $return;
+    }
+}

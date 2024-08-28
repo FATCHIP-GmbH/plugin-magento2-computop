@@ -2,6 +2,7 @@
 
 namespace Fatchip\Computop\Controller\Onepage;
 
+use Fatchip\Computop\Model\Method\RedirectNoOrder;
 use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
@@ -71,6 +72,21 @@ class Returned extends \Magento\Framework\App\Action\Action implements CsrfAware
         return $this->_redirect($this->_url->getUrl('checkout/cart'));
     }
 
+    protected function getPayment()
+    {
+        $isNoOrderRedirect = $this->checkoutSession->getComputopRedirectNoOrder();
+
+        $order = $this->checkoutSession->getLastRealOrder();
+        if ($order->getId() && empty($isNoOrderRedirect)) {
+            $payment = $order->getPayment();
+        } else {
+            $quote = $this->checkoutSession->getQuote();
+            $payment = $quote->getPayment();
+        }
+        $this->checkoutSession->unsComputopRedirectNoOrder();
+        return $payment;
+    }
+
     /**
      * Handles return to shop
      *
@@ -83,21 +99,18 @@ class Returned extends \Magento\Framework\App\Action\Action implements CsrfAware
         $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
         $this->apiLog->addApiLogResponse($response);
 
-        $order = $this->checkoutSession->getLastRealOrder();
-        if ($order->getId()) {
-            $payment = $order->getPayment();
-        } else {
-            $quote = $this->checkoutSession->getQuote();
-            $payment = $quote->getPayment();
-        }
-
+        $payment = $this->getPayment();
         if (!$payment->getMethod()) { // order process probably was cancelled because of fraud prevention in \Fatchip\Computop\Observer\CancelOrderProcess
             return $this->redirectToCart();
         }
         $methodInstance = $payment->getMethodInstance();
-
+        
         try {
             $methodInstance->handleResponse($payment, $response);
+            if ($methodInstance instanceof RedirectNoOrder) {
+                $this->checkoutSession->setComputopNoOrderRedirectResponse($response);
+                return $this->_redirect($methodInstance->getFinishUrl());
+            }
         } catch(\Exception $e) {
             return $this->redirectToCart();
         }

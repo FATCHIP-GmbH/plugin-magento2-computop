@@ -32,6 +32,18 @@ class Giropay extends RedirectPayment
     }
 
     /**
+     * Hook for extension by the real payment method classes
+     *
+     * @return array
+     */
+    public function getFrontendConfig()
+    {
+        return [
+            'requestBic' => (bool)$this->getPaymentConfigParam('request_bic'),
+        ];
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order|null $order

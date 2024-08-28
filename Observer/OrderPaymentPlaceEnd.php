@@ -25,6 +25,10 @@ class OrderPaymentPlaceEnd implements ObserverInterface
         'computop_ppe_pay_id',
         'computop_api_log_data',
         'computop_quote_comparison_string',
+        'computop_no_order_redirect_response',
+        'computop_easy_credit_dob',
+        #'computop_easy_credit_info',
+        #'computop_easy_credit_confirm_response',
     ];
 
     /**

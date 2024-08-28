@@ -32,6 +32,10 @@ define(
             {
                 type: 'computop_ideal',
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/ideal-method'
+            },
+            {
+                type: 'computop_easycredit',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/easycredit-method'
             }
         );
         /** Add view logic here if needed */

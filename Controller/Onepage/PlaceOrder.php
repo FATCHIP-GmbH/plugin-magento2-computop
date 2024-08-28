@@ -91,6 +91,7 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
         try {
             $quote = $this->checkoutSession->getQuote();
 
+            $methodInstance = $quote->getPayment()->getMethodInstance();
             if ($this->checkoutHelper->getQuoteComparisonString($quote) != $this->checkoutSession->getComputopQuoteComparisonString()) {
                 // The basket was changed - abort current checkout
                 $this->messageManager->addErrorMessage('An error occured during the Checkout.');
@@ -98,26 +99,16 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
                 return;
             }
 
-            $this->checkoutSession->setComputopPpeIsExpressOrder(true);
-            $this->checkoutSession->setComputopPpeIsExpressAuthStep(true);
-            $quote->getPayment()->getMethodInstance()->setIsExpressOrder(true);
-            $quote->getPayment()->getMethodInstance()->setIsExpressAuthStep(true);
+            $methodInstance->preReviewPlaceOrder($quote);
 
             $orderId = $this->placeOrder($quote);
 
-            $response = $this->checkoutSession->getComputopPpeCompleteResponse();
-            if ($this->apiHelper->isSuccessStatus($response)) {
-                // "last successful quote"
-                #$quoteId = $quote->getId();
-                #$this->checkoutSession->setLastQuoteId($quoteId)->setLastSuccessQuoteId($quoteId);
+            $redirectTarget = $methodInstance->postReviewPlaceOrder();
 
-                #$quote->setIsActive(false)->save();
-
+            if (!empty($redirectTarget)) {
                 $this->clearSessionParams();
 
-                $this->_redirect('checkout/onepage/success');
-            } elseif(!empty($response['paypalurl'])) {
-                $this->_redirect($response['paypalurl']);
+                $this->_redirect($redirectTarget);
             }
         } catch (\Exception $e) {
             $this->messageManager->addExceptionMessage(
