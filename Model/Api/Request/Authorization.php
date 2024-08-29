@@ -6,7 +6,8 @@ use Fatchip\Computop\Model\ComputopConfig;
 use Fatchip\Computop\Model\Method\BaseMethod;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
-use Magento\Sales\Model\Order\Address;
+use Magento\Sales\Model\Order\Address as OrderAddress;
+use Magento\Quote\Model\Quote\Address as QuoteAddress;
 use Magento\Quote\Model\Quote;
 
 class Authorization extends Base
@@ -69,7 +70,6 @@ class Authorization extends Base
         $this->addParameters($methodInstance->getPaymentSpecificParameters($order));
 
         $params = $this->getParameters();
-
         if ($log === true) {
             $this->apiLog->addApiLogEntry($methodInstance->getRequestType(), $params, null, $order);
         }
@@ -102,6 +102,14 @@ class Authorization extends Base
             $this->addParameter('shippingAddress', $this->getAddressInfo($order->getShippingAddress()));
         }
 
+        if ($methodInstance->isBillingAddressDataNeeded() === true) {
+            $this->addParameters($this->getAddressParameters($order->getBillingAddress(), 'bd'));
+        }
+
+        if ($methodInstance->isShippingAddressDataNeeded() === true) {
+            $this->addParameters($this->getAddressParameters($order->getShippingAddress(), 'sd'));
+        }
+
         return $this->generateRequest($methodInstance, $amount, $currency, $refNr, $order, $encrypt, $log);
     }
 
@@ -111,16 +119,63 @@ class Authorization extends Base
         $currency = $quote->getQuoteCurrencyCode();
         $refNr = $methodInstance->getTemporaryRefNr($quote->getId());
 
+        if ($methodInstance->isBillingAddressDataNeeded() === true) {
+            $this->addParameters($this->getAddressParameters($quote->getBillingAddress(), 'bd'));
+        }
+
+        if ($methodInstance->isShippingAddressDataNeeded() === true) {
+            $this->addParameters($this->getAddressParameters($quote->getShippingAddress(), 'sd'));
+        }
+
         return $this->generateRequest($methodInstance, $amount, $currency, $refNr, null, $encrypt, $log);
+    }
+
+    protected function splitStreet($streetWithNr)
+    {
+        preg_match('/^([^\d]*[^\d\s]) *(\d.*)$/', $streetWithNr, $matches);
+        $street = $streetWithNr;
+        $streetNr = "";
+        if (is_array($matches) && count($matches) >= 2) {
+            $street = $matches[1];
+            $streetNr = $matches[2];
+        }
+
+        return [
+            'street' => $street,
+            'streetnr' => $streetNr,
+        ];
+    }
+
+    /**
+     * @param OrderAddress|QuoteAddress $address
+     * @param string                    $prefix
+     * @return array
+     */
+    protected function getAddressParameters($address, $prefix = '')
+    {
+        $street = $address->getStreet();
+        $street = is_array($street) ? implode(' ', $street) : $street; // street may be an array
+        $split = $this->splitStreet(trim($street ?? ''));
+
+        $params = [
+            $prefix.'FirstName' => $address->getFirstname(),
+            $prefix.'LastName' => $address->getLastname(),
+            $prefix.'Zip' => $address->getPostcode(),
+            $prefix.'City' => $address->getCity(),
+            $prefix.'CountryCode' => $address->getCountryId(),
+            $prefix.'Street' => $split['street'],
+            $prefix.'StreetNr' => $split['streetnr'],
+        ];
+        return $params;
     }
 
     /**
      * Returns address string (json and base64 encoded)
      *
-     * @param  Address $address
+     * @param  OrderAddress|QuoteAddress $address
      * @return string
      */
-    protected function getAddressInfo(Address $address)
+    protected function getAddressInfo($address)
     {
         $street = $address->getStreet();
         $street = is_array($street) ? implode(' ', $street) : $street; // street may be an array

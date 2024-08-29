@@ -139,6 +139,20 @@ abstract class BaseMethod extends Adapter
     protected $sendAddressData = false;
 
     /**
+     * Determines if auth requests adds billing address parameters to the request
+     *
+     * @var bool
+     */
+    protected $addBillingAddressData = false;
+
+    /**
+     * Determines if auth requests adds shipping address parameters to the request
+     *
+     * @var bool
+     */
+    protected $addShippingAddressData = false;
+
+    /**
      * @param ManagerInterface $eventManager
      * @param ValueHandlerPoolInterface $valueHandlerPool
      * @param PaymentDataObjectFactory $paymentDataObjectFactory
@@ -233,6 +247,26 @@ abstract class BaseMethod extends Adapter
     public function isAddressDataNeeded()
     {
         return $this->sendAddressData;
+    }
+
+    /**
+     * Returns if address parameters have to be added in auth request
+     *
+     * @return bool
+     */
+    public function isBillingAddressDataNeeded()
+    {
+        return $this->addBillingAddressData;
+    }
+
+    /**
+     * Returns if address parameters have to be added in auth request
+     *
+     * @return bool
+     */
+    public function isShippingAddressDataNeeded()
+    {
+        return $this->addShippingAddressData;
     }
 
     /**

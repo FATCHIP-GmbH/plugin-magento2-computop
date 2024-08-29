@@ -50,6 +50,20 @@ class EasyCredit extends RedirectNoOrder
     protected $apiEndpoint = "easyCredit.aspx";
 
     /**
+     * Determines if auth requests adds billing address parameters to the request
+     *
+     * @var bool
+     */
+    protected $addBillingAddressData = true;
+
+    /**
+     * Determines if auth requests adds shipping address parameters to the request
+     *
+     * @var bool
+     */
+    protected $addShippingAddressData = true;
+
+    /**
      * @param ManagerInterface $eventManager
      * @param ValueHandlerPoolInterface $valueHandlerPool
      * @param PaymentDataObjectFactory $paymentDataObjectFactory
@@ -124,23 +138,9 @@ class EasyCredit extends RedirectNoOrder
             'EventToken' => 'INT',
             'version' => 'v3',
             'Email' => $dataSource->getBillingAddress()->getEmail(),
-            'salutation' => 'Mr',
+            'salutation' => 'Mr', // salutation is not gathered in Magento, therefor always send 'Mr'
             'FirstName' => $dataSource->getBillingAddress()->getFirstname(),
-            'bdFirstName' => $dataSource->getBillingAddress()->getFirstname(),
-            'bdLastName' => $dataSource->getBillingAddress()->getLastname(),
             'LastName' => $dataSource->getBillingAddress()->getLastname(),
-            'sdFirstName' => $dataSource->getShippingAddress()->getFirstname(),
-            'sdLastName' => $dataSource->getShippingAddress()->getLastname(),
-            'bdZip' => '10587',
-            'sdZip' => '10587',
-            'bdCity' => 'Berlin',
-            'sdCity' => 'Berlin',
-            'bdCountryCode' => 'DE',
-            'sdCountryCode' => 'DE',
-            'bdStreet' => 'Helmholtzstr.',
-            'sdStreet' => 'Helmholtzstr.',
-            'bdStreetNr' => '2-9',
-            'sdStreetNr' => '2-9',
             'DateOfBirth' => $this->getBirthday($dataSource->getCustomer()),
             #'orderDesc' => 'Demoshop',
             #'IPAddress' => '178.19.213.38',
