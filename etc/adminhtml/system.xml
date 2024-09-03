@@ -55,6 +55,7 @@
             <include path="Fatchip_Computop::system/computop_giropay.xml"/>
             <include path="Fatchip_Computop::system/computop_ideal.xml"/>
             <include path="Fatchip_Computop::system/computop_easycredit.xml"/>
+            <include path="Fatchip_Computop::system/computop_amazonpay.xml"/>
         </section>
     </system>
 </config>

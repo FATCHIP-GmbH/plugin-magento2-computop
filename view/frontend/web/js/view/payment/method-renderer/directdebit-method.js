@@ -67,7 +67,7 @@ define(
             },
             getData: function () {
                 document.getElementById(this.getCode() + '_iban').value = this.getCleanedNumber(this.iban());
-                if (this.requestBic() == 1) {
+                if (this.requestBic() == true) {
                     document.getElementById(this.getCode() + '_bic').value = this.getCleanedNumber(this.bic());
                 }
 

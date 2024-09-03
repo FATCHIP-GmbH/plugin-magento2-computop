@@ -52,10 +52,6 @@ class CancelOrderProcess implements ObserverInterface
      */
     protected function canCancelOrder(Order $order)
     {
-        #if ($this->hasNotifyStatus($order) === true) {
-        #    return false;
-        #}
-
         if ($order->hasInvoices() === true) {
             return false;
         }

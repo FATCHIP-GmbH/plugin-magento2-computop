@@ -36,6 +36,10 @@ define(
             {
                 type: 'computop_easycredit',
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/easycredit-method'
+            },
+            {
+                type: 'computop_amazonpay',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/amazonpay-method'
             }
         );
         /** Add view logic here if needed */

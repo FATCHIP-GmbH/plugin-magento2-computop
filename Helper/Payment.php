@@ -19,6 +19,7 @@ class Payment extends Base
         ComputopConfig::METHOD_GIROPAY,
         ComputopConfig::METHOD_IDEAL,
         ComputopConfig::METHOD_EASYCREDIT,
+        ComputopConfig::METHOD_AMAZONPAY,
     ];
 
     /**

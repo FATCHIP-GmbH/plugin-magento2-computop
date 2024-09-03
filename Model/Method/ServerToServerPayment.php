@@ -7,6 +7,20 @@ use Magento\Payment\Model\InfoInterface;
 abstract class ServerToServerPayment extends BaseMethod
 {
     /**
+     * Determine if order will be finished directly after auth call or later
+     *
+     * @var bool
+     */
+    protected $finishOrderAfterAuth = true;
+
+    /**
+     * Determine if order will be finished directly after auth call or later
+     *
+     * @var bool
+     */
+    protected $handleSpecificAfterAuth = false;
+
+    /**
      * @inheritdoc
      */
     public function authorize(InfoInterface $payment, $amount)
@@ -17,8 +31,11 @@ abstract class ServerToServerPayment extends BaseMethod
 
         $response = $this->authRequest->sendCurlRequest($payment->getOrder(), $payment, $amount);
 
-        $this->handleResponse($payment, $response);
+        $this->handleResponse($payment, $response, $this->finishOrderAfterAuth);
 
+        if ($this->handleSpecificAfterAuth === true) {
+            $this->handleResponseSpecific($payment, $response);
+        }
         return $this;
     }
 }

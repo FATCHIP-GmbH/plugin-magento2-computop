@@ -351,15 +351,25 @@ abstract class BaseMethod extends Adapter
     }
 
     /**
-     * @param InfoInterface $payment
-     * @param               $response
+     * @param  array $response
      * @return void
      */
-    public function handleResponse(InfoInterface $payment, $response)
+    protected function checkResponseForSuccess($response)
     {
         if ($this->authRequest->getApiHelper()->isSuccessStatus($response) === false) {
             throw new LocalizedException(__($response['Description'] ?? 'Error'));
         }
+    }
+
+    /**
+     * @param  InfoInterface $payment
+     * @param  array         $response
+     * @param  bool          $finalizeOrder
+     * @return void
+     */
+    public function handleResponse(InfoInterface $payment, $response, $finalizeOrder = true)
+    {
+        $this->checkResponseForSuccess($response);
 
         if ($this instanceof ServerToServerPayment || $this->setTransactionPreAuthorization === false || ($this instanceof PayPal && $this->isExpressAuthStep())) { // false = set POST auth
             $save = true;
@@ -369,7 +379,7 @@ abstract class BaseMethod extends Adapter
             $this->setTransactionId($payment, $response['TransID'], $save);
         }
 
-        if (!$this instanceof RedirectNoOrder) { // RedirectNoOrder methods did not create an order yet
+        if ($finalizeOrder === true && !$this instanceof RedirectNoOrder) { // RedirectNoOrder methods did not create an order yet
             $this->finalizeOrder($payment, $response);
         }
     }

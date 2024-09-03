@@ -194,6 +194,24 @@ class Blowfish
     }
 
     /**
+     * @param  string $splitString
+     * @return array
+     */
+    protected function ctSplit($splitString)
+    {
+        // $splitString will be a URL-like param string but must not be treated like that!
+        // Like a=1&b=2&c=3
+        $splitArray = explode('&', $splitString); // what happens when there is a legit "&" in one of the parameters values???
+
+        $result = [];
+        foreach ($splitArray as $text) {
+            $split = explode("=", $text, 2); // Limit 2 is important to not truncate values with a legit "=" in it
+            $result[$split[0]] = $split[1];
+        }
+        return $result;
+    }
+
+    /**
      * Decrypt the passed HEX string with Blowfish.
      *
      * @param  string  $cipher
@@ -216,7 +234,7 @@ class Blowfish
         }
         $this->setKey($password);
         $decrypted = mb_substr($this->decrypt($cipher), 0, $len);
-        parse_str($decrypted, $decryptedArray);
+        $decryptedArray = $this->ctSplit($decrypted);
         return $decryptedArray;
     }
 }

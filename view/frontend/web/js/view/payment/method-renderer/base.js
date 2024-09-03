@@ -49,6 +49,12 @@ define(
             redirect: function(redirectUrl) {
                 window.location.replace(url.build(redirectUrl));
             },
+            getFrontendConfigParam: function(param) {
+                if (this.getCode() in window.checkoutConfig.payment.computop && param in window.checkoutConfig.payment.computop[this.getCode()]) {
+                    return window.checkoutConfig.payment.computop[this.getCode()][param];
+                }
+                return null;
+            },
             handleRedirectAction: function(url) {
                 var self = this;
 

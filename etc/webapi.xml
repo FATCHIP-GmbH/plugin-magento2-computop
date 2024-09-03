@@ -17,6 +17,23 @@
         </data>
     </route>
 
+    <route url="/V1/guest-carts/:orderId/computop-getAmazonPayApbSession" method="POST">
+        <service class="Fatchip\Computop\Api\AmazonPayInterface" method="getAmazonPayApbSession"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <route url="/V1/carts/mine/computop-getAmazonPayApbSession" method="POST">
+        <service class="Fatchip\Computop\Api\AmazonPayInterface" method="getAmazonPayApbSession"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="orderId" force="true">%order_id%</parameter>
+        </data>
+    </route>
+
     <route url="/V1/guest-carts/:cartId/computop-startPayPalExpress" method="POST">
         <service class="Fatchip\Computop\Api\StartPayPalExpressInterface" method="start"/>
         <resources>

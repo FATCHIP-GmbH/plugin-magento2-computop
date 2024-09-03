@@ -131,6 +131,20 @@ class Api extends Base
         }
         return false;
     }
+    
+    /**
+     * Check if given response has a pending response
+     *
+     * @param  array $response
+     * @return bool
+     */
+    public function isPendingStatus($response)
+    {
+        if (isset($response['Status']) && ($response['Status'] == ComputopConfig::STATUS_PENDING || substr($response['Code'], 0, 1) == '6')) { # 6 = Pending
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @param  string $transId

@@ -5,6 +5,8 @@
     <preference for="Fatchip\Computop\Api\Data\CreditcardRequestDataResponseInterface" type="Fatchip\Computop\Service\V1\Data\CreditcardRequestDataResponse" />
     <preference for="Fatchip\Computop\Api\StartPayPalExpressInterface" type="Fatchip\Computop\Service\V1\StartPayPalExpress" />
     <preference for="Fatchip\Computop\Api\Data\StartPayPalExpressResponseInterface" type="Fatchip\Computop\Service\V1\Data\StartPayPalExpressResponse" />
+    <preference for="Fatchip\Computop\Api\AmazonPayInterface" type="Fatchip\Computop\Service\V1\AmazonPay" />
+    <preference for="Fatchip\Computop\Api\Data\AmazonPayResponseInterface" type="Fatchip\Computop\Service\V1\Data\AmazonPayResponse" />
     <!-- END - REST API PREFERENCES -->
 
     <!-- START - PAYMENT CONFIG -->
@@ -179,6 +181,29 @@
     <virtualType name="ComputopCreditcardVaultPaymentConfigEasyCredit" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_EASYCREDIT</argument>
+        </arguments>
+    </virtualType>
+    <!-- Amazon Pay Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\AmazonPay">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolAmazonPay</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolAmazonPay" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerAmazonPay</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerAmazonPay" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigAmazonPay</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigAmazonPay" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_AMAZONPAY</argument>
         </arguments>
     </virtualType>
     <!-- END - PAYMENT CONFIG -->
