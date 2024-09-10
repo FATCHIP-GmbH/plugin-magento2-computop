@@ -125,12 +125,17 @@ class Base
     /**
      * Returns transaction id for this request
      *
+     * @param  Order|null $order
      * @return string
      */
-    public function getTransactionId()
+    public function getTransactionId(Order $order = null)
     {
         if (empty($this->transactionId)) {
-            $this->transactionId = $this->paymentHelper->getTransactionId();
+            if (!empty($order)) {
+                $this->transactionId = $order->getIncrementId();
+            } else {
+                $this->transactionId = $this->paymentHelper->getTransactionId();
+            }
         }
         return $this->transactionId;
     }
