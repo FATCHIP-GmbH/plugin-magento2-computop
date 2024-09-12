@@ -166,7 +166,7 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
         if ($this->paypalMethod->getCaptureMode() == CaptureMethods::CAPTURE_AUTO) {
             $intent = "capture";
         }
-        return "https://www.paypal.com/sdk/js?client-id=ARCsDK7xBFxa5pnGxk8qvB0STB07fyi_yHDRrb5al6gxahj73Pxg9X2l7onP9J2IN-LqcVJojys94FLK&merchant-id=".$this->getPayerId()."&currency=".$this->getCurrency()."&disable-funding=giropay,sofort,sepa,card&intent=".$intent;
+        return "https://www.paypal.com/sdk/js?client-id=".$this->getClientId()."&merchant-id=".$this->getPayerId()."&currency=".$this->getCurrency()."&disable-funding=giropay,sofort,sepa,card&intent=".$intent;
     }
 
     /**
@@ -216,6 +216,28 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
     protected function getPayerId()
     {
         return $this->paypalMethod->getPaymentConfigParam('paypal_account_id');
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientId()
+    {
+        if ((bool)$this->paypalMethod->getPaymentConfigParam('express_livemode') === false) {
+            return 'ARCsDK7xBFxa5pnGxk8qvB0STB07fyi_yHDRrb5al6gxahj73Pxg9X2l7onP9J2IN-LqcVJojys94FLK';
+        }
+        return $this->paypalMethod->getPaymentConfigParam('paypal_client_id');
+    }
+
+    /**
+     * @return string
+     */
+    public function getPartnerAttributionId()
+    {
+        if ((bool)$this->paypalMethod->getPaymentConfigParam('express_livemode') === false) {
+            return 'Computop_PSP_PCP_Test';
+        }
+        return $this->paypalMethod->getPaymentConfigParam('paypal_partner_attribution_id');
     }
 
     /**
