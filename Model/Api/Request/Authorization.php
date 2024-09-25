@@ -53,6 +53,10 @@ class Authorization extends Base
      */
     public function generateRequest(BaseMethod $methodInstance, $amount, $currency, $refNr, Order $order = null, $encrypt = false, $log = false)
     {
+        if (!empty($order)) {
+            $this->setStoreCode($order->getStore()->getCode(), false);
+        }
+
         $this->addParameter('Currency', $currency);
         $this->addParameter('Amount', $this->apiHelper->formatAmount($amount));
 
