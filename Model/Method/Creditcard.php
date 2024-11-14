@@ -41,6 +41,11 @@ class Creditcard extends RedirectPayment
     protected $sendAddressData = true;
 
     /**
+     * @var bool
+     */
+    protected $addLanguageToUrl = true;
+
+    /**
      * Returns the API endpoint
      *
      * @return string
