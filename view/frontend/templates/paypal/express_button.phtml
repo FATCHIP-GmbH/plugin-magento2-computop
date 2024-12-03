@@ -1,16 +1,22 @@
 <div id="<?php echo $this->getButtonId(); ?>"></div>
 
 <script>
+    var ctPayPalAttempts = 0;
+
     function loadPayPalScript() {
         if (window.paypalJsLoaded === undefined || window.paypalJsLoaded !== true) {
             require(['jquery'], function($) {
-                $("body").append("<script type=\"text/javascript\" src=\"<?php echo $this->getJavascriptUrl(); ?>\" data-partner-attribution-id=\"Computop_PSP_PCP_Test\"><\/script>");
+                $("body").append("<script type=\"text/javascript\" src=\"<?php echo $this->getJavascriptUrl(); ?>\" data-partner-attribution-id=\"<?php echo $this->getPartnerAttributionId(); ?>\"><\/script>");
             });
             window.paypalJsLoaded = true;
         }
     }
 
     function checkForPaypalObject(buttonId) {
+        if (ctPayPalAttempts > 10) {
+            return; // stop trying
+        }
+
         if (typeof paypal != 'object') {
             loadPayPalScript();
             setTimeout(function() {
@@ -19,6 +25,7 @@
         } else {
             initPayPalButton(buttonId);
         }
+        ctPayPalAttempts++;
     }
 
     function initPayPalButton(buttonId) {

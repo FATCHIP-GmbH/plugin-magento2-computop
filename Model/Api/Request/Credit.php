@@ -28,6 +28,8 @@ class Credit extends Base
     {
         $order = $payment->getOrder();
 
+        $this->setStoreCode($order->getStore()->getCode());
+
         /** @var BaseMethod $methodInstance */
         $methodInstance = $payment->getMethodInstance();
 

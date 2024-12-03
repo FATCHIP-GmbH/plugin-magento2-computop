@@ -114,23 +114,31 @@ class Base
      * Initialize request
      * Set all default parameters
      *
+     * @param bool $clearParams
      * @return void
      */
-    protected function initRequest()
+    protected function initRequest($clearParams = true)
     {
-        $this->parameters = []; // clear parameters
+        if ($clearParams === true) {
+            $this->parameters = []; // clear parameters
+        }
         $this->addParameter('MerchantID', $this->paymentHelper->getConfigParam('merchantid', 'global', 'computop_general', $this->storeCode));
     }
 
     /**
      * Returns transaction id for this request
      *
+     * @param  Order|null $order
      * @return string
      */
-    public function getTransactionId()
+    public function getTransactionId(Order $order = null)
     {
         if (empty($this->transactionId)) {
-            $this->transactionId = $this->paymentHelper->getTransactionId();
+            if (!empty($order)) {
+                $this->transactionId = $order->getIncrementId();
+            } else {
+                $this->transactionId = $this->paymentHelper->getTransactionId();
+            }
         }
         return $this->transactionId;
     }
@@ -237,13 +245,14 @@ class Base
      * Set current store code and reinit base parameters
      *
      * @param  string $storeCode
+     * @param  biil   $clearParams
      * @return void
      */
-    public function setStoreCode($storeCode)
+    public function setStoreCode($storeCode, $clearParams = true)
     {
         if ($this->storeCode != $storeCode) {
             $this->storeCode = $storeCode;
-            $this->initRequest(); //reinit base parameters
+            $this->initRequest($clearParams); //reinit base parameters
         }
     }
 
