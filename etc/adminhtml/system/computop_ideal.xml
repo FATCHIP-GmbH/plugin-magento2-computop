@@ -24,10 +24,6 @@
             <label>Instructions</label>
             <config_path>payment/computop_ideal/instructions</config_path>
         </field>
-        <field id="update_ideal_banks" translate="button_label" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
-            <button_label>Update iDEAL banks</button_label>
-            <frontend_model>Fatchip\Computop\Block\Adminhtml\Config\Form\Field\UpdateIdealBanks</frontend_model>
-        </field>
         <field id="min_order_total" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Minimum Order Total</label>
             <config_path>payment/computop_ideal/min_order_total</config_path>

@@ -17,29 +17,6 @@
             <!--/ko-->
         </div>
 
-        <!-- ko if: showIssuerList() -->
-            <form class="ideal_form" action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
-                <fieldset data-bind="attr: {class: 'fieldset payment items ' + getCode()}">
-                    <div class="field">
-                        <label data-bind="attr: {for: getCode() + '_ideal_issuer'}" class="label">
-                            <span><!-- ko i18n: 'Bank'--><!-- /ko --></span>
-                        </label>
-                        <div class='control'>
-                            <select style="width:200px;" name="payment[ideal_issuer]" class="select"
-                                    data-bind=" attr: {id: getCode() + '_ideal_issuer', 'data-container': getCode() + '_ideal_issuer'},
-                                            enable: true,
-                                            options: getIdealIssuers(),
-                                            optionsValue: 'issuer_id',
-                                            optionsText: 'name',
-                                            optionsCaption: $t('--Please Select--'),
-                                            value: idealIssuer">
-                            </select>
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
-        <!--/ko-->
-
         <p data-bind="html: getInstructions()"></p>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
