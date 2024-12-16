@@ -24,6 +24,31 @@ class Api extends Base
     protected $defaultLocale = 'EN';
 
     /**
+     * Source: https://en.wikipedia.org/wiki/ISO_4217#Active_codes_(List_One)
+     *
+     * @var array
+     */
+    protected $nonDecimalCurrencies = [
+        'BIF', // Burundian franc	 Burundi
+        'CLP', // Chilean peso	 Chile
+        'DJF', // Djiboutian franc	 Djibouti
+        'GNF', // Guinean franc	 Guinea
+        'ISK', // Icelandic króna (plural: krónur)	 Iceland
+        'JPY', // Japanese yen	 Japan
+        'KMF', // Comoro franc	 Comoros
+        'KRW', // South Korean won	 South Korea
+        'PYG', // Paraguayan guaraní	 Paraguay
+        'RWF', // Rwandan franc	 Rwanda
+        'UGX', // Ugandan shilling	 Uganda
+        'UYI', // Uruguay Peso en Unidades Indexadas (URUIURUI) (funds code)	 Uruguay
+        'VND', // Vietnamese đồng	 Vietnam
+        'VUV', // Vanuatu vatu	 Vanuatu
+        'XAF', // CFA franc BEAC	 Cameroon (CM),  Central African Republic (CF),  Republic of the Congo (CG),  Chad (TD),  Equatorial Guinea (GQ),  Gabon (GA)
+        'XOF', // CFA franc BCEAO	 Benin (BJ),  Burkina Faso (BF),  Côte d'Ivoire (CI),  Guinea-Bissau (GW),  Mali (ML),  Niger (NE),  Senegal (SN),  Togo (TG)
+        'XPF', // CFP franc (franc Pacifique)	French territories of the Pacific Ocean:  French Polynesia (PF),  New Caledonia (NC),  Wallis and Futuna (WF)
+    ];
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context      $context
@@ -48,12 +73,17 @@ class Api extends Base
      * Formats amount for API
      * Docs say: Amount in the smallest currency unit (e.g. EUR Cent)
      *
-     * @param $amount
+     * @param double $amount
+     * @param string $currencyCode
      * @return float|int
      */
-    public function formatAmount($amount)
+    public function formatAmount($amount, $currencyCode = 'EUR')
     {
-        return number_format($amount * 100, 0, '.', '');
+        $decimalMultiplier = 100;
+        if (in_array($currencyCode, $this->nonDecimalCurrencies)) {
+            $decimalMultiplier = 1;
+        }
+        return number_format($amount * $decimalMultiplier, 0, '.', '');
     }
 
     /**

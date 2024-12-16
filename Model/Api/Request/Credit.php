@@ -24,6 +24,17 @@ class Credit extends Base
      */
     protected $apiEndpoint = "credit.aspx";
 
+    /**
+     * @param InfoInterface $payment
+     * @return double
+     */
+    protected function getDisplayAmount(InfoInterface $payment)
+    {
+        $oCreditmemo = $payment->getCreditmemo();
+
+        return $oCreditmemo->getGrandTotal();
+    }
+
     public function generateRequest(InfoInterface $payment, $amount)
     {
         $order = $payment->getOrder();
@@ -33,8 +44,10 @@ class Credit extends Base
         /** @var BaseMethod $methodInstance */
         $methodInstance = $payment->getMethodInstance();
 
+        $amount = $this->getDisplayAmount($payment);
+
         $this->addParameter('Currency', $order->getOrderCurrencyCode());
-        $this->addParameter('Amount', $this->apiHelper->formatAmount($amount));
+        $this->addParameter('Amount', $this->apiHelper->formatAmount($amount, $order->getOrderCurrencyCode()));
         $this->addParameter('PayID', $order->getComputopPayid());
 
         $this->addParameter('TransID', $this->apiHelper->getTruncatedTransactionId($payment->getTransactionId())); // Generate new TransID for further use with this transaction

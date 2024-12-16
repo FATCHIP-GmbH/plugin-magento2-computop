@@ -58,7 +58,7 @@ class Authorization extends Base
         }
 
         $this->addParameter('Currency', $currency);
-        $this->addParameter('Amount', $this->apiHelper->formatAmount($amount));
+        $this->addParameter('Amount', $this->apiHelper->formatAmount($amount, $currency));
 
         $this->addParameter('TransID', $this->getTransactionId($order));
         $this->addParameter('ReqId', $this->paymentHelper->getRequestId());

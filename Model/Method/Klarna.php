@@ -116,17 +116,18 @@ class Klarna extends RedirectPayment
      * @param  double $total
      * @param  double $totalTax
      * @param  double $unitPrice
+     * @param  string $currency
      * @return array
      */
-    protected function getArticleListEntry($name, $qty, $taxRate, $total, $totalTax, $unitPrice)
+    protected function getArticleListEntry($name, $qty, $taxRate, $total, $totalTax, $unitPrice, $currency)
     {
         return [
             'name' => $name,
             'quantity' => $qty,
-            'tax_rate' => $this->apiHelper->formatAmount($taxRate),
-            'total_amount' => $this->apiHelper->formatAmount($total),
-            'total_tax_amount' => $this->apiHelper->formatAmount($totalTax),
-            'unit_price' => $this->apiHelper->formatAmount($unitPrice),
+            'tax_rate' => $this->apiHelper->formatAmount($taxRate, $currency),
+            'total_amount' => $this->apiHelper->formatAmount($total, $currency),
+            'total_tax_amount' => $this->apiHelper->formatAmount($totalTax, $currency),
+            'unit_price' => $this->apiHelper->formatAmount($unitPrice, $currency),
         ];
     }
 
@@ -134,9 +135,10 @@ class Klarna extends RedirectPayment
      * Create product ArticleList entry from order item
      *
      * @param $item
+     * @param string $currency
      * @return array
      */
-    protected function getArticleListProductEntry($item)
+    protected function getArticleListProductEntry($item, $currency)
     {
         return $this->getArticleListEntry(
             $item->getName(),
@@ -144,7 +146,8 @@ class Klarna extends RedirectPayment
             $item->getTaxPercent(),
             $item->getRowTotalInclTax(),
             $item->getTaxAmount(),
-            $item->getPriceInclTax()
+            $item->getPriceInclTax(),
+            $currency
         );
     }
 
@@ -166,9 +169,10 @@ class Klarna extends RedirectPayment
      * Create shipping ArticleList entry from order
      *
      * @param Order $order
+     * @param string $currency
      * @return array
      */
-    protected function getArticleListShippingEntry(Order $order)
+    protected function getArticleListShippingEntry(Order $order, $currency)
     {
         return $this->getArticleListEntry(
             'shippingcosts',
@@ -176,8 +180,24 @@ class Klarna extends RedirectPayment
             $this->calculateVatRate($order->getShippingInclTax(), $order->getShippingAmount()), // @TODO: where does magento hide the shipping vat rate???...
             $order->getShippingInclTax(),
             $order->getShippingTaxAmount(),
-            $order->getShippingInclTax()
+            $order->getShippingInclTax(),
+            $currency
         );
+    }
+
+    /**
+     * @param Order $order
+     * @return string
+     */
+    protected function getCurrentCurrency(Order $order)
+    {
+        $currency = '';
+        if ($order instanceof Order) {
+            $currency = $order->getOrderCurrencyCode();
+        } elseif ($order instanceof Quote && method_exists($order, 'getQuoteCurrencyCode')) {
+            $currency = $order->getQuoteCurrencyCode();
+        }
+        return $currency;
     }
 
     /**
@@ -190,12 +210,12 @@ class Klarna extends RedirectPayment
         $list = [];
         foreach ($order->getAllItems() as $item) {
             if (($order instanceof Order && $item->isDummy() === false) || ($order instanceof Quote && $item->getParentItemId() === null)) { // prevent variant-products of adding 2 items
-                $list[] = $this->getArticleListProductEntry($item);
+                $list[] = $this->getArticleListProductEntry($item, $this->getCurrentCurrency($order));
             }
         }
 
         if ($order->getShippingInclTax()) {
-            $list[] = $this->getArticleListShippingEntry($order);
+            $list[] = $this->getArticleListShippingEntry($order, $this->getCurrentCurrency($order));
         }
         //@TODO: Add discount
         return ['order_lines' => $list];
@@ -225,7 +245,7 @@ class Klarna extends RedirectPayment
     {
         $methodInstance = $order->getPayment()->getMethodInstance();
         return [
-            'TaxAmount' => $this->apiHelper->formatAmount($order->getTaxAmount()),
+            'TaxAmount' => $this->apiHelper->formatAmount($order->getTaxAmount(), $order->getOrderCurrencyCode()),
             'bdCountryCode' => $order->getBillingAddress()->getCountryId(),
             'Language' => $this->apiHelper->getStoreLocale(),
             'Account' => $this->getKlarnaAccount(),

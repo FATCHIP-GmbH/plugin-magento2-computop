@@ -33,7 +33,7 @@ class EasyCreditConfirm extends Base
         $order = $payment->getOrder();
 
         $this->addParameter('Currency', $order->getOrderCurrencyCode());
-        $this->addParameter('Amount', $this->apiHelper->formatAmount($order->getTotalDue()));
+        $this->addParameter('Amount', $this->apiHelper->formatAmount($order->getTotalDue(), $order->getOrderCurrencyCode()));
 
         if (!empty($response['PayID'])) {
             $this->addParameter('PayID', $response['PayID']);

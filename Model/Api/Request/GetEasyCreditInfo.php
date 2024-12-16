@@ -33,7 +33,7 @@ class GetEasyCreditInfo extends Base
         $quote = $payment->getQuote();
 
         $this->addParameter('Currency', $quote->getQuoteCurrencyCode());
-        $this->addParameter('Amount', $this->apiHelper->formatAmount($quote->getGrandTotal()));
+        $this->addParameter('Amount', $this->apiHelper->formatAmount($quote->getGrandTotal(), $quote->getQuoteCurrencyCode()));
 
         if (!empty($response['PayID'])) {
             $this->addParameter('PayID', $response['PayID']);
