@@ -18,5 +18,10 @@
                 <value id="computop_amazon_pay" type="host">payments-eu.amazon.com</value>
             </values>
         </policy>
+        <policy id="frame-src">
+            <values>
+                <value id="computop_creditcard_frame" type="host">www.computop-paygate.com</value>
+            </values>
+        </policy>
     </policies>
 </csp_whitelist>
