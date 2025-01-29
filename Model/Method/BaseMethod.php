@@ -153,6 +153,11 @@ abstract class BaseMethod extends Adapter
     protected $addShippingAddressData = false;
 
     /**
+     * @var bool
+     */
+    protected $addLanguageToUrl = false;
+
+    /**
      * @param ManagerInterface $eventManager
      * @param ValueHandlerPoolInterface $valueHandlerPool
      * @param PaymentDataObjectFactory $paymentDataObjectFactory
@@ -278,6 +283,21 @@ abstract class BaseMethod extends Adapter
     public function getPaymentSpecificParameters(Order $order = null)
     {
         return []; // filled in child classes
+    }
+
+    /**
+     * Return parameters specific to this payment type that have to be added to the unencrypted URL
+     *
+     * @param  Order|null $order
+     * @return array
+     */
+    public function getUnencryptedParameters(Order $order = null)
+    {
+        $params = [];
+        if ($this->addLanguageToUrl === true) {
+            $params['language'] = strtolower($this->apiHelper->getStoreLocale());
+        }
+        return $params;
     }
 
     /**

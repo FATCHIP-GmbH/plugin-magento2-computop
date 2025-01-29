@@ -219,6 +219,18 @@ class Creditcard extends RedirectPayment
         if ((bool)$this->getPaymentConfigParam('test_mode') === true) {
             $params['orderDesc'] = 'Test:0000';
         }
+        return $params;
+    }
+
+    /**
+     * Return parameters specific to this payment type that have to be added to the unencrypted URL
+     *
+     * @param  Order|null $order
+     * @return array
+     */
+    public function getUnencryptedParameters(Order $order = null)
+    {
+        $params = parent::getUnencryptedParameters($order);
         $params['template'] = $this->getTemplateName();
         return $params;
     }

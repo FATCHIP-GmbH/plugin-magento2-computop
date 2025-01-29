@@ -12,11 +12,6 @@ abstract class RedirectPayment extends BaseMethod
     protected $requestType = "REDIRECT";
 
     /**
-     * @var bool
-     */
-    protected $addLanguageToUrl = false;
-
-    /**
      * Returns if auth request is needed
      * Can be overloaded by other classes
      *
@@ -42,9 +37,6 @@ abstract class RedirectPayment extends BaseMethod
         $transactionId = false;
         if ($this->isAuthRequestNeeded()) {
             $request = $this->authRequest->generateRequestFromOrder($order, $payment, $amount, true, true);
-            if ($this->addLanguageToUrl === true) {
-                $request['language'] = strtolower($this->apiHelper->getStoreLocale());
-            }
 
             $url = $this->authRequest->getFullApiEndpoint($this->getApiEndpoint())."?".http_build_query($request);
 

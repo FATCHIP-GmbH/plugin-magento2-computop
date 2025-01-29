@@ -80,6 +80,7 @@ class Authorization extends Base
 
         if ($encrypt === true) {
             $params = $this->getEncryptedParameters($params);
+            $params = array_merge($params, $methodInstance->getUnencryptedParameters($order));
         }
         return $params;
     }
