@@ -114,29 +114,6 @@
             <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_KLARNA</argument>
         </arguments>
     </virtualType>
-    <!-- Giropay Config Handler -->
-    <type name="Fatchip\Computop\Model\Method\Giropay">
-        <arguments>
-            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolGiropay</argument>
-        </arguments>
-    </type>
-    <virtualType name="ComputopValueHandlerPoolGiropay" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
-        <arguments>
-            <argument name="handlers" xsi:type="array">
-                <item name="default" xsi:type="string">ComputopConfigValueHandlerGiropay</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="ComputopConfigValueHandlerGiropay" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
-        <arguments>
-            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigGiropay</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="ComputopCreditcardVaultPaymentConfigGiropay" type="Magento\Payment\Gateway\Config\Config">
-        <arguments>
-            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_GIROPAY</argument>
-        </arguments>
-    </virtualType>
     <!-- Ideal Config Handler -->
     <type name="Fatchip\Computop\Model\Method\Ideal">
         <arguments>

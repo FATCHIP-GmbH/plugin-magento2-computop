@@ -16,7 +16,6 @@ abstract class ComputopConfig
     const METHOD_DIRECTDEBIT = 'computop_directdebit';
     const METHOD_PAYPAL = 'computop_paypal';
     const METHOD_KLARNA = 'computop_klarna';
-    const METHOD_GIROPAY = 'computop_giropay';
     const METHOD_IDEAL = 'computop_ideal';
     const METHOD_EASYCREDIT = 'computop_easycredit';
     const METHOD_AMAZONPAY = 'computop_amazonpay';

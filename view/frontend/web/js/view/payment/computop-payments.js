@@ -26,10 +26,6 @@ define(
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/klarna-method'
             },
             {
-                type: 'computop_giropay',
-                component: 'Fatchip_Computop/js/view/payment/method-renderer/giropay-method'
-            },
-            {
                 type: 'computop_ideal',
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/ideal-method'
             },

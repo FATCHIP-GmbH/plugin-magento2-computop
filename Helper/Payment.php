@@ -16,7 +16,6 @@ class Payment extends Base
         ComputopConfig::METHOD_DIRECTDEBIT,
         ComputopConfig::METHOD_PAYPAL,
         ComputopConfig::METHOD_KLARNA,
-        ComputopConfig::METHOD_GIROPAY,
         ComputopConfig::METHOD_IDEAL,
         ComputopConfig::METHOD_EASYCREDIT,
         ComputopConfig::METHOD_AMAZONPAY,
