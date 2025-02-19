@@ -17,6 +17,15 @@ define(
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
+            initialize: function () {
+                let parentReturn = this._super();
+                if(this.getCode() === window.checkoutConfig.payment.computop.cancelledPaymentMethod) {
+                    selectPaymentMethodAction({method: this.getCode()});
+                    checkoutData.setSelectedPaymentMethod(this.item.method);
+                    this.messageContainer.addSuccessMessage({'message': $t('Payment has been cancelled.')});
+                }
+                return this;
+            },
             isDateValid: function (year, month, day) {
                 if (!$.isNumeric(year) || !$.isNumeric(month) || !$.isNumeric(day)) {
                     return false;

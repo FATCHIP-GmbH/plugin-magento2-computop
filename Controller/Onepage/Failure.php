@@ -82,11 +82,42 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
         return true;
     }
 
+    protected function clearSessionParams()
+    {
+        $this->checkoutSession->unsComputopTmpRefnr();
+        $this->checkoutSession->unsComputopQuoteComparisonString();
+        $this->checkoutSession->unsComputopRedirectNoOrder();
+        $this->checkoutSession->unsComputopEasyCreditDob();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRedirectUrl()
+    {
+        return $this->urlBuilder->getUrl('checkout/cart');
+    }
+
+    /**
+     * @param $order
+     * @return void
+     */
+    protected function handleOrder($order)
+    {
+        // hook to add custom order handling
+    }
+
+    /**
+     * @return mixed
+     */
     public function execute()
     {
         try {
-            $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
-            $this->apiLog->addApiLogResponse($response);
+            $response = false;
+            if (!empty($this->getRequest()->getParam('Data')) && $this->getRequest()->getParam('Len')) {
+                $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
+                $this->apiLog->addApiLogResponse($response);
+            }
 
             if ($this->getRequest()->getParam('error')) {
                 $this->checkoutSession->setComputopIsError(true);
@@ -96,6 +127,8 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
                 $orderId = $this->checkoutSession->getLastOrderId();
                 $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
                 if ($order) {
+                    $this->handleOrder($order);
+
                     $order->cancel()->save();
                     $this->checkoutSession->restoreQuote();
                     $this->checkoutSession
@@ -105,16 +138,19 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
                 }
             }
 
-            $this->checkoutSession->unsComputopTmpRefnr();
+            $this->clearSessionParams();
         } catch (LocalizedException $e) {
             $this->messageManager->addExceptionMessage($e, $e->getMessage());
         } catch (\Exception $e) {
             $this->messageManager->addExceptionMessage($e, __('Error while canceling the payment'));
         }
 
+        if (!empty($response['Description'])) {
+            $this->messageManager->addErrorMessage('An error occured during the Checkout: '.$response['Description']);
+        }
+
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        $this->messageManager->addErrorMessage('An error occured during the Checkout: '.$response['Description']);
-        return $resultRedirect->setUrl($this->urlBuilder->getUrl('checkout/cart'));
+        return $resultRedirect->setUrl($this->getRedirectUrl());
     }
 }

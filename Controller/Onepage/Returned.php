@@ -95,6 +95,7 @@ class Returned extends \Magento\Framework\App\Action\Action implements CsrfAware
     public function execute()
     {
         $this->checkoutSession->unsComputopCustomerIsRedirected();
+        $this->checkoutSession->unsComputopCancelledPaymentMethod();
 
         $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
         $this->apiLog->addApiLogResponse($response);

@@ -130,6 +130,7 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
         $this->checkoutSession->unsComputopPpePayId();
         $this->checkoutSession->unsComputopPpeCompleteResponse();
         $this->checkoutSession->unsComputopQuoteComparisonString();
+        $this->checkoutSession->unsComputopCancelledPaymentMethod();
     }
 
     /**

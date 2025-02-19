@@ -321,6 +321,16 @@ abstract class BaseMethod extends Adapter
     }
 
     /**
+     * Returns redirect url for cancel case
+     *
+     * @return string|null
+     */
+    public function getCancelUrl()
+    {
+        return $this->urlBuilder->getUrl('computop/onepage/cancel');
+    }
+
+    /**
      * Returns URL for notify controller
      *
      * @return string|null

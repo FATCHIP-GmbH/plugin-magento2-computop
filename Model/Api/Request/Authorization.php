@@ -68,6 +68,8 @@ class Authorization extends Base
 
         $this->addParameter('URLSuccess', $methodInstance->getSuccessUrl());
         $this->addParameter('URLFailure', $methodInstance->getFailureUrl());
+        $this->addParameter('URLBack', $methodInstance->getCancelUrl());
+        $this->addParameter('URLCancel', $methodInstance->getCancelUrl());
         $this->addParameter('URLNotify', $methodInstance->getNotifyUrl());
         $this->addParameter('Response', 'encrypt');
 

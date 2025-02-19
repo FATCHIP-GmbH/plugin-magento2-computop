@@ -29,20 +29,30 @@ class ConfigProvider implements ConfigProviderInterface
     protected $escaper;
 
     /**
+     * Checkout session object
+     *
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
      * Constructor
      *
      * @param \Magento\Payment\Helper\Data     $dataHelper
      * @param \Fatchip\Computop\Helper\Payment $paymentHelper
      * @param \Magento\Framework\Escaper       $escaper
+     * @param \Magento\Checkout\Model\Session  $checkoutSession
      */
     public function __construct(
         \Magento\Payment\Helper\Data $dataHelper,
         \Fatchip\Computop\Helper\Payment $paymentHelper,
-        \Magento\Framework\Escaper $escaper
+        \Magento\Framework\Escaper $escaper,
+        \Magento\Checkout\Model\Session  $checkoutSession
     ) {
         $this->dataHelper = $dataHelper;
         $this->paymentHelper = $paymentHelper;
         $this->escaper = $escaper;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -52,8 +62,23 @@ class ConfigProvider implements ConfigProviderInterface
      */
     protected function getComputopCustomConfig()
     {
-        $config = [];
+        $config = [
+            'cancelledPaymentMethod' => $this->getCancelledPaymentMethod(),
+        ];
         return $config;
+    }
+
+    /**
+     * @return string|false
+     */
+    protected function getCancelledPaymentMethod()
+    {
+        $paymentMethod = $this->checkoutSession->getComputopCancelledPaymentMethod();
+        $this->checkoutSession->unsComputopCancelledPaymentMethod();
+        if (!empty($paymentMethod)) {
+            return $paymentMethod;
+        }
+        return false;
     }
 
     /**
