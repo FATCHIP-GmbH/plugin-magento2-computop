@@ -51,6 +51,9 @@ class Breakout extends \Magento\Framework\View\Element\Template
         if ($this->getRequest()->getParam('status') == 'failure') {
             $path = 'computop/onepage/failure';
         }
+        if ($this->getRequest()->getParam('status') == 'cancel') {
+            $path = 'computop/onepage/cancel';
+        }
         return $this->urlBuilder->getUrl($path);
     }
 

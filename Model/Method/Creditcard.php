@@ -144,6 +144,16 @@ class Creditcard extends RedirectPayment
     }
 
     /**
+     * Returns redirect url for cancel case
+     *
+     * @return string|null
+     */
+    public function getCancelUrl()
+    {
+        return $this->urlBuilder->getUrl('computop/onepage/ccReturn', ['status' => 'cancel']);
+    }
+
+    /**
      * Returns if auth request is needed
      * Can be overloaded by other classes
      *
