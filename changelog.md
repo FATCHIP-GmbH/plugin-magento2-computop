@@ -1,6 +1,22 @@
 # Changelog - Computop Paymet Connector for Magento 2
 
-###1.0.6
+### 1.1.0
+* Removed Giropay payment method
+* Added Back-/Cancel-URLs to API requests and payment cancel handling
+* Moved template parameter from Data to unencrypted
+
+### 1.0.9
+* Introducing iDeal V2
+* Added PayType parameter for GMO acquirer
+* Fixed problem with currencies without decimals
+
+### 1.0.8
+* Added language to creditcard form
+
+### 1.0.7
+* Fixed problem with config being taken from wrong scope for backend actions like capture and refund
+
+### 1.0.6
 Released 2024-09-16
 * Added test mode for PayPal Express
 * Added configuration for PayPal Express Livemode
