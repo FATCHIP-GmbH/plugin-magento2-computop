@@ -256,8 +256,8 @@ class Klarna extends RedirectPayment
             #'OrderDesc' => $order->getIncrementId(), // Not sending the OrderDesc parameter can result in "Message format error" errors!
             #'bdCompany' => '',
             #'sdCompany' => '',
-            #'bdEmail' => 'robert.mueller@fatchip.de',
-            #'sdEmail' => 'robert.mueller@fatchip.de',
+            #'bdEmail' => 'email',
+            #'sdEmail' => 'email',
             #'sdCountryCode' => 'DE',
             #'FirstName' => 'Paul',
             #'bdFirstName' => 'Paul',

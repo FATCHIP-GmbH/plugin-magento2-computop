@@ -94,7 +94,8 @@ define(
                     merchantId: this.getFrontendConfigParam('merchantId'),
                     publicKeyId: this.getFrontendConfigParam('publicKeyId'),
                     ledgerCurrency: this.getCurrency(),
-                    productType: quote.isVirtual() ? 'PayOnly' : 'PayAndShip',
+                    //productType: quote.isVirtual() ? 'PayOnly' : 'PayAndShip', // disabled until Computop implements "PayOnly" mode for Amazon Pay
+                    productType: 'PayAndShip',
                     placement: 'Checkout',
                     buttonColor: this.getFrontendConfigParam('buttonColor')
                 };

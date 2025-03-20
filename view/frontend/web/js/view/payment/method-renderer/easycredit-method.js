@@ -1,11 +1,14 @@
 define(
     [
         'Fatchip_Computop/js/view/payment/method-renderer/base',
+        'jquery',
         'Magento_Checkout/js/model/payment/additional-validators',
         'Magento_Customer/js/model/customer',
+        'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/action/set-payment-information',
         'mage/translate'
     ],
-    function (Component, additionalValidators, customer, $t) {
+    function (Component, $, additionalValidators, customer, quote, setPaymentInformationAction, $t) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -50,16 +53,36 @@ define(
                 }
                 return false;
             },
+            setPaymentInformation: function () {
+                return setPaymentInformationAction(
+                    this.messageContainer,
+                    {
+                        method: this.getCode()
+                    }
+                );
+            },
             continueToComputop: function () {
                 if (this.validate() && additionalValidators.validate()) {
-                    let data = this.getData();
-                    let addParam = '';
-                    if (data.additional_data !== undefined && data.additional_data.dateofbirth !== undefined) {
-                        addParam = '?dob=' + data.additional_data.dateofbirth;
+                    if (quote.isVirtual() === true) {
+                        let self = this;
+                        $.when(
+                            this.setPaymentInformation()
+                        ).done(function () {
+                            return self.redirectToComputop();
+                        });
+                    } else {
+                        return this.redirectToComputop();
                     }
-                    this.redirect('computop/onepage/redirect/' + addParam);
-                    return false;
                 }
+            },
+            redirectToComputop: function () {
+                let data = this.getData();
+                let addParam = '';
+                if (data.additional_data !== undefined && data.additional_data.dateofbirth !== undefined) {
+                    addParam = '?dob=' + data.additional_data.dateofbirth;
+                }
+                this.redirect('computop/onepage/redirect/' + addParam);
+                return false;
             }
         });
     }

@@ -104,9 +104,14 @@ class Authorization extends Base
         $currency = $order->getOrderCurrencyCode();
         $refNr = $order->getIncrementId();
 
+        $shippingAddress = $order->getBillingAddress();
+        if ($order->getIsVirtual() === false && !empty($order->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
+            $shippingAddress = $order->getShippingAddress();
+        }
+
         if ($methodInstance->isAddressDataNeeded() === true) {
             $this->addParameter('billingAddress', $this->getAddressInfo($order->getBillingAddress()));
-            $this->addParameter('shippingAddress', $this->getAddressInfo($order->getShippingAddress()));
+            $this->addParameter('shippingAddress', $this->getAddressInfo($shippingAddress));
         }
 
         if ($methodInstance->isBillingAddressDataNeeded() === true) {
@@ -114,29 +119,47 @@ class Authorization extends Base
         }
 
         if ($methodInstance->isShippingAddressDataNeeded() === true) {
-            $this->addParameters($this->getAddressParameters($order->getShippingAddress(), 'sd'));
+            $this->addParameters($this->getAddressParameters($shippingAddress, 'sd'));
         }
 
         return $this->generateRequest($methodInstance, $amount, $currency, $refNr, $order, $encrypt, $log);
     }
 
+    /**
+     * @param  Quote      $quote
+     * @param  BaseMethod $methodInstance
+     * @param  bool       $encrypt
+     * @param  bool       $log
+     * @return array
+     */
     public function generateRequestFromQuote(Quote $quote, BaseMethod $methodInstance, $encrypt = false, $log = false)
     {
         $amount = $quote->getGrandTotal();
         $currency = $quote->getQuoteCurrencyCode();
         $refNr = $methodInstance->getTemporaryRefNr($quote->getId());
 
+        $shippingAddress = $quote->getBillingAddress();
+        if ($quote->getIsVirtual() === false && !empty($quote->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
+            $shippingAddress = $quote->getShippingAddress();
+        }
+
         if ($methodInstance->isBillingAddressDataNeeded() === true) {
             $this->addParameters($this->getAddressParameters($quote->getBillingAddress(), 'bd'));
         }
 
         if ($methodInstance->isShippingAddressDataNeeded() === true) {
-            $this->addParameters($this->getAddressParameters($quote->getShippingAddress(), 'sd'));
+            $this->addParameters($this->getAddressParameters($shippingAddress, 'sd'));
         }
 
         return $this->generateRequest($methodInstance, $amount, $currency, $refNr, null, $encrypt, $log);
     }
 
+    /**
+     * Split street in street name and street number
+     *
+     * @param  array $streetWithNr
+     * @return array
+     */
     protected function splitStreet($streetWithNr)
     {
         preg_match('/^([^\d]*[^\d\s]) *(\d.*)$/', $streetWithNr, $matches);
@@ -200,6 +223,12 @@ class Authorization extends Base
         return base64_encode(json_encode($address));
     }
 
+    /**
+     * @param  Order   $order
+     * @param  Payment $payment
+     * @param  double  $amount
+     * @return array|null
+     */
     public function sendCurlRequest(Order $order, Payment $payment, $amount)
     {
         /** @var BaseMethod $methodInstance */

@@ -130,6 +130,9 @@ class PayPal extends RedirectPayment
     protected function getPayPalAddressData(Order $order)
     {
         $address = $order->getShippingAddress();
+        if (empty($address)) {
+            $address = $order->getBillingAddress();
+        }
         $street = $address->getStreet();
         $street = is_array($street) ? implode(' ', $street) : $street; // street may be an array
         return [
