@@ -102,13 +102,18 @@ class AmazonPay extends ServerToServerPayment
      */
     public function getPaymentSpecificParameters(Order $order = null)
     {
+        $shippingAddress = $order->getBillingAddress();
+        if ($order->getIsVirtual() === false && !empty($order->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
+            $shippingAddress = $order->getShippingAddress();
+        }
+
         $infoInstance = $this->getInfoInstance();
         return [
             'checkoutMode' => 'ProcessOrder',
             'TxType' => $this->getPaymentConfigParam('capture_method') == CaptureMethods::CAPTURE_AUTO ? 'AuthorizeWithCapture' : 'Authorize',
             'CountryCode' => $this->getPaymentConfigParam('marketplace_country_code'), // Country code of used marketplace. Options EU, UK, US and JP.
-            'Name' => $order->getShippingAddress()->getFirstname()." ".$order->getShippingAddress()->getLastname(),
-            'SDZipcode' => $order->getShippingAddress()->getPostcode(),
+            'Name' => $shippingAddress->getFirstname()." ".$shippingAddress->getLastname(),
+            'SDZipcode' => $shippingAddress->getPostcode(),
             'sdPhone' => $this->getTelephoneNumber($order, $infoInstance),
             #'ShopUrl' => '',
         ];
