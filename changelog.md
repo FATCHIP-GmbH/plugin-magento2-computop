@@ -1,5 +1,8 @@
 # Changelog - Computop Paymet Connector for Magento 2
 
+### 1.1.1
+* Fixed digital goods orders for several payment methods
+
 ### 1.1.0
 * Removed Giropay payment method
 * Added Back-/Cancel-URLs to API requests and payment cancel handling
