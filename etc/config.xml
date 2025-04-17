@@ -164,6 +164,11 @@
                 <can_deny_payment>1</can_deny_payment>
             </computop_amazonpay>
         </payment>
+        <computop_general>
+            <global>
+                <cronjob_pending_lifetime>25</cronjob_pending_lifetime>
+            </global>
+        </computop_general>
         <computop_payment>
             <computop_creditcard>
                 <template>ct_responsive</template>

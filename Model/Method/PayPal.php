@@ -259,4 +259,17 @@ class PayPal extends RedirectPayment
         }
         return false;
     }
+
+    /**
+     * Returns if payment method
+     *
+     * @return bool
+     */
+    public function isNotifyPaymentMethod()
+    {
+        if ($this->isExpressOrder() === true || $this->isExpressAuthStep() === true) {
+            return false; // PPE orders dont receive a Notify call, but "normal" PayPal orders do
+        }
+        return $this->isNotifyPaymentType;
+    }
 }

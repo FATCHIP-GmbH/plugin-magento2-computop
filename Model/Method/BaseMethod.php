@@ -132,6 +132,20 @@ abstract class BaseMethod extends Adapter
     protected $setTransactionPreAuthorization = true;
 
     /**
+     * Determines if initialize payment step shall be used instead of direct authorization
+     *
+     * @var bool
+     */
+    protected $useInitializeStep = false;
+
+    /**
+     * Determines if payment method will receive Notify calls from Computop
+     *
+     * @var bool
+     */
+    protected $isNotifyPaymentType = true;
+
+    /**
      * Determines if auth requests adds address parameters to the request
      *
      * @var bool
@@ -401,7 +415,7 @@ abstract class BaseMethod extends Adapter
     {
         $this->checkResponseForSuccess($response);
 
-        if ($this instanceof ServerToServerPayment || $this->setTransactionPreAuthorization === false || ($this instanceof PayPal && $this->isExpressAuthStep())) { // false = set POST auth
+        if ($this instanceof ServerToServerPayment || $this->hasTransactionToBeSetPreAuthorization() === false || ($this instanceof PayPal && $this->isExpressAuthStep())) { // false = set POST auth
             $save = true;
             if ($this instanceof ServerToServerPayment || ($this instanceof PayPal && $this->isExpressAuthStep())) {
                 $save = false;
@@ -435,7 +449,7 @@ abstract class BaseMethod extends Adapter
             }
         }
 
-        if ($this->getCaptureMode() == CaptureMethods::CAPTURE_AUTO && in_array($response['Status'], [ComputopConfig::STATUS_AUTHORIZED, ComputopConfig::STATUS_OK])) {
+        if ($this->isNotifyPaymentMethod() === false && $this->getCaptureMode() == CaptureMethods::CAPTURE_AUTO && in_array($response['Status'], [ComputopConfig::STATUS_AUTHORIZED, ComputopConfig::STATUS_OK])) {
             if ($order->getInvoiceCollection()->count() == 0) {
                 $transId = $order->getPayment()->getLastTransId();
                 if ($this instanceof ServerToServerPayment || ($this instanceof PayPal && $this->isExpressAuthStep())) {
@@ -594,5 +608,47 @@ abstract class BaseMethod extends Adapter
     {
         // Method can be overwritten by inheriting classes
         return '';
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasTransactionToBeSetPreAuthorization()
+    {
+        return $this->setTransactionPreAuthorization;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isInitializeNeeded()
+    {
+        return $this->useInitializeStep;
+    }
+
+    /**
+     * Returns if payment method
+     *
+     * @return bool
+     */
+    public function isNotifyPaymentMethod()
+    {
+        return $this->isNotifyPaymentType;
+    }
+
+    /**
+     * @param InfoInterface $payment
+     * @param $sTransId
+     * @return void
+     */
+    public function authorizePayment(InfoInterface $payment, $sTransId)
+    {
+        $order = $payment->getOrder();
+        #$totalDue = $order->getTotalDue();
+        $baseTotalDue = $order->getBaseTotalDue();
+
+        $this->setTransactionId($payment, $sTransId);
+
+        $payment->authorize(true, $baseTotalDue);
     }
 }

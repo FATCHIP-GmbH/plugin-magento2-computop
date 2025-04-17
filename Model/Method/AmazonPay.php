@@ -51,6 +51,13 @@ class AmazonPay extends ServerToServerPayment
     protected $handleSpecificAfterAuth = true;
 
     /**
+     * Determines if initialize payment step shall be used instead of direct authorization
+     *
+     * @var bool
+     */
+    protected $useInitializeStep = true;
+
+    /**
      * Can be used to assign data from frontend to info instance
      *
      * @var array

@@ -40,6 +40,13 @@ class DirectDebit extends ServerToServerPayment
     ];
 
     /**
+     * Determines if payment method will receive Notify calls from Computop
+     *
+     * @var bool
+     */
+    protected $isNotifyPaymentType = false;
+
+    /**
      * Each ELV payment needs a unique mandateID.
      * For now, it is the ordernumber plus date
      *

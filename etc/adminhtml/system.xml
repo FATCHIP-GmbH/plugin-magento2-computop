@@ -38,7 +38,11 @@
                     <label>Order number suffix</label>
                     <tooltip>Suffix for order number</tooltip>
                 </field>
-                <field id="ordernr_validation" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="cronjob_pending_lifetime" translate="label,tooltip" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Pending Payment Order Lifetime (minutes)</label>
+                    <tooltip>Pending Computop orders will be canceled if no Computop Notify call happened after X minutes.</tooltip>
+                </field>
+                <field id="ordernr_validation" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label> </label>
                     <frontend_model>Fatchip\Computop\Block\Adminhtml\Config\Form\Field\Validation</frontend_model>
                 </field>
