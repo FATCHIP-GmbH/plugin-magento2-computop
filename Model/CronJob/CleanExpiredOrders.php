@@ -54,6 +54,20 @@ class CleanExpiredOrders
         $this->orderManagement = $orderManagement ?: ObjectManager::getInstance()->get(OrderManagementInterface::class);
     }
 
+    protected function isPaymentStatusFailed($inquireResponse)
+    {
+        if (!empty($inquireResponse)) {
+            if (!empty($inquireResponse['LastStatus']) && $inquireResponse['LastStatus'] == 'FAILED') {
+                return true;
+            }
+
+            if (!empty($inquireResponse['Status']) && !empty($inquireResponse['Description']) && $inquireResponse['Status'] == 'FAILED' && $inquireResponse['Description'] == 'PAYMENT NOT FOUND') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Clean expired quotes (cron process)
      *
@@ -72,7 +86,7 @@ class CleanExpiredOrders
         foreach ($orders->getAllIds() as $entityId) {
             $order = $orders->fetchItem();
             $inquireResponse = $this->inquireRequest->getPaymentStatusByTransId($order->getIncrementId());
-            if (!empty($inquireResponse) && $inquireResponse['LastStatus'] == 'FAILED') {
+            if ($this->isPaymentStatusFailed($inquireResponse) === true) {
                 $this->orderManagement->cancel((int)$entityId);
             }
         }
