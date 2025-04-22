@@ -6,9 +6,9 @@ use Fatchip\Computop\Helper\Base;
 use Fatchip\Computop\Model\Api\Request\Inquire;
 use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Api\OrderManagementInterface;
-use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Store\Model\StoresConfig;
 use Magento\Sales\Model\Order;
+use Magento\Framework\App\ResourceConnection;
 
 /**
  * Class that provides functionality of cleaning expired quotes by cron
@@ -21,11 +21,6 @@ class CleanExpiredOrders
     protected $baseHelper;
 
     /**
-     * @var CollectionFactory
-     */
-    protected $orderCollectionFactory;
-
-    /**
      * @var OrderManagementInterface
      */
     private $orderManagement;
@@ -36,24 +31,37 @@ class CleanExpiredOrders
     protected $inquireRequest;
 
     /**
-     * @param CollectionFactory             $collectionFactory
+     * Database connection resource
+     *
+     * @var \Magento\Framework\App\ResourceConnection
+     */
+    protected $databaseResource;
+
+    /**
      * @param Base                          $baseHelper
+     * @param ResourceConnection            $resource
      * @param Inquire                       $inquireRequest
      * @param OrderManagementInterface|null $orderManagement
      */
     public function __construct(
-        CollectionFactory        $collectionFactory,
         Base                     $baseHelper,
+        ResourceConnection       $resource,
         Inquire                  $inquireRequest,
         OrderManagementInterface $orderManagement = null
     )
     {
-        $this->orderCollectionFactory = $collectionFactory;
         $this->baseHelper = $baseHelper;
+        $this->databaseResource = $resource;
         $this->inquireRequest = $inquireRequest;
         $this->orderManagement = $orderManagement ?: ObjectManager::getInstance()->get(OrderManagementInterface::class);
     }
 
+    /**
+     * Check inquire response for failed status
+     *
+     * @param array $inquireResponse
+     * @return bool
+     */
     protected function isPaymentStatusFailed($inquireResponse)
     {
         if (!empty($inquireResponse)) {
@@ -69,25 +77,41 @@ class CleanExpiredOrders
     }
 
     /**
+     * Get expired orders from database
+     *
+     * @return array
+     */
+    protected function getExpiredOrders()
+    {
+        $lifetime = $this->baseHelper->getConfigParam('cronjob_pending_lifetime');
+
+        $db = $this->databaseResource->getConnection();
+        $select = $db
+            ->select()
+            ->from($this->databaseResource->getTableName('sales_order_grid'), ['entity_id', 'increment_id'])
+            ->where("payment_method LIKE 'computop_%'")
+            ->where(new \Zend_Db_Expr('TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, `updated_at`)) >= ' . $lifetime * 60))  // check for $lifetime minutes
+            ->where(new \Zend_Db_Expr('TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, `updated_at`)) < ' . (60 * 60 * 24))) // only check for the last 24 hours
+            ->where("status = 'pending'");
+        return $db->fetchAll($select);
+    }
+
+    /**
      * Clean expired quotes (cron process)
      *
      * @return void
      */
     public function execute()
     {
-        $lifetime = $this->baseHelper->getConfigParam('cronjob_pending_lifetime');
-
-        $orders = $this->orderCollectionFactory->create();
-        $orders->addFieldToFilter('status', 'pending');
-        $orders->getSelect()->where(
-            new \Zend_Db_Expr('TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, `updated_at`)) >= ' . $lifetime * 60)
-        );
-
-        foreach ($orders->getAllIds() as $entityId) {
-            $order = $orders->fetchItem();
-            $inquireResponse = $this->inquireRequest->getPaymentStatusByTransId($order->getIncrementId());
-            if ($this->isPaymentStatusFailed($inquireResponse) === true) {
-                $this->orderManagement->cancel((int)$entityId);
+        $expiredOrders = $this->getExpiredOrders();
+        foreach ($expiredOrders as $order) {
+            try {
+                $inquireResponse = $this->inquireRequest->getPaymentStatusByTransId($order['increment_id']);
+                if ($this->isPaymentStatusFailed($inquireResponse) === true) {
+                    $this->orderManagement->cancel((int)$order['entity_id']);
+                }
+            } catch (\Exception $e) {
+                // do nothing
             }
         }
     }
