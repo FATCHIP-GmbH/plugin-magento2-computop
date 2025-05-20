@@ -228,4 +228,12 @@ class EasyCredit extends RedirectNoOrder
         $this->checkoutSession->unsComputopEasyCreditConfirmResponse();
         return $return;
     }
+
+    /**
+     * @return string
+     */
+    public function getReviewPath()
+    {
+        return 'computop/onepage/easyCreditReview';
+    }
 }

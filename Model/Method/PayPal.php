@@ -272,4 +272,15 @@ class PayPal extends RedirectPayment
         }
         return $this->isNotifyPaymentType;
     }
+
+    /**
+     * @return bool
+     */
+    public function isInitializeNeeded()
+    {
+        if ($this->isExpressOrder() === true || $this->isExpressAuthStep() === true) {
+            return false;
+        }
+        return $this->useInitializeStep;
+    }
 }

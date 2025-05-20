@@ -14,11 +14,6 @@
         <field id="klarna_account" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Klarna Account</label>
         </field>
-        <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>New Order Status</label>
-            <config_path>payment/computop_klarna/order_status</config_path>
-            <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
-        </field>
         <field id="instructions" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Instructions</label>
             <config_path>payment/computop_klarna/instructions</config_path>

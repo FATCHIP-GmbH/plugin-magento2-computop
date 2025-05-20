@@ -52,7 +52,7 @@ abstract class RedirectPayment extends BaseMethod
      */
     public function initialize($paymentAction, $stateObject)
     {
-        $this->initializeRedirectPayment();
+        $this->initializeRedirectPayment($stateObject);
     }
 
     /**
@@ -90,10 +90,11 @@ abstract class RedirectPayment extends BaseMethod
     }
 
     /**
+     * @param \Magento\Framework\DataObject $stateObject
      * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function initializeRedirectPayment()
+    public function initializeRedirectPayment($stateObject = null)
     {
         $payment = $this->getInfoInstance();
 
@@ -109,7 +110,13 @@ abstract class RedirectPayment extends BaseMethod
             $this->checkoutSession->setComputopRedirectUrl($url);
 
             $order->setState(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
-            $order->setStatus('computop_pending');
+            $order->setStatus('pending_payment');
+
+            if ($stateObject !== null) {
+                $stateObject->setData('state', \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+                $stateObject->setData('status', 'pending_payment');
+            }
+
             $order->save();
 
             $params = $this->authRequest->getParameters();

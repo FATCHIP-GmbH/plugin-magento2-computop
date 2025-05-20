@@ -15,6 +15,13 @@ abstract class RedirectNoOrder extends RedirectPayment
     protected $requestType = "REDIRECT";
 
     /**
+     * Determines if initialize payment step shall be used instead of direct authorization
+     *
+     * @var bool
+     */
+    protected $useInitializeStep = false;
+
+    /**
      * Returns if auth request is needed
      * Can be overloaded by other classes
      *

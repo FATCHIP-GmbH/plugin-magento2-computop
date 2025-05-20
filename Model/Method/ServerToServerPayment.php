@@ -30,13 +30,14 @@ abstract class ServerToServerPayment extends BaseMethod
      */
     public function initialize($paymentAction, $stateObject)
     {
-        $this->initializePayment();
+        $this->initializePayment($stateObject);
     }
 
     /**
+     * @param \Magento\Framework\DataObject $stateObject
      * @return void
      */
-    protected function initializePayment()
+    protected function initializePayment(\Magento\Framework\DataObject $stateObject = null)
     {
         $payment = $this->getInfoInstance();
 

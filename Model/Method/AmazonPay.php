@@ -153,4 +153,21 @@ class AmazonPay extends ServerToServerPayment
             $this->checkoutSession->setComputopAmazonPayPayload($response['buttonpayload']);
         }
     }
+
+    /**
+     * Instantiate state and set it to state object
+     *
+     * @param string $paymentAction
+     * @param \Magento\Framework\DataObject $stateObject
+     * @return void
+     */
+    public function initialize($paymentAction, $stateObject)
+    {
+        parent::initialize($paymentAction, $stateObject);
+
+        if ($stateObject !== null) {
+            $stateObject->setData('state', \Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+            $stateObject->setData('status', 'pending_payment');
+        }
+    }
 }
