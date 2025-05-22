@@ -99,6 +99,8 @@ abstract class RedirectPayment extends BaseMethod
         $payment = $this->getInfoInstance();
 
         $order = $payment->getOrder();
+        $order->setCanSendNewEmailFlag(false);
+
         $amount = $order->getTotalDue();
 
         $transactionId = false;

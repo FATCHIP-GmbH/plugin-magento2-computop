@@ -42,6 +42,8 @@ abstract class ServerToServerPayment extends BaseMethod
         $payment = $this->getInfoInstance();
 
         $order = $payment->getOrder();
+        $order->setCanSendNewEmailFlag(false);
+
         $amount = $order->getTotalDue();
 
         $response = $this->authRequest->sendCurlRequest($order, $payment, $amount);
