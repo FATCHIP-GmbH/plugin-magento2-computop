@@ -20,6 +20,41 @@ abstract class ServerToServerPayment extends BaseMethod
      */
     protected $handleSpecificAfterAuth = false;
 
+
+    /**
+     * Instantiate state and set it to state object
+     *
+     * @param string $paymentAction
+     * @param \Magento\Framework\DataObject $stateObject
+     * @return void
+     */
+    public function initialize($paymentAction, $stateObject)
+    {
+        $this->initializePayment($stateObject);
+    }
+
+    /**
+     * @param \Magento\Framework\DataObject $stateObject
+     * @return void
+     */
+    protected function initializePayment(\Magento\Framework\DataObject $stateObject = null)
+    {
+        $payment = $this->getInfoInstance();
+
+        $order = $payment->getOrder();
+        $order->setCanSendNewEmailFlag(false);
+
+        $amount = $order->getTotalDue();
+
+        $response = $this->authRequest->sendCurlRequest($order, $payment, $amount);
+
+        $this->handleResponse($payment, $response, $this->finishOrderAfterAuth);
+
+        if ($this->handleSpecificAfterAuth === true) {
+            $this->handleResponseSpecific($payment, $response);
+        }
+    }
+
     /**
      * @inheritdoc
      */
@@ -29,13 +64,10 @@ abstract class ServerToServerPayment extends BaseMethod
             throw new \Magento\Framework\Exception\LocalizedException(__('The authorize action is not available.'));
         }
 
-        $response = $this->authRequest->sendCurlRequest($payment->getOrder(), $payment, $amount);
-
-        $this->handleResponse($payment, $response, $this->finishOrderAfterAuth);
-
-        if ($this->handleSpecificAfterAuth === true) {
-            $this->handleResponseSpecific($payment, $response);
+        if ($this->isInitializeNeeded() === false) {
+            $this->initializePayment();
         }
+
         return $this;
     }
 }

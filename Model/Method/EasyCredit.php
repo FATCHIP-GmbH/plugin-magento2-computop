@@ -64,6 +64,13 @@ class EasyCredit extends RedirectNoOrder
     protected $addShippingAddressData = true;
 
     /**
+     * Determines if payment method will receive Notify calls from Computop
+     *
+     * @var bool
+     */
+    protected $isNotifyPaymentType = false;
+
+    /**
      * @param ManagerInterface $eventManager
      * @param ValueHandlerPoolInterface $valueHandlerPool
      * @param PaymentDataObjectFactory $paymentDataObjectFactory
@@ -220,5 +227,13 @@ class EasyCredit extends RedirectNoOrder
         $this->checkoutSession->unsComputopNoOrderRedirectResponse();
         $this->checkoutSession->unsComputopEasyCreditConfirmResponse();
         return $return;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReviewPath()
+    {
+        return 'computop/onepage/easyCreditReview';
     }
 }

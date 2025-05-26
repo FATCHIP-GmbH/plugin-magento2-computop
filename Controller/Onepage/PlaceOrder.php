@@ -77,6 +77,10 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
+        $quote = $this->checkoutSession->getQuote();
+
+        $methodInstance = $quote->getPayment()->getMethodInstance();
+
         if ($this->isValidationRequired() &&
             !$this->agreementsValidator->isValid(array_keys($this->getRequest()->getPost('agreement', [])))
         ) {
@@ -84,14 +88,11 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
                 __('Please agree to all the terms and conditions before placing the order.')
             );
             $this->messageManager->addExceptionMessage($e, $e->getMessage());
-            $this->_redirect('*/*/review');
+            $this->_redirect($methodInstance->getReviewPath());
             return;
         }
 
         try {
-            $quote = $this->checkoutSession->getQuote();
-
-            $methodInstance = $quote->getPayment()->getMethodInstance();
             if ($this->checkoutHelper->getQuoteComparisonString($quote) != $this->checkoutSession->getComputopQuoteComparisonString()) {
                 // The basket was changed - abort current checkout
                 $this->messageManager->addErrorMessage('An error occured during the Checkout.');
@@ -109,14 +110,19 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
                 $this->clearSessionParams();
 
                 $this->_redirect($redirectTarget);
+                return;
             }
         } catch (\Exception $e) {
             $this->messageManager->addExceptionMessage(
                 $e,
                 __('We can\'t place the order.')
             );
-            $this->_redirect('*/*/review');
+            $this->_redirect($methodInstance->getReviewPath());
         }
+
+        // Processing shouldn't land here, an error occured if it does - so redirect to cart instead of showing a white page
+        $this->messageManager->addErrorMessage('An error occured during the Checkout. X');
+        $this->_redirect('checkout/cart');
     }
 
     /**

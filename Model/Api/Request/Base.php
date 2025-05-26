@@ -84,6 +84,11 @@ class Base
     protected $transactionId;
 
     /**
+     * @var bool
+     */
+    protected $logRequest = true;
+
+    /**
      * Constructor
      *
      * @param \Fatchip\Computop\Helper\Payment $paymentHelper
@@ -338,7 +343,9 @@ class Base
             }
         }
 
-        $this->handleLogging($requestType, $params, $response, $order);
+        if ($this->logRequest === true) {
+            $this->handleLogging($requestType, $params, $response, $order);
+        }
 
         return $response;
     }
@@ -362,11 +369,12 @@ class Base
      *
      * @param  array|null $params
      * @param  Order|null $order
+     * @param  bool $apiEndpoint
      * @return array|null
      */
-    protected function handleStandardCurlRequest($params, Order $order = null)
+    protected function handleStandardCurlRequest($params, Order $order = null, $apiEndpoint = false)
     {
-        return $this->handleCurlRequest($this->getFullApiEndpoint(), $this->getRequestType(), $params, $order);
+        return $this->handleCurlRequest($this->getFullApiEndpoint($apiEndpoint), $this->getRequestType(), $params, $order);
     }
 
     /**
