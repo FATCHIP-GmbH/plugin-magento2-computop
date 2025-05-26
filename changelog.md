@@ -1,5 +1,9 @@
 # Changelog - Computop Paymet Connector for Magento 2
 
+### 1.2.0
+* Added new order status handling "pending payment"
+* Add extended cancel condition in the cronjob and set final cronjob timing
+
 ### 1.1.1
 * Fixed digital goods orders for several payment methods
 
