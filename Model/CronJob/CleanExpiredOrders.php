@@ -92,7 +92,7 @@ class CleanExpiredOrders
             ->where("payment_method LIKE 'computop_%'")
             ->where(new \Zend_Db_Expr('TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, `updated_at`)) >= ' . $lifetime * 60))  // check for $lifetime minutes
             ->where(new \Zend_Db_Expr('TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, `updated_at`)) < ' . (60 * 60 * 24))) // only check for the last 24 hours
-            ->where("status = 'pending'");
+            ->where("status = 'pending_payment'");
         return $db->fetchAll($select);
     }
 
