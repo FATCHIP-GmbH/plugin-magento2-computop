@@ -213,10 +213,10 @@ abstract class BaseMethod extends Adapter
         OrderSender $orderSender,
         InvoiceSender $invoiceSender,
         RefNrChange $refNrChange,
-        CommandPoolInterface $commandPool = null,
-        ValidatorPoolInterface $validatorPool = null,
-        CommandManagerInterface $commandExecutor = null,
-        LoggerInterface $logger = null
+        ?CommandPoolInterface $commandPool = null,
+        ?ValidatorPoolInterface $validatorPool = null,
+        ?CommandManagerInterface $commandExecutor = null,
+        ?LoggerInterface $logger = null
     ) {
         if (empty($this->methodCode)) {
             throw new \Exception("MethodCode is empty!");
@@ -294,7 +294,7 @@ abstract class BaseMethod extends Adapter
      * @param  Order|null $order
      * @return array
      */
-    public function getPaymentSpecificParameters(Order $order = null)
+    public function getPaymentSpecificParameters(?Order $order = null)
     {
         return []; // filled in child classes
     }
@@ -305,7 +305,7 @@ abstract class BaseMethod extends Adapter
      * @param  Order|null $order
      * @return array
      */
-    public function getUnencryptedParameters(Order $order = null)
+    public function getUnencryptedParameters(?Order $order = null)
     {
         $params = [];
         if ($this->addLanguageToUrl === true) {

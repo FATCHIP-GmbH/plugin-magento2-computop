@@ -47,7 +47,7 @@ class CleanExpiredOrders
         Base                     $baseHelper,
         ResourceConnection       $resource,
         Inquire                  $inquireRequest,
-        OrderManagementInterface $orderManagement = null
+        ?OrderManagementInterface $orderManagement = null
     )
     {
         $this->baseHelper = $baseHelper;

@@ -136,7 +136,7 @@ class Base
      * @param  Order|null $order
      * @return string
      */
-    public function getTransactionId(Order $order = null)
+    public function getTransactionId(?Order $order = null)
     {
         if (empty($this->transactionId)) {
             if (!empty($order)) {
@@ -322,7 +322,7 @@ class Base
      * @param  Order|null  $order
      * @return array|null
      */
-    protected function handleCurlRequest($url, $requestType, $params, Order $order = null)
+    protected function handleCurlRequest($url, $requestType, $params, ?Order $order = null)
     {
         $response = null;
 
@@ -357,7 +357,7 @@ class Base
      * @param Order|null $order
      * @return void
      */
-    protected function handleLogging($requestType, $request, $response = null, Order $order = null)
+    protected function handleLogging($requestType, $request, $response = null, ?Order $order = null)
     {
         $this->checkoutSession->setComputopApiLogData(['type' => $requestType, 'request' => $request, 'response' => $response]);
         $this->apiLog->addApiLogEntry($requestType, $request, $response, $order);
@@ -372,7 +372,7 @@ class Base
      * @param  bool $apiEndpoint
      * @return array|null
      */
-    protected function handleStandardCurlRequest($params, Order $order = null, $apiEndpoint = false)
+    protected function handleStandardCurlRequest($params, ?Order $order = null, $apiEndpoint = false)
     {
         return $this->handleCurlRequest($this->getFullApiEndpoint($apiEndpoint), $this->getRequestType(), $params, $order);
     }
@@ -386,7 +386,7 @@ class Base
      * @param  Order|null $order
      * @return array|null
      */
-    public function handlePaymentCurlRequest(BaseMethod $methodInstance, $params, Order $order = null)
+    public function handlePaymentCurlRequest(BaseMethod $methodInstance, $params, ?Order $order = null)
     {
         return $this->handleCurlRequest($this->getFullApiEndpoint($methodInstance->getApiEndpoint()), $methodInstance->getRequestType(), $params, $order);
     }

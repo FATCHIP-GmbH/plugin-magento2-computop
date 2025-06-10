@@ -51,7 +51,7 @@ class Authorization extends Base
      * @param  bool       $encrypt
      * @return array
      */
-    public function generateRequest(BaseMethod $methodInstance, $amount, $currency, $refNr, Order $order = null, $encrypt = false, $log = false)
+    public function generateRequest(BaseMethod $methodInstance, $amount, $currency, $refNr, ?Order $order = null, $encrypt = false, $log = false)
     {
         if (!empty($order)) {
             $this->setStoreCode($order->getStore()->getCode(), false);

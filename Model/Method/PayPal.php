@@ -149,7 +149,7 @@ class PayPal extends RedirectPayment
      * @param Order|null $order
      * @return array
      */
-    protected function getPayPalCompleteCallParams(Order $order = null)
+    protected function getPayPalCompleteCallParams(?Order $order = null)
     {
         $params = [
             'PayID' => $this->checkoutSession->getComputopPpePayId(),
@@ -205,7 +205,7 @@ class PayPal extends RedirectPayment
      * @param  Order|null $order
      * @return array
      */
-    public function getPaymentSpecificParameters(Order $order = null)
+    public function getPaymentSpecificParameters(?Order $order = null)
     {
         if ($this->isExpressAuthStep() === true) {
             return $this->getPayPalCompleteCallParams($order);

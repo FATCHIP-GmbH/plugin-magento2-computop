@@ -182,7 +182,7 @@ class Creditcard extends RedirectPayment
      * @param Order|null $order
      * @return array
      */
-    protected function getBillToCustomerArray(Order $order = null)
+    protected function getBillToCustomerArray(?Order $order = null)
     {
         $billToCustomer = [];
         $billingAddress = null;
@@ -217,7 +217,7 @@ class Creditcard extends RedirectPayment
      * @param  Order|null $order
      * @return array
      */
-    public function getPaymentSpecificParameters(Order $order = null)
+    public function getPaymentSpecificParameters(?Order $order = null)
     {
         $params = [
             'msgVer' => '2.0',
@@ -238,7 +238,7 @@ class Creditcard extends RedirectPayment
      * @param  Order|null $order
      * @return array
      */
-    public function getUnencryptedParameters(Order $order = null)
+    public function getUnencryptedParameters(?Order $order = null)
     {
         $params = parent::getUnencryptedParameters($order);
         $params['template'] = $this->getTemplateName();

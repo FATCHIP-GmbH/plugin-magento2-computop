@@ -89,10 +89,10 @@ class Klarna extends RedirectPayment
         InvoiceSender $invoiceSender,
         RefNrChange $refNrChange,
         \Magento\Sales\Model\ResourceModel\Order\Tax\Item $taxItem,
-        CommandPoolInterface $commandPool = null,
-        ValidatorPoolInterface $validatorPool = null,
-        CommandManagerInterface $commandExecutor = null,
-        LoggerInterface $logger = null
+        ?CommandPoolInterface $commandPool = null,
+        ?ValidatorPoolInterface $validatorPool = null,
+        ?CommandManagerInterface $commandExecutor = null,
+        ?LoggerInterface $logger = null
     ) {
         parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $apiHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $refNrChange, $commandPool, $validatorPool, $commandExecutor, $logger);
         $this->taxItem = $taxItem;
@@ -241,7 +241,7 @@ class Klarna extends RedirectPayment
      * @param  Order|null $order
      * @return array
      */
-    public function getPaymentSpecificParameters(Order $order = null)
+    public function getPaymentSpecificParameters(?Order $order = null)
     {
         $methodInstance = $order->getPayment()->getMethodInstance();
         return [

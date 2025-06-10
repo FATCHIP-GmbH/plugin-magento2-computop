@@ -106,7 +106,7 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param  Order|null $order
      * @return $this
      */
-    public function addApiLogEntry($requestType, $request, $response = null, Order $order = null)
+    public function addApiLogEntry($requestType, $request, $response = null, ?Order $order = null)
     {
         $request = $this->cleanData($request);
         $response = $this->cleanData($response);

@@ -66,7 +66,7 @@ class Ideal extends RedirectPayment
      * @param  Order|null $order
      * @return array
      */
-    public function getPaymentSpecificParameters(Order $order = null)
+    public function getPaymentSpecificParameters(?Order $order = null)
     {
         $infoInstance = $this->getInfoInstance();
 

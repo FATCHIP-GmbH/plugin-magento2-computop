@@ -37,7 +37,7 @@ abstract class ServerToServerPayment extends BaseMethod
      * @param \Magento\Framework\DataObject $stateObject
      * @return void
      */
-    protected function initializePayment(\Magento\Framework\DataObject $stateObject = null)
+    protected function initializePayment(?\Magento\Framework\DataObject $stateObject = null)
     {
         $payment = $this->getInfoInstance();
 

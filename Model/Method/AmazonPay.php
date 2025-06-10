@@ -107,7 +107,7 @@ class AmazonPay extends ServerToServerPayment
      * @param  Order|null $order
      * @return array
      */
-    public function getPaymentSpecificParameters(Order $order = null)
+    public function getPaymentSpecificParameters(?Order $order = null)
     {
         $shippingAddress = $order->getBillingAddress();
         if ($order->getIsVirtual() === false && !empty($order->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
