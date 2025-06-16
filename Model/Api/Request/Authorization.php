@@ -105,7 +105,8 @@ class Authorization extends Base
         $refNr = $order->getIncrementId();
 
         $shippingAddress = $order->getBillingAddress();
-        if ($order->getIsVirtual() === false && !empty($order->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
+        // getIsVirtual returns int and not bool!
+        if (!$order->getIsVirtual() && !empty($order->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
             $shippingAddress = $order->getShippingAddress();
         }
 
@@ -139,7 +140,7 @@ class Authorization extends Base
         $refNr = $methodInstance->getTemporaryRefNr($quote->getId());
 
         $shippingAddress = $quote->getBillingAddress();
-        if ($quote->getIsVirtual() === false && !empty($quote->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
+        if (!$quote->getIsVirtual() && !empty($quote->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
             $shippingAddress = $quote->getShippingAddress();
         }
 

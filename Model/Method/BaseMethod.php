@@ -671,12 +671,12 @@ abstract class BaseMethod extends Adapter
      */
     protected function getTelephoneNumber(Order $order, InfoInterface $infoInstance)
     {
-        if ($order && !empty($order->getShippingAddress()) && !empty($order->getShippingAddress()->getTelephone())) {
-            return $order->getShippingAddress()->getTelephone();
-        }
-
         if ($order && !empty($order->getBillingAddress()) && !empty($order->getBillingAddress()->getTelephone())) {
             return $order->getBillingAddress()->getTelephone();
+        }
+
+        if ($order && !empty($order->getShippingAddress()) && !empty($order->getShippingAddress()->getTelephone())) {
+            return $order->getShippingAddress()->getTelephone();
         }
 
         if (!empty($infoInstance->getAdditionalInformation('telephone'))) {
@@ -686,8 +686,8 @@ abstract class BaseMethod extends Adapter
     }
 
     /**
-     * @param Order         $order
      * @param InfoInterface $infoInstance
+     * @param Order         $order
      * @return false
      */
     protected function getBirthday(InfoInterface $infoInstance, ?Order $order = null)
