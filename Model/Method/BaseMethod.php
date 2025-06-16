@@ -395,6 +395,16 @@ abstract class BaseMethod extends Adapter
     }
 
     /**
+     * @param Order $order
+     * @param array $notify
+     * @return void
+     */
+    public function handleNotifySpecific(Order $order, $notify)
+    {
+        // hook for extention by child methods
+    }
+
+    /**
      * @param  array $response
      * @return void
      */
