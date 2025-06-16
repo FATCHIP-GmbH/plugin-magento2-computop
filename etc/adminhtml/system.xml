@@ -46,6 +46,11 @@
                     <label> </label>
                     <frontend_model>Fatchip\Computop\Block\Adminhtml\Config\Form\Field\Validation</frontend_model>
                 </field>
+                <field id="proxy_mode" translate="label,tooltip" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Proxy-Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <tooltip>Enable this option to interpret the HTTP_X_FORWARDED_FOR and HTTP_X_REAL_IP headers when reading the customers IP address. Should be activated if your shop is behind a Proxy server.</tooltip>
+                </field>
             </group>
         </section>
         <section id="computop_payment" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -59,6 +64,8 @@
             <include path="Fatchip_Computop::system/computop_ideal.xml"/>
             <include path="Fatchip_Computop::system/computop_easycredit.xml"/>
             <include path="Fatchip_Computop::system/computop_amazonpay.xml"/>
+            <include path="Fatchip_Computop::system/computop_ratepay_directdebit.xml"/>
+            <include path="Fatchip_Computop::system/computop_ratepay_invoice.xml"/>
         </section>
     </system>
 </config>

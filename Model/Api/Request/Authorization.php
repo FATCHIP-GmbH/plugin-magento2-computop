@@ -115,11 +115,11 @@ class Authorization extends Base
         }
 
         if ($methodInstance->isBillingAddressDataNeeded() === true) {
-            $this->addParameters($this->getAddressParameters($order->getBillingAddress(), 'bd'));
+            $this->addParameters($this->getAddressParameters($order->getBillingAddress(), 'bd', $methodInstance));
         }
 
         if ($methodInstance->isShippingAddressDataNeeded() === true) {
-            $this->addParameters($this->getAddressParameters($shippingAddress, 'sd'));
+            $this->addParameters($this->getAddressParameters($shippingAddress, 'sd', $methodInstance));
         }
 
         return $this->generateRequest($methodInstance, $amount, $currency, $refNr, $order, $encrypt, $log);
@@ -144,11 +144,11 @@ class Authorization extends Base
         }
 
         if ($methodInstance->isBillingAddressDataNeeded() === true) {
-            $this->addParameters($this->getAddressParameters($quote->getBillingAddress(), 'bd'));
+            $this->addParameters($this->getAddressParameters($quote->getBillingAddress(), 'bd', $methodInstance));
         }
 
         if ($methodInstance->isShippingAddressDataNeeded() === true) {
-            $this->addParameters($this->getAddressParameters($shippingAddress, 'sd'));
+            $this->addParameters($this->getAddressParameters($shippingAddress, 'sd', $methodInstance));
         }
 
         return $this->generateRequest($methodInstance, $amount, $currency, $refNr, null, $encrypt, $log);
@@ -179,9 +179,10 @@ class Authorization extends Base
     /**
      * @param OrderAddress|QuoteAddress $address
      * @param string                    $prefix
+     * @param BaseMethod|null           $methodInstance
      * @return array
      */
-    protected function getAddressParameters($address, $prefix = '')
+    protected function getAddressParameters($address, $prefix = '', ?BaseMethod $methodInstance = null)
     {
         $street = $address->getStreet();
         $street = is_array($street) ? implode(' ', $street) : $street; // street may be an array
@@ -196,6 +197,15 @@ class Authorization extends Base
             $prefix.'Street' => $split['street'],
             $prefix.'StreetNr' => $split['streetnr'],
         ];
+
+        if (!empty($address->getCompany())) {
+            $params[$prefix.'CompanyName'] = $address->getCompany();
+        }
+
+        if ($methodInstance instanceof \Fatchip\Computop\Model\Method\Ratepay\Base) {
+            $params[$prefix.'ZIPCode'] = $params[$prefix.'Zip'];
+        }
+
         return $params;
     }
 

@@ -183,6 +183,52 @@
             <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_AMAZONPAY</argument>
         </arguments>
     </virtualType>
+    <!-- Ratepay Direct Debit Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\Ratepay\DirectDebit">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolRatepayDirectDebit</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolRatepayDirectDebit" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerRatepayDirectDebit</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerRatepayDirectDebit" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigRatepayDirectDebit</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigRatepayDirectDebit" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_RATEPAY_DIRECTDEBIT</argument>
+        </arguments>
+    </virtualType>
+    <!-- Ratepay Invoice Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\Ratepay\Invoice">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolRatepayInvoice</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolRatepayInvoice" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerRatepayInvoice</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerRatepayInvoice" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigRatepayInvoice</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigRatepayInvoice" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_RATEPAY_INVOICE</argument>
+        </arguments>
+    </virtualType>
     <!-- END - PAYMENT CONFIG -->
 
     <!-- START - Session proxies -->

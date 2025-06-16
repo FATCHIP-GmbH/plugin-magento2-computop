@@ -19,6 +19,8 @@ abstract class ComputopConfig
     const METHOD_IDEAL = 'computop_ideal';
     const METHOD_EASYCREDIT = 'computop_easycredit';
     const METHOD_AMAZONPAY = 'computop_amazonpay';
+    const METHOD_RATEPAY_DIRECTDEBIT = 'computop_ratepay_directdebit';
+    const METHOD_RATEPAY_INVOICE = 'computop_ratepay_invoice';
 
     const STATUS_CODE_SUCCESS = '00000000';
 

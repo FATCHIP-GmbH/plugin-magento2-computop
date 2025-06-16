@@ -565,6 +565,18 @@ abstract class BaseMethod extends Adapter
     }
 
     /**
+     * Return invoice parameters specific to this payment type
+     *
+     * @param InfoInterface $payment
+     * @param float         $amount
+     * @return array
+     */
+    public function getPaymentSpecificInvoiceParameters(InfoInterface $payment, $amount)
+    {
+        return []; // filled in child classes
+    }
+
+    /**
      * Refund specified amount for payment
      *
      * @param InfoInterface $payment
@@ -650,5 +662,61 @@ abstract class BaseMethod extends Adapter
         $this->setTransactionId($payment, $sTransId);
 
         $payment->authorize(true, $baseTotalDue);
+    }
+
+    /**
+     * @param Order         $order
+     * @param InfoInterface $infoInstance
+     * @return false
+     */
+    protected function getTelephoneNumber(Order $order, InfoInterface $infoInstance)
+    {
+        if ($order && !empty($order->getShippingAddress()) && !empty($order->getShippingAddress()->getTelephone())) {
+            return $order->getShippingAddress()->getTelephone();
+        }
+
+        if ($order && !empty($order->getBillingAddress()) && !empty($order->getBillingAddress()->getTelephone())) {
+            return $order->getBillingAddress()->getTelephone();
+        }
+
+        if (!empty($infoInstance->getAdditionalInformation('telephone'))) {
+            return $infoInstance->getAdditionalInformation('telephone');
+        }
+        return false;
+    }
+
+    /**
+     * @param Order         $order
+     * @param InfoInterface $infoInstance
+     * @return false
+     */
+    protected function getBirthday(InfoInterface $infoInstance, ?Order $order = null)
+    {
+        $dobTime = false;
+        if ($order && !empty($order->getCustomerDob())) {
+            $dobTime = strtotime($order->getCustomerDob());
+        }
+
+        if (!empty($infoInstance->getAdditionalInformation('customer_dateofbirth'))) {
+            $dobTime = strtotime($infoInstance->getAdditionalInformation('customer_dateofbirth'));
+        }
+
+        if ($dobTime !== false) {
+            return date('Y-m-d', $dobTime);
+        }
+
+        if (!empty($infoInstance->getAdditionalInformation('dateofbirth'))) {
+            return $infoInstance->getAdditionalInformation('dateofbirth');
+        }
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReviewPath()
+    {
+        // Default
+        return '*/*/review';
     }
 }

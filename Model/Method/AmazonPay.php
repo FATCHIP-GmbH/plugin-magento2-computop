@@ -81,27 +81,6 @@ class AmazonPay extends ServerToServerPayment
     }
 
     /**
-     * @param Order         $order
-     * @param InfoInterface $infoInstance
-     * @return false
-     */
-    protected function getTelephoneNumber(Order $order, InfoInterface $infoInstance)
-    {
-        if ($order && !empty($order->getShippingAddress()) && !empty($order->getShippingAddress()->getTelephone())) {
-            return $order->getShippingAddress()->getTelephone();
-        }
-
-        if ($order && !empty($order->getBillingAddress()) && !empty($order->getBillingAddress()->getTelephone())) {
-            return $order->getBillingAddress()->getTelephone();
-        }
-
-        if (!empty($infoInstance->getAdditionalInformation('telephone'))) {
-            return $infoInstance->getAdditionalInformation('telephone');
-        }
-        return false;
-    }
-
-    /**
      * Return parameters specific to this payment type
      *
      * @param  Order|null $order

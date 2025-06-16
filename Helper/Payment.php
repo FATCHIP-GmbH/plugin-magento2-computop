@@ -19,6 +19,8 @@ class Payment extends Base
         ComputopConfig::METHOD_IDEAL,
         ComputopConfig::METHOD_EASYCREDIT,
         ComputopConfig::METHOD_AMAZONPAY,
+        ComputopConfig::METHOD_RATEPAY_DIRECTDEBIT,
+        ComputopConfig::METHOD_RATEPAY_INVOICE,
     ];
 
     /**
