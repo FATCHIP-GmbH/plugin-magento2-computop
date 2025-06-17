@@ -1,5 +1,10 @@
 # Changelog - Computop Paymet Connector for Magento 2
 
+### 1.2.2
+* Save cc data from notify call in order db table
+* Added payment methods Ratepay direct debit and Ratepay invoice
+* Added compatibility for Magento 2.4.8
+
 ### 1.2.1
 * Hotfix: Changed status in Cronjob to pending_payment
 
