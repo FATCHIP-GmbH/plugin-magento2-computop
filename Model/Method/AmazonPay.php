@@ -81,27 +81,6 @@ class AmazonPay extends ServerToServerPayment
     }
 
     /**
-     * @param Order         $order
-     * @param InfoInterface $infoInstance
-     * @return false
-     */
-    protected function getTelephoneNumber(Order $order, InfoInterface $infoInstance)
-    {
-        if ($order && !empty($order->getShippingAddress()) && !empty($order->getShippingAddress()->getTelephone())) {
-            return $order->getShippingAddress()->getTelephone();
-        }
-
-        if ($order && !empty($order->getBillingAddress()) && !empty($order->getBillingAddress()->getTelephone())) {
-            return $order->getBillingAddress()->getTelephone();
-        }
-
-        if (!empty($infoInstance->getAdditionalInformation('telephone'))) {
-            return $infoInstance->getAdditionalInformation('telephone');
-        }
-        return false;
-    }
-
-    /**
      * Return parameters specific to this payment type
      *
      * @param  Order|null $order
@@ -110,7 +89,8 @@ class AmazonPay extends ServerToServerPayment
     public function getPaymentSpecificParameters(?Order $order = null)
     {
         $shippingAddress = $order->getBillingAddress();
-        if ($order->getIsVirtual() === false && !empty($order->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
+        // getIsVirtual returns int and not bool!
+        if (!$order->getIsVirtual() && !empty($order->getShippingAddress())) { // is not a digital/virtual order? -> add shipping address
             $shippingAddress = $order->getShippingAddress();
         }
 

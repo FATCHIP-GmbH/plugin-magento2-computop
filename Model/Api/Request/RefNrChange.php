@@ -19,7 +19,7 @@ class RefNrChange extends Base
     protected $apiEndpoint = "RefNrChange.aspx";
 
     /**
-     * Collects ideal issuer list from Computop API
+     * Change RefNr of a payment
      *
      * @return array
      */

@@ -36,6 +36,14 @@ define(
             {
                 type: 'computop_amazonpay',
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/amazonpay-method'
+            },
+            {
+                type: 'computop_ratepay_directdebit',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/ratepay_directdebit-method'
+            },
+            {
+                type: 'computop_ratepay_invoice',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/ratepay_invoice-method'
             }
         );
         /** Add view logic here if needed */

@@ -54,6 +54,8 @@ class Capture extends Base
         $this->addParameter('EtiID', $this->apiHelper->getIdentString());
         $this->addParameter('RefNr', $this->apiHelper->getReferenceNumber($order->getIncrementId()));
 
+        $this->addParameters($methodInstance->getPaymentSpecificInvoiceParameters($payment, $amount));
+
         $params = $this->getParameters();
 
         return $params;

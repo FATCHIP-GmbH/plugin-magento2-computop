@@ -244,4 +244,35 @@ class Creditcard extends RedirectPayment
         $params['template'] = $this->getTemplateName();
         return $params;
     }
+
+    /**
+     * @param Order $order
+     * @param array $notify
+     * @return void
+     */
+    public function handleNotifySpecific(Order $order, $notify)
+    {
+        $changed = false;
+
+        if (!empty($notify['PCNr'])) {
+            $order->setComputopPcnr($notify['PCNr']);
+            $changed = true;
+        }
+        if (!empty($notify['CCExpiry'])) {
+            $order->setComputopCcexpiry($notify['CCExpiry']);
+            $changed = true;
+        }
+        if (!empty($notify['CCBrand'])) {
+            $order->setComputopCcbrand($notify['CCBrand']);
+            $changed = true;
+        }
+        if (!empty($notify['CardHolder'])) {
+            $order->setComputopCardholder($notify['CardHolder']);
+            $changed = true;
+        }
+
+        if ($changed === true) {
+            $order->save();
+        }
+    }
 }

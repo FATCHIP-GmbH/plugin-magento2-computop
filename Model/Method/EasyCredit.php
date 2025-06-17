@@ -148,7 +148,7 @@ class EasyCredit extends RedirectNoOrder
             'salutation' => 'Mr', // salutation is not gathered in Magento, therefor always send 'Mr'
             'FirstName' => $dataSource->getBillingAddress()->getFirstname(),
             'LastName' => $dataSource->getBillingAddress()->getLastname(),
-            'DateOfBirth' => $this->getBirthday($dataSource->getCustomer()),
+            'DateOfBirth' => $this->getBirthday($this->getInfoInstance(), $order),
             #'orderDesc' => 'Demoshop',
             #'IPAddress' => '178.19.213.38',
             #'language' => 'de',
@@ -156,17 +156,17 @@ class EasyCredit extends RedirectNoOrder
     }
 
     /**
-     * Returns the customers birthday if known
-     *
-     * @return string
+     * @param InfoInterface $infoInstance
+     * @param Order         $order
+     * @return false
      */
-    protected function getBirthday($customer)
+    protected function getBirthday(InfoInterface $infoInstance, ?Order $order = null)
     {
         $dateOfBirth = $this->checkoutSession->getComputopEasyCreditDob();
         if (!empty($dateOfBirth)) {
             return $dateOfBirth;
         }
-        return $customer->getDob();
+        return parent::getBirthday($infoInstance, $order);
     }
 
     /**
