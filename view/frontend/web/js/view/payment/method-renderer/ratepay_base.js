@@ -15,13 +15,13 @@ define(
                 return true;
             },
             isCompanySet: function () {
-                if (quote.billingAddress() != null && typeof quote.billingAddress().company != "undefined" && quote.billingAddress().company.length > 1) {
+                if (quote.billingAddress() != null && typeof quote.billingAddress().company != "undefined" && quote.billingAddress().company !== null && quote.billingAddress().company.length > 1) {
                     return true;
                 }
                 return false;
             },
             isTelephoneSet: function () {
-                if (quote.billingAddress() != null && typeof quote.billingAddress().telephone != "undefined" && quote.billingAddress().telephone.length > 1) {
+                if (quote.billingAddress() != null && typeof quote.billingAddress().telephone != "undefined" && quote.billingAddress().telephone !== null && quote.billingAddress().telephone.length > 1) {
                     return true;
                 }
                 return false;
