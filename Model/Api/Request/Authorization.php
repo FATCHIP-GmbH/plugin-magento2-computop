@@ -73,6 +73,8 @@ class Authorization extends Base
         $this->addParameter('URLNotify', $methodInstance->getNotifyUrl());
         $this->addParameter('Response', 'encrypt');
 
+        $this->addParameter('orderDesc', $this->getParameter('TransID'));
+
         $this->addParameters($methodInstance->getPaymentSpecificParameters($order));
 
         $params = $this->getParameters();
