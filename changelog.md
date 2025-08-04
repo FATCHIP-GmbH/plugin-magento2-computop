@@ -1,4 +1,7 @@
 # Changelog - Computop Paymet Connector for Magento 2
+### 1.2.3
+* Added Ratepay legal texts
+* Send transaction id in orderDesc param
 
 ### 1.2.2
 * Save cc data from notify call in order db table
