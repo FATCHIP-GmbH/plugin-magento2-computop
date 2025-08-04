@@ -128,6 +128,19 @@
         </form>
 
         <p data-bind="html: getInstructions()"></p>
+        <div class="ctRatepayLegalText">
+            <!-- ko i18n: 'With selection of this payment method you agree to the'--><!-- /ko -->
+            <a href='//www.ratepay.com/legal-payment-dataprivacy' title='Legal terms - Ratepay' target='_blank' style='text-decoration: underline; cursor: pointer'><!-- ko i18n: 'terms of payment of our payment partner'--><!-- /ko --></a>
+            <!-- ko i18n: 'as well as to the performance of a'--><!-- /ko -->
+            <a href='//www.ratepay.com/en/ratepay-data-privacy-statement' title='Legal data privacy - Ratepay' target='_blank' style='text-decoration: underline; cursor: pointer'><!-- ko i18n: 'risk check by our payment partner'--><!-- /ko --></a>.
+        </div>
+        <div class="ctRatepayMandateText">
+            <input type="checkbox" data-bind="attr: {id: getCode() + '_save_sepa_accepted'}, checked: sepaAccepted">
+            <label data-bind="attr: {for: getCode() + '_save_sepa_accepted'}" class="label"><!-- ko i18n: 'Accept'--><!-- /ko --> <a data-bind="click: toggleMandateText"><!-- ko i18n: 'SEPA Direct Debit Mandate (Click to show)'--><!-- /ko --></a></label>
+            <div data-bind="attr: {id: getCode() + '_sepa_mandate_text'}" style="display:none" class="ctRatepayMandateTextBox">
+                <!-- ko i18n: 'By agreeing to the SEPA Direct Debit Mandate, you authorise Ratepay GmbH to collect payments from your account by direct debit. At the same time, you instruct your bank to debit your account in accordance with the instructions from Ratepay GmbH. Note: As part of your rights, you are entitled to a refund from your bank. A refund must be claimed within 8 weeks, starting from the date on which your account was debited. The terms and conditions of your bank apply. The mandate reference and creditor identification number will be communicated to you separately.'--><!-- /ko -->
+            </div>
+        </div>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
             <!-- ko template: getTemplate() --><!-- /ko -->

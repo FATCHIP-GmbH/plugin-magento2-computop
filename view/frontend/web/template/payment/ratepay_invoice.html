@@ -76,6 +76,12 @@
         </div>
 
         <p data-bind="html: getInstructions()"></p>
+        <div class="ctRatepayMandateText">
+            <!-- ko i18n: 'With selection of this payment method you agree to the'--><!-- /ko -->
+            <a href='//www.ratepay.com/legal-payment-dataprivacy' title='Legal terms - Ratepay' target='_blank' style='text-decoration: underline; cursor: pointer'><!-- ko i18n: 'terms of payment of our payment partner'--><!-- /ko --></a>
+            <!-- ko i18n: 'as well as to the performance of a'--><!-- /ko -->
+            <a href='//www.ratepay.com/en/ratepay-data-privacy-statement' title='Legal data privacy - Ratepay' target='_blank' style='text-decoration: underline; cursor: pointer'><!-- ko i18n: 'risk check by our payment partner'--><!-- /ko --></a>.
+        </div>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
             <!-- ko template: getTemplate() --><!-- /ko -->

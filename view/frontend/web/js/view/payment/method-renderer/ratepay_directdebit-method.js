@@ -1,10 +1,11 @@
 define(
     [
+        'jquery',
         'Fatchip_Computop/js/view/payment/method-renderer/ratepay_base',
         'Magento_Checkout/js/model/quote',
         'mage/translate',
     ],
-    function (Component, quote, $t) {
+    function ($, Component, quote, $t) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -15,7 +16,8 @@ define(
                 birthday: '',
                 birthmonth: '',
                 birthyear: '',
-                telephone: ''
+                telephone: '',
+                sepaAccepted: false
             },
             initObservable: function () {
                 this._super()
@@ -26,7 +28,8 @@ define(
                         'birthday',
                         'birthmonth',
                         'birthyear',
-                        'telephone'
+                        'telephone',
+                        'sepaAccepted'
                     ]);
                 return this;
             },
@@ -49,6 +52,10 @@ define(
                 }
                 if (this.isBicNeeded() == 1 && this.bic() == '') {
                     this.messageContainer.addErrorMessage({'message': $t('Please enter a valid BIC.')});
+                    return false;
+                }
+                if (this.sepaAccepted() === false) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Ratepay.')});
                     return false;
                 }
                 return true;
@@ -84,6 +91,9 @@ define(
             },
             isBicNeeded: function() {
                 return this.getFrontendConfigParam('requestBic');
+            },
+            toggleMandateText: function() {
+                $('#' + this.getCode() + '_sepa_mandate_text').toggle();
             }
         });
     }
