@@ -222,7 +222,6 @@ class Creditcard extends RedirectPayment
         $params = [
             'msgVer' => '2.0',
             'Capture' => $this->getPaymentConfigParam('capture_method'),
-            'credentialOnFile' => $this->authRequest->getApiHelper()->encodeArray(['type' => ['unscheduled' => 'CIT'], 'initialPayment' => true]),
             'billToCustomer' => $this->authRequest->getApiHelper()->encodeArray($this->getBillToCustomerArray($order)),
             'PayType' => '1', // for Acquirer GMO
         ];
