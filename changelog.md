@@ -1,4 +1,7 @@
 # Changelog - Computop Paymet Connector for Magento 2
+### 1.2.4
+* Removed CredentialOnFile parameter from CC payments
+
 ### 1.2.3
 * Added Ratepay legal texts
 * Send transaction id in orderDesc param
