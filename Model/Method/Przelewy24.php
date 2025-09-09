@@ -61,7 +61,7 @@ class Przelewy24 extends RedirectPayment
      */
     public function getCaptureMode()
     {
-        return CaptureMethods::CAPTURE_AUTO; ///@TODO: Zu klären
+        return CaptureMethods::CAPTURE_AUTO;
     }
 
     /**
