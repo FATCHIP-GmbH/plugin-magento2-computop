@@ -29,6 +29,7 @@ class ApiLog extends AbstractModel
         'shoppingBasket',
         'items',
         'vats',
+        'Articlelist',
     ];
 
     /**

@@ -659,6 +659,21 @@ abstract class BaseMethod extends Adapter
     }
 
     /**
+     * @param Order $order
+     * @return string
+     */
+    protected function getCurrentCurrency(Order $order)
+    {
+        $currency = '';
+        if ($order instanceof Order) {
+            $currency = $order->getOrderCurrencyCode();
+        } elseif ($order instanceof Quote && method_exists($order, 'getQuoteCurrencyCode')) {
+            $currency = $order->getQuoteCurrencyCode();
+        }
+        return $currency;
+    }
+
+    /**
      * @param InfoInterface $payment
      * @param $sTransId
      * @return void

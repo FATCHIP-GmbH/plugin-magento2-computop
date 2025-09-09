@@ -229,6 +229,29 @@
             <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_RATEPAY_INVOICE</argument>
         </arguments>
     </virtualType>
+    <!-- Przelewy24 Config Handler -->
+    <type name="Fatchip\Computop\Model\Method\Przelewy24">
+        <arguments>
+            <argument name="valueHandlerPool" xsi:type="object">ComputopValueHandlerPoolPrzelewy24</argument>
+        </arguments>
+    </type>
+    <virtualType name="ComputopValueHandlerPoolPrzelewy24" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ComputopConfigValueHandlerPrzelewy24</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopConfigValueHandlerPrzelewy24" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ComputopCreditcardVaultPaymentConfigPrzelewy24</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ComputopCreditcardVaultPaymentConfigPrzelewy24" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Fatchip\Computop\Model\ComputopConfig::METHOD_PRZELEWY24</argument>
+        </arguments>
+    </virtualType>
     <!-- END - PAYMENT CONFIG -->
 
     <!-- START - Session proxies -->
