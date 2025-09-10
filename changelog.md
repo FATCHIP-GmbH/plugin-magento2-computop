@@ -1,4 +1,7 @@
 # Changelog - Computop Paymet Connector for Magento 2
+### 1.2.5
+* Added payment method Przelewy24
+
 ### 1.2.4
 * Removed CredentialOnFile parameter from CC payments
 
