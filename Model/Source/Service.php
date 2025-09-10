@@ -4,7 +4,7 @@ namespace Fatchip\Computop\Model\Source;
 
 use Magento\Framework\Option\ArrayInterface;
 
-class IdealService implements ArrayInterface
+class Service implements ArrayInterface
 {
     const SERVICE_DIRECT = 'direct';
     const SERVICE_PPRO = 'ppro';
@@ -19,7 +19,7 @@ class IdealService implements ArrayInterface
         return [
             [
                 'value' => self::SERVICE_DIRECT,
-                'label' => __('iDEAL Direkt'),
+                'label' => __('Direct'),
             ],
             [
                 'value' => self::SERVICE_PPRO,

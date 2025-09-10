@@ -44,6 +44,10 @@ define(
             {
                 type: 'computop_ratepay_invoice',
                 component: 'Fatchip_Computop/js/view/payment/method-renderer/ratepay_invoice-method'
+            },
+            {
+                type: 'computop_przelewy24',
+                component: 'Fatchip_Computop/js/view/payment/method-renderer/przelewy24-method'
             }
         );
         /** Add view logic here if needed */

@@ -3,7 +3,7 @@
 namespace Fatchip\Computop\Helper;
 
 use Fatchip\Computop\Model\ComputopConfig;
-use Fatchip\Computop\Model\Source\IdealService;
+use Fatchip\Computop\Model\Source\Service;
 
 class Validation extends Base
 {
@@ -61,13 +61,13 @@ class Validation extends Base
         $rules = [];
         if ((bool)$this->getConfigParam('active', ComputopConfig::METHOD_IDEAL, 'payment') === true) {
             $idealService = $this->getConfigParam('service', ComputopConfig::METHOD_IDEAL, 'computop_payment');
-            if ($idealService == IdealService::SERVICE_PPRO) {
+            if ($idealService == Service::SERVICE_PPRO) {
                 $rules[] = [
                     'regex' => '^[a-zA-Z0-9,_-]{1,40}$', // a-zA-Z0-9,-_   max 40
                     'errormessage' => __("Order number prefix/suffix validation failed: RefNr param may only consist of letters, numbers, comma, underscore and dash. Additionally the combination of prefix, the 9-digit order number and suffix must not be longer than 40 characters in total. Please change prefix/suffix accordingly."),
                 ];
             }
-            if ($idealService == IdealService::SERVICE_DIRECT) {
+            if ($idealService == Service::SERVICE_DIRECT) {
                 $rules[] = [
                     'regex' => '^.{1,15}$', // max 15
                     'errormessage' => __("Order number prefix/suffix validation failed: The combination of prefix, the 9-digit order number and suffix must not be longer than 15 characters in total. Please change prefix/suffix accordingly."),

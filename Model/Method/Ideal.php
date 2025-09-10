@@ -8,7 +8,7 @@ use Fatchip\Computop\Model\Api\Request\Capture;
 use Fatchip\Computop\Model\Api\Request\Credit;
 use Fatchip\Computop\Model\ComputopConfig;
 use Fatchip\Computop\Model\Source\CaptureMethods;
-use Fatchip\Computop\Model\Source\IdealService;
+use Fatchip\Computop\Model\Source\Service;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Payment\Gateway\Command\CommandManagerInterface;
 use Magento\Payment\Gateway\Command\CommandPoolInterface;
@@ -54,7 +54,7 @@ class Ideal extends RedirectPayment
      */
     protected function isPproMode()
     {
-        if ($this->getPaymentConfigParam('service') == IdealService::SERVICE_PPRO) {
+        if ($this->getPaymentConfigParam('service') == Service::SERVICE_PPRO) {
             return true;
         }
         return false;
@@ -63,7 +63,7 @@ class Ideal extends RedirectPayment
     /**
      * Return parameters specific to this payment type
      *
-     * @param  Order|null $order
+     * @param Order|null $order
      * @return array
      */
     public function getPaymentSpecificParameters(?Order $order = null)

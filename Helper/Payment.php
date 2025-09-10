@@ -21,6 +21,7 @@ class Payment extends Base
         ComputopConfig::METHOD_AMAZONPAY,
         ComputopConfig::METHOD_RATEPAY_DIRECTDEBIT,
         ComputopConfig::METHOD_RATEPAY_INVOICE,
+        ComputopConfig::METHOD_PRZELEWY24,
     ];
 
     /**
