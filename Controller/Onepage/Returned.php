@@ -21,10 +21,11 @@ class Returned extends \Magento\Framework\App\Action\Action implements CsrfAware
      */
     protected $apiLog;
 
+
     /**
-     * @var \Fatchip\Computop\Model\Api\Encryption\Blowfish
+     * @var \Fatchip\Computop\Helper\Encryption
      */
-    protected $blowfish;
+    protected $encryptionHelper;
 
     /**
      * Constructor
@@ -32,18 +33,18 @@ class Returned extends \Magento\Framework\App\Action\Action implements CsrfAware
      * @param \Magento\Framework\App\Action\Context           $context
      * @param \Magento\Checkout\Model\Session                 $checkoutSession
      * @param \Fatchip\Computop\Model\ResourceModel\ApiLog    $apiLog
-     * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+     * @param \Fatchip\Computop\Helper\Encryption             $encryptionHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog,
-        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+        \Fatchip\Computop\Helper\Encryption $encryptionHelper
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
         $this->apiLog = $apiLog;
-        $this->blowfish = $blowfish;
+        $this->encryptionHelper = $encryptionHelper;
     }
 
     /**
@@ -97,7 +98,7 @@ class Returned extends \Magento\Framework\App\Action\Action implements CsrfAware
         $this->checkoutSession->unsComputopCustomerIsRedirected();
         $this->checkoutSession->unsComputopCancelledPaymentMethod();
 
-        $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
+        $response = $this->encryptionHelper->decrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
         $this->apiLog->addApiLogResponse($response);
 
         $payment = $this->getPayment();

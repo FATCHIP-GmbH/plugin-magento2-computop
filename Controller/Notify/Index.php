@@ -19,9 +19,9 @@ class Index extends \Magento\Framework\App\Action\Action implements CsrfAwareAct
     protected $orderHelper;
 
     /**
-     * @var \Fatchip\Computop\Model\Api\Encryption\Blowfish
+     * @var \Fatchip\Computop\Helper\Encryption
      */
-    protected $blowfish;
+    protected $encryptionHelper;
 
     /**
      * @var \Magento\Framework\Controller\Result\RawFactory
@@ -41,7 +41,7 @@ class Index extends \Magento\Framework\App\Action\Action implements CsrfAwareAct
      * @param \Magento\Framework\App\Action\Context           $context
      * @param \Fatchip\Computop\Model\ResourceModel\ApiLog    $apiLog
      * @param \Fatchip\Computop\Helper\Order                  $orderHelper
-     * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+     * @param \Fatchip\Computop\Helper\Encryption             $encryptionHelper
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
      * @param \Magento\Framework\Event\ManagerInterface       $eventManager
      */
@@ -49,14 +49,14 @@ class Index extends \Magento\Framework\App\Action\Action implements CsrfAwareAct
         \Magento\Framework\App\Action\Context $context,
         \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog,
         \Fatchip\Computop\Helper\Order $orderHelper,
-        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
+        \Fatchip\Computop\Helper\Encryption $encryptionHelper,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
         \Magento\Framework\Event\ManagerInterface $eventManager
     ) {
         parent::__construct($context);
         $this->apiLog = $apiLog;
         $this->orderHelper = $orderHelper;
-        $this->blowfish = $blowfish;
+        $this->encryptionHelper = $encryptionHelper;
         $this->resultRawFactory = $resultRawFactory;
         $this->eventManager = $eventManager;
     }
@@ -88,7 +88,7 @@ class Index extends \Magento\Framework\App\Action\Action implements CsrfAwareAct
 
         $content = 'ERROR'; // default
         if (!empty($this->getRequest()->getParam('Data') && !empty($this->getRequest()->getParam('Len')))) {
-            $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
+            $response = $this->encryptionHelper->decrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
             $this->apiLog->addApiLogEntry('NOTIFY', $response);
             $params = [
                 'response' => $response,

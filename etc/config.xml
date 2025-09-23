@@ -236,6 +236,7 @@
         <computop_general>
             <global>
                 <cronjob_pending_lifetime>25</cronjob_pending_lifetime>
+                <encryption>blowfish</encryption>
             </global>
         </computop_general>
         <computop_payment>
