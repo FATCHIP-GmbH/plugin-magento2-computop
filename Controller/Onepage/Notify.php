@@ -10,9 +10,9 @@ class Notify extends \Magento\Framework\App\Action\Action
     protected $apiLog;
 
     /**
-     * @var \Fatchip\Computop\Model\Api\Encryption\Blowfish
+     * @var \Fatchip\Computop\Helper\Encryption
      */
-    protected $blowfish;
+    protected $encryptionHelper;
 
     /**
      * @var \Magento\Framework\Controller\Result\RawFactory
@@ -24,18 +24,18 @@ class Notify extends \Magento\Framework\App\Action\Action
      *
      * @param \Magento\Framework\App\Action\Context           $context
      * @param \Fatchip\Computop\Model\ResourceModel\ApiLog    $apiLog
-     * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+     * @param \Fatchip\Computop\Helper\Encryption             $encryptionHelper
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog,
-        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
+        \Fatchip\Computop\Helper\Encryption $encryptionHelper,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
     ) {
         parent::__construct($context);
         $this->apiLog = $apiLog;
-        $this->blowfish = $blowfish;
+        $this->encryptionHelper = $encryptionHelper;
         $this->resultRawFactory = $resultRawFactory;
     }
 
@@ -48,7 +48,7 @@ class Notify extends \Magento\Framework\App\Action\Action
     {
         $resultRaw = $this->resultRawFactory->create();
         if (!empty($this->getRequest()->getParam('Data') && !empty($this->getRequest()->getParam('Len')))) {
-            $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
+            $response = $this->encryptionHelper->decrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
             $this->apiLog->addApiLogEntry('NOTIFY', $response);
 
             $resultRaw->setContents('OK');

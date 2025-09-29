@@ -34,11 +34,9 @@ class Base
     protected $apiHelper;
 
     /**
-     * Class for handling the encryption of the API communication
-     *
-     * @var \Fatchip\Computop\Model\Api\Encryption\Blowfish
+     * @var \Fatchip\Computop\Helper\Encryption
      */
-    protected $blowfish;
+    protected $encryptionHelper;
 
     /**
      * @var \Magento\Framework\HTTP\Client\Curl
@@ -93,7 +91,7 @@ class Base
      *
      * @param \Fatchip\Computop\Helper\Payment $paymentHelper
      * @param \Fatchip\Computop\Helper\Api $apiHelper
-     * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+     * @param \Fatchip\Computop\Helper\Encryption $encryptionHelper
      * @param \Magento\Framework\HTTP\Client\Curl $curl
      * @param \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog
      * @param \Magento\Checkout\Model\Session $checkoutSession
@@ -101,14 +99,14 @@ class Base
     public function __construct(
         \Fatchip\Computop\Helper\Payment $paymentHelper,
         \Fatchip\Computop\Helper\Api $apiHelper,
-        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
+        \Fatchip\Computop\Helper\Encryption $encryptionHelper,
         \Magento\Framework\HTTP\Client\Curl $curl,
         \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog,
         \Magento\Checkout\Model\Session $checkoutSession
     ) {
         $this->paymentHelper = $paymentHelper;
         $this->apiHelper = $apiHelper;
-        $this->blowfish = $blowfish;
+        $this->encryptionHelper = $encryptionHelper;
         $this->curl = $curl;
         $this->apiLog = $apiLog;
         $this->checkoutSession = $checkoutSession;
@@ -309,7 +307,7 @@ class Base
         return [
             'MerchantID' => $this->getParameter('MerchantID'),
             'Len' => $length,
-            'Data' => $this->blowfish->ctEncrypt($dataQuery, $length, $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode))
+            'Data' => $this->encryptionHelper->encrypt($dataQuery, $length, $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode))
         ];
     }
 
@@ -337,7 +335,7 @@ class Base
         if (!empty($responseBody)) {
             parse_str($responseBody, $parsedResponse);
             if (isset($parsedResponse['Data']) && isset($parsedResponse['Len'])) {
-                $response = $this->blowfish->ctDecrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));;
+                $response = $this->encryptionHelper->decrypt($parsedResponse['Data'], $parsedResponse['Len'], $this->paymentHelper->getConfigParam('password', 'global', 'computop_general', $this->storeCode));;
             } elseif (isset($parsedResponse['mid'])) { // not encrypted? this is the case with PPE paypalComplete call
                 $response = $parsedResponse;
             }

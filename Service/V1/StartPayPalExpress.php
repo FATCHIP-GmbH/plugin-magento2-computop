@@ -7,8 +7,8 @@ use Fatchip\Computop\Api\StartPayPalExpressInterface;
 use Fatchip\Computop\Helper\Checkout;
 use Fatchip\Computop\Model\ComputopConfig;
 use Fatchip\Computop\Model\ResourceModel\ApiLog;
+use Fatchip\Computop\Helper\Encryption;
 use Magento\Checkout\Model\Session;
-use Fatchip\Computop\Model\Api\Encryption\Blowfish;
 
 class StartPayPalExpress implements StartPayPalExpressInterface
 {
@@ -32,9 +32,9 @@ class StartPayPalExpress implements StartPayPalExpressInterface
     protected $apiLog;
 
     /**
-     * @var Blowfish
+     * @var Encryption
      */
-    protected $blowfish;
+    protected $encryptionHelper;
 
     /**
      * @var Checkout
@@ -47,20 +47,20 @@ class StartPayPalExpress implements StartPayPalExpressInterface
      * @param StartPayPalExpressResponseInterfaceFactory $responseFactory
      * @param Session                                    $checkoutSession
      * @param ApiLog                                     $apiLog
-     * @param Blowfish                                   $blowfish
+     * @param Encryption                                 $encryptionHelper
      * @param Checkout                                   $checkoutHelper
      */
     public function __construct(
         StartPayPalExpressResponseInterfaceFactory $responseFactory,
         Session $checkoutSession,
         ApiLog $apiLog,
-        Blowfish $blowfish,
+        Encryption $encryptionHelper,
         Checkout $checkoutHelper
     ) {
         $this->responseFactory = $responseFactory;
         $this->checkoutSession = $checkoutSession;
         $this->apiLog = $apiLog;
-        $this->blowfish = $blowfish;
+        $this->encryptionHelper = $encryptionHelper;
         $this->checkoutHelper = $checkoutHelper;
     }
 
@@ -82,7 +82,7 @@ class StartPayPalExpress implements StartPayPalExpressInterface
         $payment = $quote->getPayment();
         $payment->setMethod(ComputopConfig::METHOD_PAYPAL);
 
-        $request = $this->blowfish->ctDecrypt($data, $len);
+        $request = $this->encryptionHelper->decrypt($data, $len);
         if (!empty($request)) {
             $this->apiLog->addApiLogEntry('PAYPALEXPRESS', $request);
             #$payment->setTransactionId($request['TransID']);

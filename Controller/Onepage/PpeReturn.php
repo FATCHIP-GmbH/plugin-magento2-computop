@@ -24,9 +24,9 @@ class PpeReturn extends \Magento\Framework\App\Action\Action implements CsrfAwar
     protected $apiLog;
 
     /**
-     * @var \Fatchip\Computop\Model\Api\Encryption\Blowfish
+     * @var \Fatchip\Computop\Helper\Encryption
      */
-    protected $blowfish;
+    protected $encryptionHelper;
 
     /**
      * @var \Fatchip\Computop\Helper\Checkout
@@ -46,7 +46,7 @@ class PpeReturn extends \Magento\Framework\App\Action\Action implements CsrfAwar
      * @param \Magento\Framework\App\Action\Context           $context
      * @param \Magento\Checkout\Model\Session                 $checkoutSession
      * @param \Fatchip\Computop\Model\ResourceModel\ApiLog    $apiLog
-     * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+     * @param \Fatchip\Computop\Helper\Encryption             $encryptionHelper
      * @param \Fatchip\Computop\Helper\Checkout               $checkoutHelper
      * @param \Magento\Quote\Model\Quote\TotalsCollector      $totalsCollector
      */
@@ -54,14 +54,14 @@ class PpeReturn extends \Magento\Framework\App\Action\Action implements CsrfAwar
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog,
-        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
+        \Fatchip\Computop\Helper\Encryption $encryptionHelper,
         \Fatchip\Computop\Helper\Checkout $checkoutHelper,
         \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
         $this->apiLog = $apiLog;
-        $this->blowfish = $blowfish;
+        $this->encryptionHelper = $encryptionHelper;
         $this->checkoutHelper = $checkoutHelper;
         $this->totalsCollector = $totalsCollector;
     }
@@ -182,7 +182,7 @@ class PpeReturn extends \Magento\Framework\App\Action\Action implements CsrfAwar
     {
         $this->checkoutSession->unsComputopCustomerIsRedirected();
 
-        $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
+        $response = $this->encryptionHelper->decrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
         $this->apiLog->addApiLogResponse($response);
 
         /*

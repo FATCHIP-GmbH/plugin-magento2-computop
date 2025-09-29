@@ -22,7 +22,7 @@ class Authorization extends Base
      *
      * @param \Fatchip\Computop\Helper\Payment $paymentHelper
      * @param \Fatchip\Computop\Helper\Api $apiHelper
-     * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+     * @param \Fatchip\Computop\Helper\Encryption $encryptionHelper
      * @param \Magento\Framework\HTTP\Client\Curl $curl
      * @param \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog
      * @param \Magento\Checkout\Model\Session $checkoutSession
@@ -31,13 +31,13 @@ class Authorization extends Base
     public function __construct(
         \Fatchip\Computop\Helper\Payment $paymentHelper,
         \Fatchip\Computop\Helper\Api $apiHelper,
-        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
+        \Fatchip\Computop\Helper\Encryption $encryptionHelper,
         \Magento\Framework\HTTP\Client\Curl $curl,
         \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Fatchip\Computop\Helper\Country $countryHelper
     ) {
-        parent::__construct($paymentHelper, $apiHelper, $blowfish, $curl, $apiLog, $checkoutSession);
+        parent::__construct($paymentHelper, $apiHelper, $encryptionHelper, $curl, $apiLog, $checkoutSession);
         $this->countryHelper = $countryHelper;
     }
 

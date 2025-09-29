@@ -7,24 +7,8 @@ namespace Fatchip\Computop\Model\Api\Encryption;
  *
  * This class provides the Blowfish encryption for PHP environment.
  */
-class Blowfish
+class Blowfish extends Base
 {
-    /**
-     * @var \Fatchip\Computop\Helper\Base
-     */
-    protected $baseHelper;
-
-    /**
-     * Constructor
-     *
-     * @param \Fatchip\Computop\Helper\Base $baseHelper
-     */
-    public function __construct(
-        \Fatchip\Computop\Helper\Base $baseHelper
-    ) {
-        $this->baseHelper = $baseHelper;
-    }
-
     /**
      * @var int[]
      */
@@ -180,7 +164,7 @@ class Blowfish
     public function ctEncrypt($plaintext, $len, $password = false)
     {
         if ($password === false) {
-            $password = $this->baseHelper->getConfigParam('password');
+            $password = $this->getPasswordFromConfig();
         }
 
         if (mb_strlen($password) <= 0) $password = ' ';
@@ -194,24 +178,6 @@ class Blowfish
     }
 
     /**
-     * @param  string $splitString
-     * @return array
-     */
-    protected function ctSplit($splitString)
-    {
-        // $splitString will be a URL-like param string but must not be treated like that!
-        // Like a=1&b=2&c=3
-        $splitArray = explode('&', $splitString); // what happens when there is a legit "&" in one of the parameters values???
-
-        $result = [];
-        foreach ($splitArray as $text) {
-            $split = explode("=", $text, 2); // Limit 2 is important to not truncate values with a legit "=" in it
-            $result[$split[0]] = $split[1];
-        }
-        return $result;
-    }
-
-    /**
      * Decrypt the passed HEX string with Blowfish.
      *
      * @param  string  $cipher
@@ -222,7 +188,7 @@ class Blowfish
     public function ctDecrypt($cipher, $len, $password = false)
     {
         if ($password === false) {
-            $password = $this->baseHelper->getConfigParam('password');
+            $password = $this->getPasswordFromConfig();
         }
 
         if (mb_strlen($password) <= 0) $password = ' ';

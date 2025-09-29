@@ -22,8 +22,12 @@
                     <label>HMAC-Key</label>
                     <tooltip>Your HMAC key</tooltip>
                 </field>
+                <field id="encryption" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Encryption mode</label>
+                    <source_model>Fatchip\Computop\Model\Source\EncryptionMode</source_model>
+                </field>
                 <field id="password" translate="label,tooltip" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Blowfish Password</label>
+                    <label>Password</label>
                     <tooltip>Your encryption password</tooltip>
                 </field>
                 <!--NO CONNECTION TO REST API AS OF NOW field id="restapikey" translate="label,tooltip" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">

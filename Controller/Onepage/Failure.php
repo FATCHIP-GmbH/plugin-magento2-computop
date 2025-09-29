@@ -31,9 +31,9 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
     protected $urlBuilder;
 
     /**
-     * @var \Fatchip\Computop\Model\Api\Encryption\Blowfish
+     * @var \Fatchip\Computop\Helper\Encryption
      */
-    protected $blowfish;
+    protected $encryptionHelper;
 
     /**
      * @var \Fatchip\Computop\Model\ResourceModel\ApiLog
@@ -47,7 +47,7 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
      * @param \Magento\Checkout\Model\Session                 $checkoutSession
      * @param \Magento\Sales\Model\OrderFactory               $orderFactory
      * @param \Magento\Framework\Url                          $urlBuilder
-     * @param \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish
+     * @param \Fatchip\Computop\Helper\Encryption             $encryptionHelper
      * @param \Fatchip\Computop\Model\ResourceModel\ApiLog    $apiLog
      */
     public function __construct(
@@ -55,14 +55,14 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \Magento\Framework\Url $urlBuilder,
-        \Fatchip\Computop\Model\Api\Encryption\Blowfish $blowfish,
+        \Fatchip\Computop\Helper\Encryption $encryptionHelper,
         \Fatchip\Computop\Model\ResourceModel\ApiLog $apiLog
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
         $this->orderFactory = $orderFactory;
         $this->urlBuilder = $urlBuilder;
-        $this->blowfish = $blowfish;
+        $this->encryptionHelper = $encryptionHelper;
         $this->apiLog = $apiLog;
     }
 
@@ -115,7 +115,7 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
         try {
             $response = false;
             if (!empty($this->getRequest()->getParam('Data')) && $this->getRequest()->getParam('Len')) {
-                $response = $this->blowfish->ctDecrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
+                $response = $this->encryptionHelper->decrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
                 $this->apiLog->addApiLogResponse($response);
             }
 
