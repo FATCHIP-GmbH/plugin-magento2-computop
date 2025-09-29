@@ -1,4 +1,7 @@
 # Changelog - Computop Paymet Connector for Magento 2
+### 1.2.6
+* Added AES encryption
+
 ### 1.2.5
 * Added payment method Przelewy24
 
