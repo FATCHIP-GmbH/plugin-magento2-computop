@@ -207,6 +207,7 @@ class Authorization extends Base
 
         if ($methodInstance instanceof \Fatchip\Computop\Model\Method\Ratepay\Base) {
             $params[$prefix.'ZIPCode'] = $params[$prefix.'Zip'];
+            $params[$prefix.'StreetHouseNumber'] = $params[$prefix.'StreetNr'];
         }
 
         return $params;
