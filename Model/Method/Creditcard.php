@@ -2,11 +2,27 @@
 
 namespace Fatchip\Computop\Model\Method;
 
+use Fatchip\Computop\Helper\Api;
+use Fatchip\Computop\Helper\Payment;
+use Fatchip\Computop\Model\Api\Request\Capture;
+use Fatchip\Computop\Model\Api\Request\Credit;
+use Fatchip\Computop\Model\Api\Request\RefNrChange;
 use Fatchip\Computop\Model\ComputopConfig;
 use Fatchip\Computop\Model\Source\CreditcardModes;
 use Fatchip\Computop\Model\Source\CreditcardTypes;
+use Magento\Framework\Event\ManagerInterface;
+use Magento\Payment\Gateway\Command\CommandManagerInterface;
+use Magento\Payment\Gateway\Command\CommandPoolInterface;
+use Magento\Payment\Gateway\Config\ValueHandlerPoolInterface;
+use Magento\Payment\Gateway\Data\PaymentDataObjectFactory;
+use Magento\Payment\Gateway\Validator\ValidatorPoolInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Magento\Sales\Model\Service\InvoiceService;
+use Psr\Log\LoggerInterface;
+
 
 class Creditcard extends RedirectPayment
 {
@@ -44,6 +60,39 @@ class Creditcard extends RedirectPayment
      * @var bool
      */
     protected $addLanguageToUrl = true;
+
+    protected $addBillingAddressData = false;
+    protected $addShippingAddressData = false;
+
+    public function __construct(
+        ManagerInterface $eventManager,
+        ValueHandlerPoolInterface $valueHandlerPool,
+        PaymentDataObjectFactory $paymentDataObjectFactory,
+        $code,
+        $formBlockType,
+        $infoBlockType,
+        \Magento\Framework\Url $urlBuilder,
+        \Fatchip\Computop\Model\Api\Request\Authorization $authRequest,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        Payment $paymentHelper,
+        Api $apiHelper, Capture $captureRequest,
+        Credit $creditRequest,
+        InvoiceService $invoiceService,
+        OrderSender $orderSender,
+        InvoiceSender $invoiceSender,
+        RefNrChange $refNrChange,
+        CommandPoolInterface $commandPool = null,
+        ValidatorPoolInterface $validatorPool = null,
+        CommandManagerInterface $commandExecutor = null,
+        LoggerInterface $logger = null)
+    {
+        parent::__construct($eventManager, $valueHandlerPool, $paymentDataObjectFactory, $code, $formBlockType, $infoBlockType, $urlBuilder, $authRequest, $checkoutSession, $paymentHelper, $apiHelper, $captureRequest, $creditRequest, $invoiceService, $orderSender, $invoiceSender, $refNrChange, $commandPool, $validatorPool, $commandExecutor, $logger);
+
+        $acq = $this->getPaymentConfigParam('acquirer') ?? '';
+        $isPayPalCC = strcasecmp($acq, 'PayPalCC') === 0;
+        $this->addBillingAddressData = $isPayPalCC;
+        $this->addShippingAddressData = $isPayPalCC;
+    }
 
     /**
      * Returns the API endpoint
