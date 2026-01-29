@@ -65,16 +65,21 @@ class CancelOrderProcess implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+error_log(date("Y-m-d H:i:s - ")."Trigger CancelOrderProcess Observer - 1 - PRE".PHP_EOL, 3, BP."/var/log/computop_debug.log");
         if ($this->checkoutSession->getComputopCustomerIsRedirected()) {
+error_log(date("Y-m-d H:i:s - ")."Trigger CancelOrderProcess Observer - 2 - INSIDE".PHP_EOL, 3, BP."/var/log/computop_debug.log");
             try {
                 $orderId = $this->checkoutSession->getLastOrderId();
                 /** @var Order $order */
                 $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
                 if ($order) {
+error_log(date("Y-m-d H:i:s - ")."Trigger CancelOrderProcess Observer - 3 - GOT ORDER".PHP_EOL, 3, BP."/var/log/computop_debug.log");
                     if ($this->canCancelOrder($order)) {
+error_log(date("Y-m-d H:i:s - ")."Trigger CancelOrderProcess Observer - 4 - CAN CANCEL".PHP_EOL, 3, BP."/var/log/computop_debug.log");
                         $order->cancel();
                         $order->addStatusToHistory(Order::STATE_CANCELED, __('The transaction has been canceled.'), false);
                         $order->save();
+error_log(date("Y-m-d H:i:s - ")."Trigger CancelOrderProcess Observer - 5 - ORDER CANCELED".PHP_EOL, 3, BP."/var/log/computop_debug.log");
 
                         $currentQuote = $this->checkoutSession->getQuote();
 
@@ -84,6 +89,7 @@ class CancelOrderProcess implements ObserverInterface
                             $currentQuote->merge($oldQuote);
                             $currentQuote->collectTotals();
                             $currentQuote->save();
+error_log(date("Y-m-d H:i:s - ")."Trigger CancelOrderProcess Observer - 6 - OLD BASKET RESTORED".PHP_EOL, 3, BP."/var/log/computop_debug.log");
                         }
                     }
 
@@ -101,5 +107,6 @@ class CancelOrderProcess implements ObserverInterface
 
             $this->checkoutSession->unsComputopCustomerIsRedirected();
         }
+error_log(date("Y-m-d H:i:s - ")."Trigger CancelOrderProcess Observer - 7 - POST".PHP_EOL, 3, BP."/var/log/computop_debug.log");
     }
 }

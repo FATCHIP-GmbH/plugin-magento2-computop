@@ -123,20 +123,26 @@ class Failure extends \Magento\Framework\App\Action\Action implements CsrfAwareA
                 $this->checkoutSession->setComputopIsError(true);
             }
 
+error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 1 - PRE".PHP_EOL, 3, BP."/var/log/computop_debug.log");
             if (empty($this->checkoutSession->getComputopTmpRefnr())) { // no order created pre-redirect, therefor no order to cancel
+error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 2 - INSIDE".PHP_EOL, 3, BP."/var/log/computop_debug.log");
                 $orderId = $this->checkoutSession->getLastOrderId();
                 $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
                 if ($order) {
+error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 3 - GOT ORDER".PHP_EOL, 3, BP."/var/log/computop_debug.log");
                     $this->handleOrder($order);
 
                     $order->cancel()->save();
+error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 4 - ORDER CANCELED".PHP_EOL, 3, BP."/var/log/computop_debug.log");
                     $this->checkoutSession->restoreQuote();
+error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 5 - OLD BASKET RESTORED".PHP_EOL, 3, BP."/var/log/computop_debug.log");
                     $this->checkoutSession
                         ->unsLastQuoteId()
                         ->unsLastSuccessQuoteId()
                         ->unsLastOrderId();
                 }
             }
+error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 6 - PRE".PHP_EOL, 3, BP."/var/log/computop_debug.log");
 
             $this->clearSessionParams();
         } catch (LocalizedException $e) {
