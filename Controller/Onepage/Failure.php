@@ -142,7 +142,7 @@ error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 5 - OLD BASKE
                         ->unsLastOrderId();
                 }
             }
-error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 6 - PRE".PHP_EOL, 3, BP."/var/log/computop_debug.log");
+error_log(date("Y-m-d H:i:s - ")."Trigger Cancel/Failure PROCESS - 6 - POST".PHP_EOL, 3, BP."/var/log/computop_debug.log");
 
             $this->clearSessionParams();
         } catch (LocalizedException $e) {
