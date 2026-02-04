@@ -64,6 +64,8 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
         if (!empty($redirectUrl)) {
             $this->checkoutSession->setComputopCustomerIsRedirected(true);
+error_log(date("Y-m-d H:i:s - ")."---> SESSION - B - setComputopCustomerIsRedirected to true - SessionID: ".$this->checkoutSession->getSessionId().PHP_EOL, 3, BP."/pub/computop_debug.log");
+error_log(date("Y-m-d H:i:s - ")."------> REDIRECT USER TO ".$redirectUrl.PHP_EOL, 3, BP."/pub/computop_debug.log");
             $this->getResponse()->setRedirect($redirectUrl);
             return;
         }
