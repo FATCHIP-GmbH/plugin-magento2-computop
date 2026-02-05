@@ -47,7 +47,7 @@ class Payment extends \Magento\Framework\App\Action\Action
         }
 
         $this->checkoutSession->setComputopCustomerIsRedirected(true);
-error_log(date("Y-m-d H:i:s - ")."---> SESSION - A - setComputopCustomerIsRedirected to true - SessionID: ".$this->checkoutSession->getSessionId().PHP_EOL, 3, BP."/pub/computop_debug.log");
+error_log(date("Y-m-d H:i:s - ")."---> SESSION - A - setComputopCustomerIsRedirected to true - SessionID: ".$this->checkoutSession->getSessionId().PHP_EOL, 3, BP."/pub/media/logs/computop_debug.log");
         return $this->pageFactory->create();
     }
 }

@@ -96,7 +96,7 @@ class Returned extends \Magento\Framework\App\Action\Action implements CsrfAware
     public function execute()
     {
         $this->checkoutSession->unsComputopCustomerIsRedirected();
-error_log(date("Y-m-d H:i:s - ")."---> SESSION - B - unsComputopCustomerIsRedirected - SessionID: ".$this->checkoutSession->getSessionId().PHP_EOL, 3, BP."/pub/computop_debug.log");
+error_log(date("Y-m-d H:i:s - ")."---> SESSION - B - unsComputopCustomerIsRedirected - SessionID: ".$this->checkoutSession->getSessionId().PHP_EOL, 3, BP."/pub/media/logs/computop_debug.log");
         $this->checkoutSession->unsComputopCancelledPaymentMethod();
 
         $response = $this->encryptionHelper->decrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
