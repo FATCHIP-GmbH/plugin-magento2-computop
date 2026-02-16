@@ -66,6 +66,8 @@ define(
             handleRedirectAction: function(url) {
                 var self = this;
 
+                window.computopRedirectInitiated = true;
+
                 this.isPlaceOrderActionAllowed(false);
                 this.getPlaceOrderDeferredObject()
                     .fail(
