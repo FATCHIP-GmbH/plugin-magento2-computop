@@ -34,20 +34,6 @@ class Wero extends RedirectPayment
     protected $apiEndpoint = "WERO.aspx";
 
     /**
-     * Determines if auth requests adds billing address parameters to the request
-     *
-     * @var bool
-     */
-    #protected $addBillingAddressData = true;
-
-    /**
-     * Determines if auth requests adds shipping address parameters to the request
-     *
-     * @var bool
-     */
-    #protected $addShippingAddressData = true;
-
-    /**
      * @return string
      */
     public function getCaptureMode()
