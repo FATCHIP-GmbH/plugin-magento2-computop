@@ -2,6 +2,7 @@
 ### 1.2.8
 * Added Wero payment method
 * Added default config values
+* Fixed session problem with race condition in checkout
 
 ### 1.2.7
 * Fixed Ratepay payments
