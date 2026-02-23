@@ -181,7 +181,6 @@ class PpeReturn extends \Magento\Framework\App\Action\Action implements CsrfAwar
     public function execute()
     {
         $this->checkoutSession->unsComputopCustomerIsRedirected();
-error_log(date("Y-m-d H:i:s - ")."---> SESSION - A - unsComputopCustomerIsRedirected - SessionID: ".$this->checkoutSession->getSessionId().PHP_EOL, 3, BP."/pub/media/logs/computop_debug.log");
 
         $response = $this->encryptionHelper->decrypt($this->getRequest()->getParam('Data'), $this->getRequest()->getParam('Len'));
         $this->apiLog->addApiLogResponse($response);
