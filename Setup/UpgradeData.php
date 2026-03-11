@@ -86,6 +86,15 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'computop_transid')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'computop_transid',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
+
         $setup->endSetup();
     }
 }
