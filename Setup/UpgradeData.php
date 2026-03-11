@@ -91,7 +91,7 @@ class UpgradeData implements UpgradeDataInterface
             $salesInstaller->addAttribute(
                 'order',
                 'computop_transid',
-                ['type' => 'varchar', 'length' => 64, 'default' => '']
+                ['type' => 'varchar', 'length' => 64, 'default' => '', 'grid' => true]
             );
         }
 
