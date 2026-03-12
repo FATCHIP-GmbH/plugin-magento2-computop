@@ -1,4 +1,8 @@
 # Changelog - Computop Paymet Connector for Magento 2
+### 1.2.9
+* security hardening
+* Added pre- and suffix to transID
+
 ### 1.2.8
 * Added Wero payment method
 * Added default config values
