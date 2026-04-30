@@ -11,7 +11,7 @@
             <label>Title</label>
             <config_path>payment/computop_ratepay_directdebit/title</config_path>
         </field>
-        <field id="request_bic" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field id="request_bic" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Request BIC</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
