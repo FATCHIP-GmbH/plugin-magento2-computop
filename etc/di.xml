@@ -7,6 +7,8 @@
     <preference for="Fatchip\Computop\Api\Data\StartPayPalExpressResponseInterface" type="Fatchip\Computop\Service\V1\Data\StartPayPalExpressResponse" />
     <preference for="Fatchip\Computop\Api\AmazonPayInterface" type="Fatchip\Computop\Service\V1\AmazonPay" />
     <preference for="Fatchip\Computop\Api\Data\AmazonPayResponseInterface" type="Fatchip\Computop\Service\V1\Data\AmazonPayResponse" />
+    <preference for="Fatchip\Computop\Api\DeviceFingerprintSentInterface" type="Fatchip\Computop\Service\V1\DeviceFingerprintSent" />
+    <preference for="Fatchip\Computop\Api\Data\DeviceFingerprintSentResponseInterface" type="Fatchip\Computop\Service\V1\Data\DeviceFingerprintSentResponse" />
     <!-- END - REST API PREFERENCES -->
 
     <!-- START - PAYMENT CONFIG -->
