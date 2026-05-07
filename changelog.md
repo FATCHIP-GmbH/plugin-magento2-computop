@@ -1,4 +1,8 @@
 # Changelog - Computop Paymet Connector for Magento 2
+### 1.3.0
+* Implemented DeviceToken mechanic for Ratepay payment methods
+* Changed success status detection
+
 ### 1.2.9
 * security hardening
 * Added pre- and suffix to transID
