@@ -2,6 +2,7 @@
 ### 1.3.0
 * Implemented DeviceToken mechanic for Ratepay payment methods
 * Changed success status detection
+* Fixed problem with creditcard silent mode
 
 ### 1.2.9
 * security hardening
