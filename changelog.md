@@ -1,4 +1,8 @@
 # Changelog - Computop Paymet Connector for Magento 2
+
+### 1.3.1
+* Added compatibility to Magento 2.4.9 and PHP 8.5
+
 ### 1.3.0
 * Implemented DeviceToken mechanic for Ratepay payment methods
 * Changed success status detection
