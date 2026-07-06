@@ -361,4 +361,7 @@
     <type name="Magento\Sales\Model\Service\CreditmemoService">
         <plugin name="computop_payment_plugin_creditmemoservice" type="Fatchip\Computop\Plugin\CreditmemoService" sortOrder="1" />
     </type>
+    <type name="Magento\Quote\Model\CustomerManagement">
+        <plugin name="computop_payment_skip_addresses_validate" type="Fatchip\Computop\Plugin\CustomerManagementPlugin" sortOrder="5"/>
+    </type>
 </config>
