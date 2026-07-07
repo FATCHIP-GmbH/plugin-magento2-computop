@@ -4,6 +4,7 @@ namespace Fatchip\Computop\Model\Api\Request;
 
 use Fatchip\Computop\Model\ComputopConfig;
 use Fatchip\Computop\Model\Method\BaseMethod;
+use Fatchip\Computop\Model\Method\PayPal;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Order\Address as OrderAddress;
@@ -138,6 +139,12 @@ class Authorization extends Base
     public function generateRequestFromQuote(Quote $quote, BaseMethod $methodInstance, $encrypt = false, $log = false)
     {
         $amount = $quote->getGrandTotal();
+
+        $totals = $quote->getTotals();
+        if ($methodInstance instanceof PayPal && (!isset($totals['shipping']) || $totals['shipping']->getValue() == 0)) {
+            $amount += $methodInstance->getPayPalExpressDefaultDeliveryCosts();
+        }
+
         $currency = $quote->getQuoteCurrencyCode();
         $refNr = $methodInstance->getTemporaryRefNr($quote->getId());
 
