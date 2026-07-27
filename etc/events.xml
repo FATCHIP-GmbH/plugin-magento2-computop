@@ -4,10 +4,10 @@
         <observer name="computop_order_payment_place_end" instance="Fatchip\Computop\Observer\OrderPaymentPlaceEnd" />
     </event>
     <event name="controller_action_predispatch_checkout_index_index">
-        <observer name="computop_predispatch_checkout_index" instance="Fatchip\Computop\Observer\CancelOrderProcess" />
+        <observer name="computop_predispatch_checkout_index" instance="Fatchip\Computop\Observer\ReactivateQuote" />
     </event>
     <event name="checkout_cart_save_after">
-        <observer name="computop_checkout_cart_save_after" instance="Fatchip\Computop\Observer\CancelOrderProcess" />
+        <observer name="computop_checkout_cart_save_after" instance="Fatchip\Computop\Observer\ReactivateQuote" />
     </event>
     <event name="fatchip_computop_notify_ok">
         <observer name="fatchip_computop_notify_ok" instance="Fatchip\Computop\Observer\Notify\Ok" />
