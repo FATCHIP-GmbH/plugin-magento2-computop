@@ -1,5 +1,8 @@
 # Changelog - Computop Paymet Connector for Magento 2
 
+### 1.3.3
+* Changed order handling with browser back/forward buttons
+
 ### 1.3.2
 * Added PayPal Express default shipping cost config
 
